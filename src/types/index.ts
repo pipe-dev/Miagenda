@@ -63,9 +63,13 @@ export interface ProfileConfig {
   activeProfile: UserProfile;
   isSetupComplete: boolean;
   coupleId?: string;
-  wakeTime?: string; // Hora de levantarse (HH:mm)
+  wakeTime?: string; // Fallback
+  wakeTimeWeekdays?: string; // Lunes a Viernes (HH:mm)
+  wakeTimeWeekend?: string; // Sábado y Domingo (HH:mm)
   sleepTime?: string; // Hora de acostarse (HH:mm)
   briefingTime?: string; // Hora del resumen matutino (HH:mm)
+  enableBedtimeReminder?: boolean; // Aviso 1h antes de dormir
+  enableWakeAlarm?: boolean; // Alarma al despertar
 }
 
 export interface SharedGroceryItem {

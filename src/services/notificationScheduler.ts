@@ -145,6 +145,41 @@ class NotificationScheduler {
         tag: morningKey
       });
     }
+
+    // 4. 🌙 BEDTIME PREPARATION REMINDER (1 hour before sleepTime)
+    if (schedule.enableBedtimeReminder) {
+      const [sleepH, sleepM] = (schedule.sleepTime || '23:00').split(':').map(Number);
+      let prepH = (sleepH || 23) - 1;
+      if (prepH < 0) prepH += 24;
+      const prepTimeStr = `${prepH.toString().padStart(2, '0')}:${(sleepM || 0).toString().padStart(2, '0')}`;
+
+      const bedtimeKey = `bedtime_prep_${todayStr}`;
+      if (currentTimeStr === prepTimeStr && !notifiedSet.has(bedtimeKey)) {
+        markNotified(bedtimeKey);
+        notificationService.sendNotification({
+          title: '🌙 Hora de prepararse para descansar',
+          body: `Falta 1 hora para tu hora de dormir (${formatTime12H(schedule.sleepTime)}). ¡Desconéctate y relájate!`,
+          url: '/?view=today',
+          tag: bedtimeKey
+        });
+      }
+    }
+
+    // 5. ⏰ WAKE-UP ALARM (At today's effective wakeTime)
+    if (schedule.enableWakeAlarm) {
+      const wakeKey = `wake_alarm_${todayStr}`;
+      if (currentTimeStr === schedule.wakeTime && !notifiedSet.has(wakeKey)) {
+        markNotified(wakeKey);
+        const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+        const dayName = dayNames[now.getDay()] || 'hoy';
+        notificationService.sendNotification({
+          title: '⏰ ¡Hora de levantarse! ☀️',
+          body: `¡Feliz ${dayName}! Es momento de iniciar tu jornada con toda la energía.`,
+          url: '/?view=today',
+          tag: wakeKey
+        });
+      }
+    }
   }
 }
 

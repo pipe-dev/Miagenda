@@ -269,8 +269,12 @@ export const getProfileConfig = (): ProfileConfig => {
         isSetupComplete: Boolean(parsed.isSetupComplete),
         coupleId: parsed.coupleId || coupleId,
         wakeTime: parsed.wakeTime || '07:00',
+        wakeTimeWeekdays: parsed.wakeTimeWeekdays || parsed.wakeTime || '07:00',
+        wakeTimeWeekend: parsed.wakeTimeWeekend || '09:00',
         sleepTime: parsed.sleepTime || '23:00',
-        briefingTime: parsed.briefingTime || '08:00'
+        briefingTime: parsed.briefingTime || '08:00',
+        enableBedtimeReminder: parsed.enableBedtimeReminder !== undefined ? Boolean(parsed.enableBedtimeReminder) : true,
+        enableWakeAlarm: parsed.enableWakeAlarm !== undefined ? Boolean(parsed.enableWakeAlarm) : true
       };
     }
   } catch (e) {
@@ -285,8 +289,12 @@ export const getProfileConfig = (): ProfileConfig => {
     isSetupComplete: false,
     coupleId: getCoupleId(),
     wakeTime: '07:00',
+    wakeTimeWeekdays: '07:00',
+    wakeTimeWeekend: '09:00',
     sleepTime: '23:00',
-    briefingTime: '08:00'
+    briefingTime: '08:00',
+    enableBedtimeReminder: true,
+    enableWakeAlarm: true
   };
 };
 
@@ -308,8 +316,12 @@ export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfi
     isSetupComplete: config.isSetupComplete !== undefined ? config.isSetupComplete : current.isSetupComplete,
     coupleId: cId,
     wakeTime: config.wakeTime || current.wakeTime || '07:00',
+    wakeTimeWeekdays: config.wakeTimeWeekdays || current.wakeTimeWeekdays || config.wakeTime || '07:00',
+    wakeTimeWeekend: config.wakeTimeWeekend || current.wakeTimeWeekend || '09:00',
     sleepTime: config.sleepTime || current.sleepTime || '23:00',
-    briefingTime: config.briefingTime || current.briefingTime || '08:00'
+    briefingTime: config.briefingTime || current.briefingTime || '08:00',
+    enableBedtimeReminder: config.enableBedtimeReminder !== undefined ? config.enableBedtimeReminder : current.enableBedtimeReminder,
+    enableWakeAlarm: config.enableWakeAlarm !== undefined ? config.enableWakeAlarm : current.enableWakeAlarm
   };
   localStorage.setItem(PROFILE_CONFIG_KEY, JSON.stringify(fullConfig));
   if (config.activeProfile) {
@@ -320,18 +332,39 @@ export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfi
   }
 };
 
-// Helper: Get user's personal daily schedule
-export const getUserSchedule = (): { wakeTime: string; sleepTime: string; briefingTime: string } => {
+// Helper: Get user's personal daily schedule (evaluating weekday vs weekend)
+export const getUserSchedule = (): {
+  wakeTime: string;
+  wakeTimeWeekdays: string;
+  wakeTimeWeekend: string;
+  sleepTime: string;
+  briefingTime: string;
+  enableBedtimeReminder: boolean;
+  enableWakeAlarm: boolean;
+  isWeekend: boolean;
+} => {
   const config = getProfileConfig();
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0 = Sun, 6 = Sat
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+  const effectiveWakeTime = isWeekend
+    ? (config.wakeTimeWeekend || '09:00')
+    : (config.wakeTimeWeekdays || config.wakeTime || '07:00');
+
   return {
-    wakeTime: config.wakeTime || '07:00',
+    wakeTime: effectiveWakeTime,
+    wakeTimeWeekdays: config.wakeTimeWeekdays || config.wakeTime || '07:00',
+    wakeTimeWeekend: config.wakeTimeWeekend || '09:00',
     sleepTime: config.sleepTime || '23:00',
-    briefingTime: config.briefingTime || '08:00'
+    briefingTime: config.briefingTime || '08:00',
+    enableBedtimeReminder: config.enableBedtimeReminder ?? true,
+    enableWakeAlarm: config.enableWakeAlarm ?? true,
+    isWeekend
   };
 };
 
 // Helper: Save user's personal daily schedule
-export const saveUserSchedule = (schedule: { wakeTime?: string; sleepTime?: string; briefingTime?: string }) => {
+export const saveUserSchedule = (schedule: Partial<ProfileConfig>) => {
   const current = getProfileConfig();
   saveProfileConfig({
     ...current,

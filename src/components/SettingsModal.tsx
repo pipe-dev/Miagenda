@@ -33,10 +33,21 @@ export default function SettingsModal({
   const [permissionStatus, setPermissionStatus] = React.useState<string>(notificationService.getPermission());
   const [isTestingNotif, setIsTestingNotif] = React.useState<boolean>(false);
   const initialSchedule = getUserSchedule();
-  const [wakeTime, setWakeTime] = React.useState<string>(initialSchedule.wakeTime || '07:00');
+  const [wakeTimeWeekdays, setWakeTimeWeekdays] = React.useState<string>(initialSchedule.wakeTimeWeekdays || '07:00');
+  const [wakeTimeWeekend, setWakeTimeWeekend] = React.useState<string>(initialSchedule.wakeTimeWeekend || '09:00');
   const [sleepTime, setSleepTime] = React.useState<string>(initialSchedule.sleepTime || '23:00');
   const [briefingTime, setBriefingTime] = React.useState<string>(initialSchedule.briefingTime || '08:00');
+  const [enableBedtimeReminder, setEnableBedtimeReminder] = React.useState<boolean>(initialSchedule.enableBedtimeReminder ?? true);
+  const [enableWakeAlarm, setEnableWakeAlarm] = React.useState<boolean>(initialSchedule.enableWakeAlarm ?? true);
   const [scheduleSavedFeedback, setScheduleSavedFeedback] = React.useState<boolean>(false);
+
+  // Helper to calculate 1 hour before bedtime
+  const getBedtimePrepTime = (timeStr: string) => {
+    const [h, m] = (timeStr || '23:00').split(':').map(Number);
+    let prepH = (h || 23) - 1;
+    if (prepH < 0) prepH += 24;
+    return `${prepH.toString().padStart(2, '0')}:${(m || 0).toString().padStart(2, '0')}`;
+  };
 
   const handleDragEnd = (_: any, info: PanInfo) => {
     if (info.offset.y > 140) {
@@ -201,57 +212,100 @@ export default function SettingsModal({
             </div>
 
             {/* ⏰ Horarios Personales & Resumen Matutino */}
-            <div className="plush-card rounded-2xl p-4 border border-white bg-white/95 shadow-xs space-y-3.5">
+            <div className="plush-card rounded-2xl p-4 border border-white bg-white/95 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
                     <span className="material-symbols-outlined text-[20px]">schedule</span>
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-on-surface">Horarios Personales & Jornada</h4>
+                    <h4 className="text-xs font-bold text-on-surface">Horarios Personales & Rutina</h4>
                     <p className="text-[10px] text-on-surface-variant">
-                      Ajusta el cálculo del banner y la hora del resumen
+                      Despertar diferenciado, aviso de descanso y resumen
                     </p>
                   </div>
                 </div>
                 {scheduleSavedFeedback && (
-                  <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 animate-pulse">
+                  <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 animate-pulse">
                     ✓ Guardado
                   </span>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-                {/* 1. Hora de Levantarse */}
-                <div className="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/80 space-y-1">
-                  <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
-                    <span>☀️</span>
-                    <span>Hora de Levantarse</span>
-                  </label>
-                  <input
-                    type="time"
-                    value={wakeTime}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setWakeTime(val);
-                      saveUserSchedule({ wakeTime: val });
-                      hapticService.playLightTap();
-                      setScheduleSavedFeedback(true);
-                      setTimeout(() => setScheduleSavedFeedback(false), 2000);
-                    }}
-                    className="w-full bg-white px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-on-surface outline-none focus:border-primary shadow-2xs"
-                  />
-                  <p className="text-[9px] text-on-surface-variant/80">
-                    Inicio de jornada: <strong>{formatTime12H(wakeTime)}</strong>
-                  </p>
+              {/* Grid de Horarios de Despertar */}
+              <div className="space-y-1.5">
+                <div className="text-[11px] font-extrabold text-on-surface flex items-center space-x-1.5">
+                  <span className="material-symbols-outlined text-[15px] text-amber-600">wb_sunny</span>
+                  <span>Hora de Despertar (Inicio de Jornada)</span>
                 </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {/* Lunes a Viernes */}
+                  <div className="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/80 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
+                        <span>💼</span>
+                        <span>Lunes a Viernes</span>
+                      </label>
+                      <span className="text-[9px] font-extrabold text-primary" style={{ color: 'var(--primary)' }}>
+                        {formatTime12H(wakeTimeWeekdays)}
+                      </span>
+                    </div>
+                    <input
+                      type="time"
+                      value={wakeTimeWeekdays}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setWakeTimeWeekdays(val);
+                        saveUserSchedule({ wakeTimeWeekdays: val, wakeTime: val });
+                        hapticService.playLightTap();
+                        setScheduleSavedFeedback(true);
+                        setTimeout(() => setScheduleSavedFeedback(false), 2000);
+                      }}
+                      className="w-full bg-white px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-on-surface outline-none focus:border-primary shadow-2xs"
+                    />
+                  </div>
 
-                {/* 2. Hora de Acostarse */}
+                  {/* Sábado y Domingo */}
+                  <div className="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/80 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
+                        <span>🏖️</span>
+                        <span>Sábado y Domingo</span>
+                      </label>
+                      <span className="text-[9px] font-extrabold text-primary" style={{ color: 'var(--primary)' }}>
+                        {formatTime12H(wakeTimeWeekend)}
+                      </span>
+                    </div>
+                    <input
+                      type="time"
+                      value={wakeTimeWeekend}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setWakeTimeWeekend(val);
+                        saveUserSchedule({ wakeTimeWeekend: val });
+                        hapticService.playLightTap();
+                        setScheduleSavedFeedback(true);
+                        setTimeout(() => setScheduleSavedFeedback(false), 2000);
+                      }}
+                      className="w-full bg-white px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-on-surface outline-none focus:border-primary shadow-2xs"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Grid de Hora de Dormir y Resumen Matutino */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* Hora de Acostarse */}
                 <div className="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/80 space-y-1">
-                  <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
-                    <span>🌙</span>
-                    <span>Hora de Acostarse</span>
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
+                      <span>🌙</span>
+                      <span>Hora de Acostarse</span>
+                    </label>
+                    <span className="text-[9px] font-extrabold text-primary" style={{ color: 'var(--primary)' }}>
+                      {formatTime12H(sleepTime)}
+                    </span>
+                  </div>
                   <input
                     type="time"
                     value={sleepTime}
@@ -266,16 +320,21 @@ export default function SettingsModal({
                     className="w-full bg-white px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-on-surface outline-none focus:border-primary shadow-2xs"
                   />
                   <p className="text-[9px] text-on-surface-variant/80">
-                    Fin de jornada: <strong>{formatTime12H(sleepTime)}</strong>
+                    Fin de jornada activa
                   </p>
                 </div>
 
-                {/* 3. Hora del Resumen Matutino */}
+                {/* Resumen Matutino */}
                 <div className="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/80 space-y-1">
-                  <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
-                    <span>📬</span>
-                    <span>Resumen Matutino</span>
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
+                      <span>📬</span>
+                      <span>Resumen Matutino</span>
+                    </label>
+                    <span className="text-[9px] font-extrabold text-primary" style={{ color: 'var(--primary)' }}>
+                      {formatTime12H(briefingTime)}
+                    </span>
+                  </div>
                   <input
                     type="time"
                     value={briefingTime}
@@ -290,8 +349,65 @@ export default function SettingsModal({
                     className="w-full bg-white px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-on-surface outline-none focus:border-primary shadow-2xs"
                   />
                   <p className="text-[9px] text-on-surface-variant/80">
-                    Aviso diario: <strong>{formatTime12H(briefingTime)}</strong>
+                    Notificación diaria de citas y tareas
                   </p>
+                </div>
+              </div>
+
+              {/* Toggles de Recordatorios Adicionales */}
+              <div className="pt-2 border-t border-slate-100 space-y-2.5">
+                {/* 1. Alarma al Despertar */}
+                <div className="flex items-center justify-between bg-slate-50/80 p-2.5 rounded-xl">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm">⏰</span>
+                    <div>
+                      <h5 className="text-[11px] font-bold text-on-surface">Alarma al Despertar</h5>
+                      <p className="text-[9px] text-on-surface-variant">
+                        Notificación matutina a la hora de levantarse ({initialSchedule.isWeekend ? formatTime12H(wakeTimeWeekend) : formatTime12H(wakeTimeWeekdays)})
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = !enableWakeAlarm;
+                      setEnableWakeAlarm(next);
+                      saveUserSchedule({ enableWakeAlarm: next });
+                      hapticService.playLightTap();
+                    }}
+                    className={`w-9 h-5 flex items-center rounded-full p-0.5 transition-colors duration-200 ${
+                      enableWakeAlarm ? 'bg-primary justify-end' : 'bg-slate-300 justify-start'
+                    }`}
+                  >
+                    <motion.div layout className="w-4 h-4 bg-white rounded-full shadow-xs" />
+                  </button>
+                </div>
+
+                {/* 2. Recordatorio 1 hora antes de Dormir */}
+                <div className="flex items-center justify-between bg-slate-50/80 p-2.5 rounded-xl">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm">😴</span>
+                    <div>
+                      <h5 className="text-[11px] font-bold text-on-surface">Aviso 1h antes de Dormir</h5>
+                      <p className="text-[9px] text-on-surface-variant">
+                        Recordatorio a las <strong>{formatTime12H(getBedtimePrepTime(sleepTime))}</strong> para ir a descansar
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = !enableBedtimeReminder;
+                      setEnableBedtimeReminder(next);
+                      saveUserSchedule({ enableBedtimeReminder: next });
+                      hapticService.playLightTap();
+                    }}
+                    className={`w-9 h-5 flex items-center rounded-full p-0.5 transition-colors duration-200 ${
+                      enableBedtimeReminder ? 'bg-primary justify-end' : 'bg-slate-300 justify-start'
+                    }`}
+                  >
+                    <motion.div layout className="w-4 h-4 bg-white rounded-full shadow-xs" />
+                  </button>
                 </div>
               </div>
             </div>
