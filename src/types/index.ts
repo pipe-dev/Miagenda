@@ -63,6 +63,9 @@ export interface ProfileConfig {
   activeProfile: UserProfile;
   isSetupComplete: boolean;
   coupleId?: string;
+  wakeTime?: string; // Hora de levantarse (HH:mm)
+  sleepTime?: string; // Hora de acostarse (HH:mm)
+  briefingTime?: string; // Hora del resumen matutino (HH:mm)
 }
 
 export interface SharedGroceryItem {

@@ -4,7 +4,8 @@ import {
   getTasks,
   getLocalDateStr,
   isEventActiveOnDate,
-  getActiveProfile
+  getActiveProfile,
+  getUserSchedule
 } from './storageService';
 import { notificationService } from './notificationService';
 import { EventItem, MedicationItem } from '../types';
@@ -130,9 +131,11 @@ class NotificationScheduler {
       });
     });
 
-    // 3. ☀️ MORNING BRIEFING REMINDER (At 08:00 AM once per day)
-    const morningKey = 'morning_briefing';
-    if (currentHours === 8 && currentMinutes === 0 && !notifiedSet.has(morningKey)) {
+    // 3. ☀️ MORNING BRIEFING REMINDER (At user's configured briefingTime)
+    const schedule = getUserSchedule();
+    const briefingTime = schedule.briefingTime || '08:00';
+    const morningKey = `morning_briefing_${todayStr}`;
+    if (currentTimeStr === briefingTime && !notifiedSet.has(morningKey)) {
       markNotified(morningKey);
       const todayTasks = getTasks(activeProfile).filter(t => !t.completed);
       notificationService.sendNotification({

@@ -5,7 +5,8 @@ import {
   isEventActiveOnDate,
   getLocalDateStr,
   getMinutesFromDayStart,
-  isEventPassed
+  isEventPassed,
+  getUserSchedule
 } from '../services/storageService';
 import { hapticService } from '../services/hapticService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
@@ -44,6 +45,27 @@ export default function MorningBriefingCard({
   const currentMinutes = now.getMinutes();
   const currentTimeStr = `${currentHour.toString().padStart(2, '0')}:${currentMinutes.toString().padStart(2, '0')}`;
   const currentMinutesTotal = currentHour * 60 + currentMinutes;
+
+  // Personal schedule from settings
+  const schedule = getUserSchedule();
+  const [wakeH, wakeM] = (schedule.wakeTime || '07:00').split(':').map(Number);
+  const [sleepH, sleepM] = (schedule.sleepTime || '23:00').split(':').map(Number);
+
+  const dayStartMin = (wakeH || 7) * 60 + (wakeM || 0);
+  let dayEndMin = (sleepH || 23) * 60 + (sleepM || 0);
+  if (dayEndMin <= dayStartMin) {
+    dayEndMin += 1440; // Past midnight schedule
+  }
+
+  let effectiveCurrentMin = currentMinutesTotal;
+  if (effectiveCurrentMin < dayStartMin && currentMinutesTotal < 360) {
+    effectiveCurrentMin += 1440;
+  }
+
+  const dayProgressPercent = Math.min(
+    100,
+    Math.max(0, Math.round(((effectiveCurrentMin - dayStartMin) / (dayEndMin - dayStartMin)) * 100))
+  );
 
   // Time of day greeting
   let greeting = 'Buenos días';
@@ -85,14 +107,6 @@ export default function MorningBriefingCard({
       nextEventCountdownStr = 'en curso ahora';
     }
   }
-
-  // Day progress percentage (from 6:00 AM / 360 min to 11:00 PM / 1380 min)
-  const dayStartMin = 360; // 06:00 AM
-  const dayEndMin = 1380; // 11:00 PM
-  const dayProgressPercent = Math.min(
-    100,
-    Math.max(0, Math.round(((currentMinutesTotal - dayStartMin) / (dayEndMin - dayStartMin)) * 100))
-  );
 
   // Latest event end time (when user is free)
   const lastEvent = sortedEvents.length > 0 ? sortedEvents[sortedEvents.length - 1] : null;

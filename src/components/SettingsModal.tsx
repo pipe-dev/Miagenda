@@ -1,7 +1,17 @@
+const formatTime12H = (time24?: string): string => {
+  if (!time24) return '';
+  const [hStr, mStr] = time24.split(':');
+  const h = parseInt(hStr || '0', 10);
+  const m = mStr || '00';
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12.toString().padStart(2, '0')}:${m} ${period}`;
+};
+
 import React from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { getFirebaseServices } from '../services/firebase';
-import { getProfileConfig } from '../services/storageService';
+import { getProfileConfig, getUserSchedule, saveUserSchedule } from '../services/storageService';
 import { isFirestoreConfigured, getFirestoreConfig } from '../services/firestoreSync';
 import { hapticService } from '../services/hapticService';
 import { notificationService } from '../services/notificationService';
@@ -22,6 +32,11 @@ export default function SettingsModal({
   const [notificationsEnabled, setNotificationsEnabled] = React.useState<boolean>(notificationService.isEnabled());
   const [permissionStatus, setPermissionStatus] = React.useState<string>(notificationService.getPermission());
   const [isTestingNotif, setIsTestingNotif] = React.useState<boolean>(false);
+  const initialSchedule = getUserSchedule();
+  const [wakeTime, setWakeTime] = React.useState<string>(initialSchedule.wakeTime || '07:00');
+  const [sleepTime, setSleepTime] = React.useState<string>(initialSchedule.sleepTime || '23:00');
+  const [briefingTime, setBriefingTime] = React.useState<string>(initialSchedule.briefingTime || '08:00');
+  const [scheduleSavedFeedback, setScheduleSavedFeedback] = React.useState<boolean>(false);
 
   const handleDragEnd = (_: any, info: PanInfo) => {
     if (info.offset.y > 140) {
@@ -182,6 +197,102 @@ export default function SettingsModal({
                   <span className="material-symbols-outlined text-[14px]">send</span>
                   <span>{isTestingNotif ? 'Enviando...' : 'Probar Notificación'}</span>
                 </motion.button>
+              </div>
+            </div>
+
+            {/* ⏰ Horarios Personales & Resumen Matutino */}
+            <div className="plush-card rounded-2xl p-4 border border-white bg-white/95 shadow-xs space-y-3.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[20px]">schedule</span>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-on-surface">Horarios Personales & Jornada</h4>
+                    <p className="text-[10px] text-on-surface-variant">
+                      Ajusta el cálculo del banner y la hora del resumen
+                    </p>
+                  </div>
+                </div>
+                {scheduleSavedFeedback && (
+                  <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 animate-pulse">
+                    ✓ Guardado
+                  </span>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                {/* 1. Hora de Levantarse */}
+                <div className="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/80 space-y-1">
+                  <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
+                    <span>☀️</span>
+                    <span>Hora de Levantarse</span>
+                  </label>
+                  <input
+                    type="time"
+                    value={wakeTime}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setWakeTime(val);
+                      saveUserSchedule({ wakeTime: val });
+                      hapticService.playLightTap();
+                      setScheduleSavedFeedback(true);
+                      setTimeout(() => setScheduleSavedFeedback(false), 2000);
+                    }}
+                    className="w-full bg-white px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-on-surface outline-none focus:border-primary shadow-2xs"
+                  />
+                  <p className="text-[9px] text-on-surface-variant/80">
+                    Inicio de jornada: <strong>{formatTime12H(wakeTime)}</strong>
+                  </p>
+                </div>
+
+                {/* 2. Hora de Acostarse */}
+                <div className="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/80 space-y-1">
+                  <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
+                    <span>🌙</span>
+                    <span>Hora de Acostarse</span>
+                  </label>
+                  <input
+                    type="time"
+                    value={sleepTime}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSleepTime(val);
+                      saveUserSchedule({ sleepTime: val });
+                      hapticService.playLightTap();
+                      setScheduleSavedFeedback(true);
+                      setTimeout(() => setScheduleSavedFeedback(false), 2000);
+                    }}
+                    className="w-full bg-white px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-on-surface outline-none focus:border-primary shadow-2xs"
+                  />
+                  <p className="text-[9px] text-on-surface-variant/80">
+                    Fin de jornada: <strong>{formatTime12H(sleepTime)}</strong>
+                  </p>
+                </div>
+
+                {/* 3. Hora del Resumen Matutino */}
+                <div className="bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/80 space-y-1">
+                  <label className="text-[10px] font-bold text-on-surface flex items-center space-x-1">
+                    <span>📬</span>
+                    <span>Resumen Matutino</span>
+                  </label>
+                  <input
+                    type="time"
+                    value={briefingTime}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setBriefingTime(val);
+                      saveUserSchedule({ briefingTime: val });
+                      hapticService.playLightTap();
+                      setScheduleSavedFeedback(true);
+                      setTimeout(() => setScheduleSavedFeedback(false), 2000);
+                    }}
+                    className="w-full bg-white px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-on-surface outline-none focus:border-primary shadow-2xs"
+                  />
+                  <p className="text-[9px] text-on-surface-variant/80">
+                    Aviso diario: <strong>{formatTime12H(briefingTime)}</strong>
+                  </p>
+                </div>
               </div>
             </div>
 

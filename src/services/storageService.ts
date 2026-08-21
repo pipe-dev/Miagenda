@@ -267,7 +267,10 @@ export const getProfileConfig = (): ProfileConfig => {
         partner2Color: parsed.partner2Color || 'pink',
         activeProfile: active,
         isSetupComplete: Boolean(parsed.isSetupComplete),
-        coupleId: parsed.coupleId || coupleId
+        coupleId: parsed.coupleId || coupleId,
+        wakeTime: parsed.wakeTime || '07:00',
+        sleepTime: parsed.sleepTime || '23:00',
+        briefingTime: parsed.briefingTime || '08:00'
       };
     }
   } catch (e) {
@@ -280,11 +283,14 @@ export const getProfileConfig = (): ProfileConfig => {
     partner2Color: 'pink',
     activeProfile: getActiveProfile(),
     isSetupComplete: false,
-    coupleId: getCoupleId()
+    coupleId: getCoupleId(),
+    wakeTime: '07:00',
+    sleepTime: '23:00',
+    briefingTime: '08:00'
   };
 };
 
-export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfile: UserProfile; isSetupComplete: boolean }) => {
+export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfile?: UserProfile; isSetupComplete?: boolean }) => {
   const current = getProfileConfig();
   const p1 = config.partner1Name || current.partner1Name || 'Tú';
   const p2 = config.partner2Name || current.partner2Name || 'Pareja';
@@ -298,15 +304,39 @@ export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfi
     partner2Name: p2,
     partner1Color: p1Color,
     partner2Color: p2Color,
-    activeProfile: config.activeProfile,
-    isSetupComplete: config.isSetupComplete,
-    coupleId: cId
+    activeProfile: config.activeProfile || current.activeProfile,
+    isSetupComplete: config.isSetupComplete !== undefined ? config.isSetupComplete : current.isSetupComplete,
+    coupleId: cId,
+    wakeTime: config.wakeTime || current.wakeTime || '07:00',
+    sleepTime: config.sleepTime || current.sleepTime || '23:00',
+    briefingTime: config.briefingTime || current.briefingTime || '08:00'
   };
   localStorage.setItem(PROFILE_CONFIG_KEY, JSON.stringify(fullConfig));
-  setActiveProfile(config.activeProfile);
+  if (config.activeProfile) {
+    setActiveProfile(config.activeProfile);
+  }
   if (fullConfig.isSetupComplete) {
     syncProfileConfigToCloud(fullConfig);
   }
+};
+
+// Helper: Get user's personal daily schedule
+export const getUserSchedule = (): { wakeTime: string; sleepTime: string; briefingTime: string } => {
+  const config = getProfileConfig();
+  return {
+    wakeTime: config.wakeTime || '07:00',
+    sleepTime: config.sleepTime || '23:00',
+    briefingTime: config.briefingTime || '08:00'
+  };
+};
+
+// Helper: Save user's personal daily schedule
+export const saveUserSchedule = (schedule: { wakeTime?: string; sleepTime?: string; briefingTime?: string }) => {
+  const current = getProfileConfig();
+  saveProfileConfig({
+    ...current,
+    ...schedule
+  });
 };
 
 // Helper: Get the profile color ('blue' | 'pink')
