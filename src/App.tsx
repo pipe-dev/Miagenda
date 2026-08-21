@@ -80,6 +80,7 @@ import { getFirebaseServices } from './services/firebase';
 import { checkAndRunAutomatedBackup } from './services/backupService';
 import { notificationService } from './services/notificationService';
 import { notificationScheduler } from './services/notificationScheduler';
+import { remotePushService } from './services/remotePushService';
 
 export default function App() {
   // Navigation & Privacy (Siempre entra en Mi Agenda / Privada por defecto)
@@ -414,6 +415,17 @@ export default function App() {
     setEditingEvent(null);
     setNewEventDefaultDate(null);
     setIsEventModalOpen(false);
+
+    // Dispatch Apple APNs / Google Push if shared event
+    if (eventData.privacy === 'shared') {
+      const myName = getUserDisplayName(activeProfile);
+      remotePushService.sendPushToPartner({
+        title: '✨ Nueva cita compartida',
+        body: `${myName} programó: "${eventData.title}" a las ${eventData.startTime || '10:00'}`,
+        url: '/?view=today',
+        tag: 'remote-event-' + Date.now()
+      });
+    }
   };
 
   const handleRequestDeleteEvent = (event: EventItem) => {
@@ -553,6 +565,14 @@ export default function App() {
     const updated = saveCoupleMood(status);
     setCoupleMoods(updated);
     markMoodPromptedForToday(activeProfile);
+
+    const myName = getUserDisplayName(activeProfile);
+    remotePushService.sendPushToPartner({
+      title: '💖 Sintonizador de Pareja',
+      body: `${myName} ha compartido su estado de ánimo hoy.`,
+      url: '/?view=memories',
+      tag: 'remote-mood-' + Date.now()
+    });
   };
 
   // Dedications / Surprise handlers
@@ -560,6 +580,15 @@ export default function App() {
     const updated = saveDedication(dedicationData);
     setDedications(updated);
     setIsDedicationModalOpen(false);
+
+    // Dispatch Apple APNs / Google Push for love dedication
+    const myName = getUserDisplayName(activeProfile);
+    remotePushService.sendPushToPartner({
+      title: '💌 ¡Dedicatoria sorpresa de amor!',
+      body: `${myName} te ha enviado una cartita de amor.`,
+      url: '/?view=memories',
+      tag: 'remote-dedication-' + Date.now()
+    });
   };
 
   const handleAcknowledgeSurprise = (id: string) => {

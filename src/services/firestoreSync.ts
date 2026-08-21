@@ -535,3 +535,48 @@ export const syncAllLocalDataToCloud = async (data: {
     return false;
   }
 };
+
+// ==========================================
+// 📲 PUSH SUBSCRIPTIONS CLOUD STORAGE
+// ==========================================
+export const syncPushSubscriptionToCloud = async (
+  profile: UserProfile,
+  subscription: any
+) => {
+  const { db, isConfigured } = getFirebaseServices();
+  if (!db || !isConfigured) return;
+
+  try {
+    await ensureAnonymousAuth();
+    const spaceId = getSpaceId();
+    const docRef = doc(db, 'couples', spaceId, 'push_subscriptions', profile);
+    await setDoc(docRef, {
+      profile,
+      subscription: typeof subscription.toJSON === 'function' ? subscription.toJSON() : subscription,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (e) {
+    console.warn('Error saving push subscription to Firestore', e);
+  }
+};
+
+export const getPartnerPushSubscriptionFromCloud = async (
+  partnerProfile: UserProfile
+): Promise<any | null> => {
+  const { db, isConfigured } = getFirebaseServices();
+  if (!db || !isConfigured) return null;
+
+  try {
+    await ensureAnonymousAuth();
+    const spaceId = getSpaceId();
+    const docRef = doc(db, 'couples', spaceId, 'push_subscriptions', partnerProfile);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      return data?.subscription || null;
+    }
+  } catch (e) {
+    console.warn('Error reading partner push subscription from Firestore', e);
+  }
+  return null;
+};

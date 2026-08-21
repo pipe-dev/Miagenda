@@ -1,7 +1,10 @@
 import { audioService } from './audioService';
 import { hapticService } from './hapticService';
+import { syncPushSubscriptionToCloud } from './firestoreSync';
+import { getActiveProfile } from './storageService';
 
 const SETTINGS_KEY = 'mi_agenda_notifications_enabled';
+export const VAPID_PUBLIC_KEY = 'BKEjz8CtSrX7dNrGUvZULgaNTtagcgJdnM6ALFJhy90rUC8SXwxKKXJ_FHg-Q5maNurss9rRdj9EJoZ8nbaPEws';
 
 export interface NotificationPayload {
   title: string;
@@ -14,6 +17,18 @@ export interface NotificationPayload {
 }
 
 export type PermissionStatus = 'granted' | 'denied' | 'default' | 'unsupported';
+
+// Helper: Convert Base64 URL safe to Uint8Array for PushManager
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
 
 class NotificationService {
   // Check if browser supports notifications
@@ -41,6 +56,36 @@ class NotificationService {
     }
   }
 
+  // Register device with Apple APNs / Google Push Manager & sync to Firestore
+  public async subscribeToPushNotifications(): Promise<PushSubscription | null> {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      return null;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
+
+      if (!subscription) {
+        const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: convertedVapidKey
+        });
+      }
+
+      if (subscription) {
+        const activeProfile = getActiveProfile();
+        await syncPushSubscriptionToCloud(activeProfile, subscription);
+      }
+
+      return subscription;
+    } catch (err) {
+      console.warn('Could not subscribe to PushManager with VAPID', err);
+      return null;
+    }
+  }
+
   // Request browser/system notification permission
   public async requestPermission(): Promise<PermissionStatus> {
     if (!this.isSupported()) return 'unsupported';
@@ -49,6 +94,8 @@ class NotificationService {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
         this.setEnabled(true);
+        // Subscribe to Apple APNs / Google Push with VAPID
+        await this.subscribeToPushNotifications();
         // Test chime & haptic
         hapticService.playSuccess();
         audioService.playCompletionChime();
