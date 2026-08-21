@@ -78,6 +78,8 @@ import {
 } from './services/firestoreSync';
 import { getFirebaseServices } from './services/firebase';
 import { checkAndRunAutomatedBackup } from './services/backupService';
+import { notificationService } from './services/notificationService';
+import { notificationScheduler } from './services/notificationScheduler';
 
 export default function App() {
   // Navigation & Privacy (Siempre entra en Mi Agenda / Privada por defecto)
@@ -121,6 +123,34 @@ export default function App() {
     | null
   >(null);
 
+  // Start background notification monitor (citas, pastillero, briefing)
+  useEffect(() => {
+    notificationScheduler.start();
+    return () => {
+      notificationScheduler.stop();
+    };
+  }, []);
+
+  // Deep Link navigation from Notification Click (?view=today|calendar|tasks|memories)
+  useEffect(() => {
+    const handleUrlView = () => {
+      const params = new URLSearchParams(window.location.search);
+      const viewParam = params.get('view') as NavView;
+      if (viewParam && ['today', 'calendar', 'tasks', 'memories'].includes(viewParam)) {
+        setCurrentView(viewParam);
+      }
+    };
+    handleUrlView();
+    window.addEventListener('popstate', handleUrlView);
+    return () => window.removeEventListener('popstate', handleUrlView);
+  }, []);
+
+  // Track notified IDs in session to avoid repeat notifications on initial mount sync
+  const knownEventIdsRef = React.useRef<Set<string>>(new Set());
+  const knownDedicationIdsRef = React.useRef<Set<string>>(new Set());
+  const knownGroceryIdsRef = React.useRef<Set<string>>(new Set());
+  const isInitialCloudSyncRef = React.useRef<boolean>(true);
+
   // Load initial data
   useEffect(() => {
     const loadedEvents = getEvents();
@@ -148,7 +178,27 @@ export default function App() {
     const { isConfigured } = getFirebaseServices();
     if (!isConfigured) return;
 
+    const partnerProfile: UserProfile = activeProfile === 'partner1' ? 'partner2' : 'partner1';
+
     const unsubEvents = subscribeToCloudEvents((cloudEvents) => {
+      if (!isInitialCloudSyncRef.current) {
+        // Detect new shared events added by partner
+        const newShared = cloudEvents.filter(e => 
+          e.privacy === 'shared' && 
+          e.author === partnerProfile && 
+          !knownEventIdsRef.current.has(e.id)
+        );
+        if (newShared.length > 0) {
+          const evt = newShared[0];
+          notificationService.sendNotification({
+            title: '✨ Nueva cita compartida',
+            body: `${getUserDisplayName(partnerProfile)} agregó: "${evt.title}" a las ${evt.startTime || '10:00'}`,
+            url: '/?view=today',
+            tag: 'partner-evt-' + evt.id
+          });
+        }
+      }
+      cloudEvents.forEach(e => knownEventIdsRef.current.add(e.id));
       setEvents(cloudEvents);
       localStorage.setItem('daily_delight_events_v2', JSON.stringify(cloudEvents));
     });
@@ -159,13 +209,52 @@ export default function App() {
     });
 
     const unsubGroceries = subscribeToCloudGroceries((cloudGroceries) => {
+      if (!isInitialCloudSyncRef.current) {
+        // Detect new groceries added by partner
+        const newGroceries = cloudGroceries.filter(g => 
+          g.addedBy === partnerProfile && 
+          !g.completed && 
+          !knownGroceryIdsRef.current.has(g.id)
+        );
+        if (newGroceries.length > 0) {
+          const item = newGroceries[0];
+          notificationService.sendNotification({
+            title: '🛒 Lista del Súper actualizada',
+            body: `${getUserDisplayName(partnerProfile)} agregó "${item.title}" a las compras.`,
+            url: '/?view=tasks',
+            tag: 'partner-groc-' + item.id
+          });
+        }
+      }
+      cloudGroceries.forEach(g => knownGroceryIdsRef.current.add(g.id));
       setSharedGroceries(cloudGroceries);
       localStorage.setItem('daily_delight_shared_groceries_v2', JSON.stringify(cloudGroceries));
     });
 
     const unsubDedications = subscribeToCloudDedications((cloudDedications) => {
+      if (!isInitialCloudSyncRef.current) {
+        // Detect new surprise dedications from partner
+        const newDeds = cloudDedications.filter(d => 
+          d.author === partnerProfile && 
+          !d.isRead && 
+          !knownDedicationIdsRef.current.has(d.id)
+        );
+        if (newDeds.length > 0) {
+          const ded = newDeds[0];
+          notificationService.sendNotification({
+            title: '💌 ¡Dedicatoria sorpresa de amor!',
+            body: `${getUserDisplayName(partnerProfile)} te ha enviado una cartita de amor.`,
+            url: '/?view=memories',
+            tag: 'partner-ded-' + ded.id
+          });
+        }
+      }
+      cloudDedications.forEach(d => knownDedicationIdsRef.current.add(d.id));
       setDedications(cloudDedications);
       localStorage.setItem('daily_delight_dedications_v2', JSON.stringify(cloudDedications));
+      
+      // Initial sync completed after first snapshot
+      isInitialCloudSyncRef.current = false;
     });
 
     const unsubMeds = subscribeToCloudMedications((cloudMeds) => {

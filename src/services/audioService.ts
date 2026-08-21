@@ -79,6 +79,45 @@ class AudioService {
       this.mediaRecorder.stop();
     });
   }
+
+  // Synthesize pleasant candy notification chime using Web Audio API
+  public playCompletionChime(): void {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(587.33, now); // D5
+      osc1.frequency.exponentialRampToValueAtTime(880, now + 0.15); // A5
+
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(880, now + 0.12);
+      osc2.frequency.exponentialRampToValueAtTime(1174.66, now + 0.35); // D6
+
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc1.stop(now + 0.18);
+      osc2.start(now + 0.12);
+      osc2.stop(now + 0.55);
+    } catch (e) {}
+  }
 }
 
 export const audioRecorder = new AudioService();
+export const audioService = audioRecorder;
+

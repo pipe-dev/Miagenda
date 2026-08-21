@@ -4,6 +4,7 @@ import { getFirebaseServices } from '../services/firebase';
 import { getProfileConfig } from '../services/storageService';
 import { isFirestoreConfigured, getFirestoreConfig } from '../services/firestoreSync';
 import { hapticService } from '../services/hapticService';
+import { notificationService } from '../services/notificationService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
 
 interface SettingsModalProps {
@@ -18,6 +19,9 @@ export default function SettingsModal({
   onOpenProfileSetup
 }: SettingsModalProps) {
   const { isConfigured } = getFirebaseServices();
+  const [notificationsEnabled, setNotificationsEnabled] = React.useState<boolean>(notificationService.isEnabled());
+  const [permissionStatus, setPermissionStatus] = React.useState<string>(notificationService.getPermission());
+  const [isTestingNotif, setIsTestingNotif] = React.useState<boolean>(false);
 
   const handleDragEnd = (_: any, info: PanInfo) => {
     if (info.offset.y > 140) {
@@ -100,6 +104,85 @@ export default function SettingsModal({
               >
                 {isConfigured ? '🟢 Conectado' : 'Activo'}
               </span>
+            </div>
+
+            {/* 🔔 Notificaciones Push & Recordatorios */}
+            <div className="plush-card rounded-2xl p-4 border border-white bg-white/95 shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-9 h-9 rounded-full bg-pink-100 text-primary flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[20px]">notifications_active</span>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-on-surface">Notificaciones Push</h4>
+                    <p className="text-[10px] text-on-surface-variant">
+                      Citas (15 min antes), dedicatorias y pastillero
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Switch Toggle */}
+                <button
+                  type="button"
+                  onClick={async () => {
+                    hapticService.playLightTap();
+                    if (!notificationsEnabled || permissionStatus !== 'granted') {
+                      const res = await notificationService.requestPermission();
+                      setPermissionStatus(res);
+                      if (res === 'granted') {
+                        setNotificationsEnabled(true);
+                      }
+                    } else {
+                      const next = !notificationsEnabled;
+                      notificationService.setEnabled(next);
+                      setNotificationsEnabled(next);
+                    }
+                  }}
+                  className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${
+                    notificationsEnabled && permissionStatus === 'granted'
+                      ? 'bg-primary justify-end'
+                      : 'bg-slate-300 justify-start'
+                  }`}
+                >
+                  <motion.div
+                    layout
+                    className="w-4 h-4 bg-white rounded-full shadow-md"
+                  />
+                </button>
+              </div>
+
+              {/* Status & Test Button */}
+              <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-t border-slate-100">
+                <span className="text-[10px] font-bold text-on-surface-variant flex items-center space-x-1.5">
+                  <span>Estado:</span>
+                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold ${
+                    permissionStatus === 'granted'
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : permissionStatus === 'denied'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-amber-100 text-amber-700'
+                  }`}>
+                    {permissionStatus === 'granted' ? '✅ Permitidas' : permissionStatus === 'denied' ? '🚫 Bloqueadas en el navegador' : '⚠️ Pendiente de permiso'}
+                  </span>
+                </span>
+
+                <motion.button
+                  whileTap={{ scale: 0.94 }}
+                  disabled={isTestingNotif}
+                  onClick={async () => {
+                    setIsTestingNotif(true);
+                    hapticService.playLightTap();
+                    const success = await notificationService.sendTestNotification();
+                    setPermissionStatus(notificationService.getPermission());
+                    setNotificationsEnabled(notificationService.isEnabled());
+                    setTimeout(() => setIsTestingNotif(false), 1500);
+                  }}
+                  className="py-1.5 px-3 rounded-full candy-btn text-white text-[11px] font-bold shadow-sm flex items-center justify-center space-x-1"
+                >
+                  <span className="material-symbols-outlined text-[14px]">send</span>
+                  <span>{isTestingNotif ? 'Enviando...' : 'Probar Notificación'}</span>
+                </motion.button>
+              </div>
             </div>
 
             {/* Invitar a Pareja / Código de Pareja */}
