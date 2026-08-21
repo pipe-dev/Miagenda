@@ -62,13 +62,10 @@ export default function SettingsModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto modal-scroll-area bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
       >
         <motion.div
-          drag="y"
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.4}
-          onDragEnd={handleDragEnd}
+          
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.88, y: 40, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
@@ -103,7 +100,7 @@ export default function SettingsModal({
             </motion.button>
           </div>
 
-          <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+          <div className="space-y-4 max-h-[70vh] overflow-y-auto modal-scroll-area pr-1">
             {/* Sincronización en la Nube */}
             <div className="plush-card rounded-2xl p-4 border border-white flex items-center justify-between shadow-xs bg-white/90">
               <div className="flex items-center space-x-3">

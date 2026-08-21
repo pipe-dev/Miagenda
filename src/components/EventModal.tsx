@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { downloadIcsFile } from '../services/calendarIcsService';
+import { isCoupleLinked } from '../services/storageService';
 import { EventItem, PrivacyType, RecurrenceType, UserProfile } from '../types';
 import { hapticService } from '../services/hapticService';
 
@@ -31,7 +32,9 @@ export default function EventModal({
   const [date, setDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('11:00');
-  const [privacy, setPrivacy] = useState<PrivacyType>('shared');
+  const coupleLinked = isCoupleLinked();
+  const [privacy, setPrivacy] = useState<PrivacyType>(coupleLinked ? 'shared' : 'mine');
+  const [coupleLockWarning, setCoupleLockWarning] = useState<boolean>(false);
   const [category, setCategory] = useState<'date' | 'work' | 'reminder' | 'special'>('date');
   const [recurrence, setRecurrence] = useState<RecurrenceType>('none');
   const [repeatDays, setRepeatDays] = useState<number[]>([1, 3, 5]); // Default: Mon, Wed, Fri
@@ -45,7 +48,7 @@ export default function EventModal({
       setDate(initialEvent.date || new Date().toISOString().split('T')[0]);
       setStartTime(initialEvent.startTime || '10:00');
       setEndTime(initialEvent.endTime || '11:00');
-      setPrivacy(initialEvent.privacy || 'shared');
+      setPrivacy(coupleLinked ? (initialEvent.privacy || 'shared') : 'mine');
       setCategory(initialEvent.category || 'date');
       setRecurrence(initialEvent.recurrence || 'none');
       setRepeatDays(initialEvent.repeatDays || [new Date(initialEvent.date || date).getDay()]);
@@ -57,7 +60,7 @@ export default function EventModal({
       setDate(defaultDate);
       setStartTime('10:00');
       setEndTime('11:00');
-      setPrivacy('shared');
+      setPrivacy(coupleLinked ? 'shared' : 'mine');
       setCategory('date');
       setRecurrence('none');
       const defaultDay = new Date(defaultDate + 'T00:00:00').getDay();
@@ -123,10 +126,7 @@ export default function EventModal({
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/30 backdrop-blur-md cursor-pointer overflow-y-auto"
       >
         <motion.div
-          drag="y"
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={{ top: 0, bottom: 0.5 }}
-          onDragEnd={handleDragEnd}
+          
           initial={{ scale: 0.94, opacity: 0, y: 30 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.94, opacity: 0, y: 30 }}
@@ -164,15 +164,16 @@ export default function EventModal({
             </motion.button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto modal-scroll-area pr-1">
             {/* Privacy Switch: Mi Agenda vs Compartido */}
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center space-y-1.5">
               <div className="bg-surface-container-high/80 p-1 rounded-full flex items-center space-x-1 border border-white shadow-inner">
                 <button
                   type="button"
                   onClick={() => {
                     hapticService.playLightTap();
                     setPrivacy('mine');
+                    setCoupleLockWarning(false);
                   }}
                   className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all relative select-none ${
                     privacy === 'mine' ? 'candy-btn text-white shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
@@ -188,18 +189,36 @@ export default function EventModal({
                   type="button"
                   onClick={() => {
                     hapticService.playLightTap();
+                    if (!coupleLinked) {
+                      setCoupleLockWarning(true);
+                      hapticService.playPhysicalThud(0.3, 0.2);
+                      return;
+                    }
                     setPrivacy('shared');
+                    setCoupleLockWarning(false);
                   }}
                   className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all relative select-none ${
-                    privacy === 'shared' ? 'candy-accent-bicolor text-white shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
+                    privacy === 'shared'
+                      ? 'candy-accent-bicolor text-white shadow-sm'
+                      : !coupleLinked
+                      ? 'opacity-60 text-slate-400'
+                      : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >
                   <span className="flex items-center space-x-1">
-                    <span className="material-symbols-outlined text-[14px]">group</span>
-                    <span>Compartido</span>
+                    <span className="material-symbols-outlined text-[14px]">
+                      {!coupleLinked ? 'lock' : 'group'}
+                    </span>
+                    <span>Compartido {!coupleLinked ? '(Bloqueado)' : ''}</span>
                   </span>
                 </button>
               </div>
+
+              {coupleLockWarning && (
+                <p className="text-[10px] font-bold text-pink-600 bg-pink-50 border border-pink-200 px-3 py-1 rounded-full animate-bounce">
+                  🔒 Conecta con tu pareja en Ajustes para crear citas compartidas.
+                </p>
+              )}
             </div>
 
             {/* Title Input: Plush Sunken Well */}

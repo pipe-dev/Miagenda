@@ -99,7 +99,7 @@ export default function TimelineView({
       )}
 
       {/* Timeline Container */}
-      <div className="relative">
+      <div id="tour-today-timeline" className="relative">
         {/* Timeline Vertical Guide Line */}
         <div className="absolute left-6 top-0 bottom-0 w-1 bg-white/30 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.2)] pointer-events-none" />
 
@@ -286,24 +286,26 @@ export default function TimelineView({
   return (
     <div className="w-full max-w-3xl mx-auto px-4 pb-32 pt-2">
       {/* 🌟 1. Smart Card: Morning Briefing (Mi Agenda) vs Free Time Matcher (Compartido) */}
-      {activeTab === 'mine' ? (
-        <MorningBriefingCard
-          events={events}
-          tasks={tasks}
-          activeProfile={activeProfile}
-          userName={userName}
-          onOpenNewEvent={onNewEvent}
-        />
-      ) : (
-        <FreeTimeMatcherCard
-          events={events}
-          dateStr={todayStr}
-          onPlanSharedDate={onPlanSharedDate || (() => onNewEvent())}
-        />
-      )}
+      <div id="tour-morning-banner">
+        {activeTab === 'mine' ? (
+          <MorningBriefingCard
+            events={events}
+            tasks={tasks}
+            activeProfile={activeProfile}
+            userName={userName}
+            onOpenNewEvent={onNewEvent}
+          />
+        ) : (
+          <FreeTimeMatcherCard
+            events={events}
+            dateStr={todayStr}
+            onPlanSharedDate={onPlanSharedDate || (() => onNewEvent())}
+          />
+        )}
+      </div>
 
       {/* 🌟 2. Privacy Switch (Mi Agenda vs Compartido) */}
-      <div className="flex justify-center items-center mb-6">
+      <div id="tour-privacy-toggle" className="flex justify-center items-center mb-6">
         <div className="sunken-well bg-white/70 p-1.5 rounded-full flex items-center space-x-1 border border-white/60 shadow-inner">
           <motion.button
             whileTap={{ scale: 0.94 }}

@@ -73,10 +73,7 @@ export default function ConfirmDeleteModal({
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
       >
         <motion.div
-          drag="y"
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.4}
-          onDragEnd={handleDragEnd}
+          
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.88, y: 30, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}

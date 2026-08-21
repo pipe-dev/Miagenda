@@ -80,7 +80,7 @@ export default function SurpriseModal({ dedication, onClose, onAcknowledge }: Su
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto modal-scroll-area bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
       >
         {/* Background glowing ambient orbs */}
         <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
@@ -98,10 +98,7 @@ export default function SurpriseModal({ dedication, onClose, onAcknowledge }: Su
 
         {/* Modal Container with Drag to dismiss & spring physics */}
         <motion.div
-          drag="y"
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.4}
-          onDragEnd={handleDragEnd}
+          
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.85, y: 50, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}

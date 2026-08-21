@@ -131,13 +131,10 @@ export default function DedicationCreator({ activeProfile, onClose, onSave }: De
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto modal-scroll-area bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
       >
         <motion.div
-          drag="y"
-          dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.4}
-          onDragEnd={handleDragEnd}
+          
           onClick={(e) => e.stopPropagation()}
           initial={{ scale: 0.88, y: 40, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}

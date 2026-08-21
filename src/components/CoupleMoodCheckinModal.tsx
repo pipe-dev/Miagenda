@@ -99,7 +99,7 @@ export default function CoupleMoodCheckinModal({
         </div>
 
         {/* Scrollable Body */}
-        <form onSubmit={handleSave} className="space-y-5 overflow-y-auto flex-1 pr-1 pb-2">
+        <form onSubmit={handleSave} className="space-y-5 overflow-y-auto modal-scroll-area flex-1 pr-1 pb-2">
           {/* Section 1: Dynamic Fluid Interactive Battery */}
           <div className="plush-card rounded-3xl p-4 border border-white shadow-sm flex flex-col items-center bg-white/80">
             <label className="text-xs font-black text-on-surface uppercase tracking-wider block mb-3 text-center">

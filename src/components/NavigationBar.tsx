@@ -33,7 +33,7 @@ export default function NavigationBar({
   const isMemories = currentView === 'memories';
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-4 sm:pb-6 pointer-events-none">
+    <nav id="tour-bottom-nav" className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-4 sm:pb-6 pointer-events-none">
       <div className="max-w-md mx-auto pointer-events-auto">
         <div className="bg-white/95 backdrop-blur-2xl border-2 border-white rounded-full p-2 shadow-[0_16px_40px_rgba(0,0,0,0.22),inset_0_2px_4px_rgba(255,255,255,1)] flex items-center justify-between select-none">
           

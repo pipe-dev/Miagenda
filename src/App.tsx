@@ -81,6 +81,7 @@ import { checkAndRunAutomatedBackup } from './services/backupService';
 import { notificationService } from './services/notificationService';
 import { notificationScheduler } from './services/notificationScheduler';
 import { remotePushService } from './services/remotePushService';
+import { tourService } from './services/tourService';
 
 export default function App() {
   // Navigation & Privacy (Siempre entra en Mi Agenda / Privada por defecto)
@@ -292,6 +293,16 @@ export default function App() {
       if (unsubProfile) unsubProfile();
     };
   }, [activeProfile, isWelcomeOpen]);
+
+  // Auto launch screen tour when user enters a view (first time per screen)
+  useEffect(() => {
+    if (!isWelcomeOpen && !isAnyModalOpen) {
+      const timer = setTimeout(() => {
+        tourService.startTour(currentView, false);
+      }, 900);
+      return () => clearTimeout(timer);
+    }
+  }, [currentView, isWelcomeOpen]);
 
   // Update tasks when active profile changes
   useEffect(() => {
@@ -651,6 +662,7 @@ export default function App() {
         onProfileChange={handleProfileChange}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenProfileSetup={() => setIsWelcomeOpen(true)}
+        onStartTour={() => tourService.startTour(currentView, true)}
       />
 
       {/* Main Content Area */}
