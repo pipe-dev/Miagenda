@@ -332,15 +332,25 @@ export default function App() {
     };
   }, [events, activeProfile]);
 
-  // Dynamic theme class application (partner1 -> blue candy, partner2 -> pink candy)
+  // Dynamic theme class & iOS Status bar / Dynamic Island color sync
   useEffect(() => {
-    if (activeProfile === 'partner1') {
+    const isMale = activeProfile === 'partner1';
+    if (isMale) {
       document.documentElement.classList.remove('theme-female');
       document.documentElement.classList.add('theme-male');
     } else {
       document.documentElement.classList.remove('theme-male');
       document.documentElement.classList.add('theme-female');
     }
+
+    // Dynamic Island & iOS Status Bar header tinting
+    let metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (!metaTheme) {
+      metaTheme = document.createElement('meta');
+      metaTheme.setAttribute('name', 'theme-color');
+      document.head.appendChild(metaTheme);
+    }
+    metaTheme.setAttribute('content', '#ffffff');
   }, [activeProfile]);
 
   // ==========================================

@@ -52,6 +52,19 @@
   --today-subtle-bg: #eaf3fb;
 }
 
+/* iOS Safe Area & Dynamic Island Header Support */
+.safe-top-header {
+  padding-top: max(calc(env(safe-area-inset-top, 0px) + 8px), 14px);
+}
+
+.safe-top-modal {
+  padding-top: max(calc(env(safe-area-inset-top, 0px) + 12px), 16px);
+}
+
+.safe-bottom-dock {
+  padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 8px), 12px);
+}
+
 @layer base {
   * {
     -webkit-tap-highlight-color: transparent;
