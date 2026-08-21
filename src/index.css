@@ -1,0 +1,139 @@
+@import './assets/styles/candy-glass.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root, .theme-female {
+  --app-bg: #d6cddb;
+  --primary: #af0a78;
+  --primary-rgb: 175 10 120;
+  --primary-border: #af0a78;
+  --primary-border-light: rgba(175, 10, 120, 0.5);
+  --primary-ring: rgba(175, 10, 120, 0.25);
+  --primary-light: rgba(175, 10, 120, 0.12);
+  --primary-container: #cf3192;
+  --primary-container-rgb: 207 49 146;
+  --inverse-primary: #ffafd5;
+  --primary-fixed: #ffd8e8;
+  --primary-fixed-dim: #ffafd5;
+  --on-primary-fixed: #3d0027;
+  --on-primary-fixed-variant: #8a005e;
+  --candy-btn-from: #cf3192;
+  --candy-btn-to: #af0a78;
+  --candy-btn-glow: rgba(175, 10, 120, 0.35);
+  --candy-accent-bg: #af0a78;
+  --card-subtle-bg: #faf7fb;
+  --card-subtle-hover: #f3edf5;
+  --today-subtle-bg: #fdfbfe;
+}
+
+.theme-male {
+  --app-bg: #ccdae8;
+  --primary: #007dab;
+  --primary-rgb: 0 125 171;
+  --primary-border: #007dab;
+  --primary-border-light: rgba(0, 125, 171, 0.5);
+  --primary-ring: rgba(0, 125, 171, 0.28);
+  --primary-light: rgba(0, 125, 171, 0.14);
+  --primary-container: #006388;
+  --primary-container-rgb: 0 99 136;
+  --inverse-primary: #7ed0ff;
+  --primary-fixed: #c5e7ff;
+  --primary-fixed-dim: #7ed0ff;
+  --on-primary-fixed: #001e2d;
+  --on-primary-fixed-variant: #004c6a;
+  --candy-btn-from: #2bb7eb;
+  --candy-btn-to: #007dab;
+  --candy-btn-glow: rgba(0, 125, 171, 0.35);
+  --candy-accent-bg: #007dab;
+  --card-subtle-bg: #f2f7fc;
+  --card-subtle-hover: #e3eef9;
+  --today-subtle-bg: #eaf3fb;
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  html, body, #root {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1d1b20;
+    background-color: var(--app-bg, #d6cddb) !important;
+    user-select: none;
+    -webkit-user-select: none;
+    min-height: 100vh;
+    transition: background-color 0.25s ease;
+  }
+
+  /* Material Symbols Helper */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+  }
+
+  .material-symbols-outlined.fill-1 {
+    font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+  }
+}
+
+/* Explicit Stitch Typography Weights & Larger Impact Size */
+.font-headline-lg-mobile {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 32px !important;
+  line-height: 38px !important;
+  letter-spacing: -0.025em !important;
+}
+
+@media (min-width: 640px) {
+  .font-headline-lg-mobile {
+    font-size: 36px !important;
+    line-height: 44px !important;
+  }
+}
+
+.font-title-md {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 20px !important;
+  line-height: 28px !important;
+}
+
+.font-body-md {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
+}
+
+.font-label-lg {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  line-height: 20px !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e7e0e8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #cf3192;
+}

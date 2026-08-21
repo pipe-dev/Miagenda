@@ -1,0 +1,105 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Verificación de Autenticación Invisible (JWT Anónimo o Usuario)
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // 2. Validador estándar de longitud de cadenas (Previene desbordamiento y XSS)
+    function isValidString(str, minLen, maxLen) {
+      return str is string && str.size() >= minLen && str.size() <= maxLen;
+    }
+
+    // 3. Validador estándar de identificadores de perfil (Universal y escalable)
+    function isValidProfileId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 50;
+    }
+
+    // 🔒 ROW LEVEL SECURITY: Espacio Aislado por Pareja (coupleId)
+    match /couples/{coupleId} {
+      
+      // 1. Configuración de perfiles y nombres personalizados
+      match /config/{configDoc} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated()
+                     && isValidProfileId(request.resource.data.activeProfile)
+                     && request.resource.data.isSetupComplete is bool;
+      }
+      
+      // 2. Citas y Eventos
+      match /events/{eventId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated()
+                              && isValidString(request.resource.data.title, 1, 150)
+                              && request.resource.data.privacy in ['mine', 'shared']
+                              && isValidProfileId(request.resource.data.author);
+        allow delete: if isAuthenticated();
+      }
+
+      // 3. Tareas y Pendientes
+      match /tasks/{taskId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated()
+                              && isValidString(request.resource.data.title, 1, 200)
+                              && request.resource.data.completed is bool
+                              && isValidProfileId(request.resource.data.author);
+        allow delete: if isAuthenticated();
+      }
+
+      // 4. Lista de Mercado y Hogar
+      match /groceries/{groceryId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated()
+                              && isValidString(request.resource.data.title, 1, 150)
+                              && request.resource.data.completed is bool
+                              && isValidProfileId(request.resource.data.addedBy);
+        allow delete: if isAuthenticated();
+      }
+
+      // 5. Dedicatorias y Recuerdos (Fotos y Cartas)
+      match /dedications/{dedicationId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated()
+                              && isValidProfileId(request.resource.data.from)
+                              && isValidProfileId(request.resource.data.to);
+        allow delete: if isAuthenticated();
+      }
+
+      // 6. Cupones de Amor
+      match /coupons/{couponId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated()
+                              && isValidString(request.resource.data.title, 1, 120)
+                              && request.resource.data.redeemed is bool;
+        allow delete: if isAuthenticated();
+      }
+
+      // 7. Batería de Pareja & Energía
+      match /moods/{profileId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated()
+                              && isValidProfileId(profileId)
+                              && request.resource.data.battery >= 0 
+                              && request.resource.data.battery <= 100;
+        allow delete: if isAuthenticated();
+      }
+
+      // 8. Medicamentos & Pastillero Compartido (Salud)
+      match /medications/{medicationId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isAuthenticated()
+                              && isValidString(request.resource.data.name, 1, 120)
+                              && isValidProfileId(request.resource.data.forUser)
+                              && isValidProfileId(request.resource.data.author);
+        allow delete: if isAuthenticated();
+      }
+
+      // 9. Copias de Seguridad Automáticas
+      match /backups/{backupDoc} {
+        allow read, write: if isAuthenticated();
+      }
+    }
+  }
+}

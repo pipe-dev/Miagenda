@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Weekly Grid View - Daily Delight</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "lavender-mist": "#e6e0f8",
+                    "primary": "#af0a78",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#e7e0e8",
+                    "surface-dim": "#ded8e0",
+                    "on-primary-fixed-variant": "#8a005e",
+                    "tertiary": "#006388",
+                    "inverse-on-surface": "#f5eff6",
+                    "secondary-fixed-dim": "#dbb8ff",
+                    "on-secondary-fixed": "#2b0052",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "cream-surface": "#fffcf2",
+                    "on-surface": "#1d1b20",
+                    "surface-container-high": "#ede6ee",
+                    "secondary-fixed": "#efdbff",
+                    "inverse-primary": "#ffafd5",
+                    "tertiary-container": "#007dab",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#5b3188",
+                    "secondary": "#744aa2",
+                    "primary-fixed-dim": "#ffafd5",
+                    "candy-glaze": "rgba(255, 255, 255, 0.4)",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f8f1f9",
+                    "outline": "#8a707b",
+                    "inverse-surface": "#322f35",
+                    "background": "#fef7ff",
+                    "surface-bright": "#fef7ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#e7e0e8",
+                    "surface": "#fef7ff",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#7ed0ff",
+                    "surface-tint": "#b2107b",
+                    "on-tertiary-fixed": "#001e2d",
+                    "on-tertiary-container": "#fcfcff",
+                    "primary-container": "#cf3192",
+                    "surface-container": "#f2ecf4",
+                    "on-primary-fixed": "#3d0027",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#004c6a",
+                    "secondary-container": "#cda0fe",
+                    "on-surface-variant": "#57414a",
+                    "on-primary-container": "#fffbff",
+                    "tertiary-fixed": "#c5e7ff",
+                    "primary-fixed": "#ffd8e8",
+                    "outline-variant": "#ddbfca",
+                    "on-background": "#1d1b20",
+                    "on-secondary-container": "#5a3086"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "gutter": "1.5rem",
+                    "container-padding-lg": "3rem",
+                    "container-padding-sm": "1.5rem",
+                    "stack-gap": "1rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "title-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Pearlescent Background */
+        body {
+            background: linear-gradient(135deg, #fffcf2 0%, #ffafd5 50%, #c5e7ff 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* Glass Tube Container */
+        .glass-tube {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                inset 0 0 20px rgba(255, 255, 255, 0.5),
+                inset 10px 0 20px rgba(255, 255, 255, 0.2),
+                inset -10px 0 20px rgba(0, 0, 0, 0.05),
+                0 8px 32px rgba(175, 10, 120, 0.1);
+            border-radius: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Tube Highlights */
+        .glass-tube::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        /* Candy Drop Event */
+        .candy-drop {
+            border-radius: 9999px;
+            box-shadow: 
+                inset 0 -8px 12px rgba(0, 0, 0, 0.2), /* Bottom shadow for volume */
+                inset 0 8px 12px rgba(255, 255, 255, 0.8), /* Top highlight */
+                0 6px 12px rgba(0, 0, 0, 0.15); /* Drop shadow */
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .candy-drop::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 15%;
+            right: 15%;
+            height: 30%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0));
+            border-radius: 9999px;
+            pointer-events: none;
+        }
+
+        .candy-drop:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 
+                inset 0 -8px 12px rgba(0, 0, 0, 0.2),
+                inset 0 10px 16px rgba(255, 255, 255, 0.9),
+                0 10px 20px rgba(175, 10, 120, 0.2);
+        }
+
+        .candy-drop:active {
+            transform: scale(0.95);
+            box-shadow: 
+                inset 0 8px 12px rgba(0, 0, 0, 0.2), /* Inverted inner shadow */
+                inset 0 -8px 12px rgba(255, 255, 255, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Candy Colors */
+        .candy-pink { background: radial-gradient(circle at 50% 30%, #ffafd5, #cf3192); color: #fff; }
+        .candy-blue { background: radial-gradient(circle at 50% 30%, #c5e7ff, #007dab); color: #fff; }
+        .candy-purple { background: radial-gradient(circle at 50% 30%, #efdbff, #744aa2); color: #fff; }
+        .candy-lavender { background: radial-gradient(circle at 50% 30%, #ffffff, #cda0fe); color: #5a3086; }
+
+        /* Hide scrollbar for grid */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface pb-32">
+<!-- TopAppBar (From JSON) -->
+<header class="w-full rounded-b-lg bg-surface-container-high dark:bg-surface-container-highest border-b-2 border-surface-variant shadow-[inset_0px_2px_4px_rgba(255,255,255,0.8),0px_4px_12px_rgba(175,10,120,0.15)] flex justify-between items-center px-gutter py-4 w-full sticky top-0 z-40">
+<button class="text-primary dark:text-primary-fixed-dim hover:scale-105 transition-transform duration-300 active:scale-95 transition-all duration-150 ease-in-out p-2 rounded-full bg-candy-glaze">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight italic drop-shadow-sm md:font-headline-lg md:text-headline-lg">Daily Delight</h1>
+<button class="text-primary dark:text-primary-fixed-dim hover:scale-105 transition-transform duration-300 active:scale-95 transition-all duration-150 ease-in-out p-1 rounded-full bg-candy-glaze border-2 border-white/50 shadow-sm overflow-hidden h-10 w-10">
+<img class="w-full h-full object-cover rounded-full" data-alt="A macro shot of a glossy, spherical user avatar featuring a stylized, cute 3D rendered character face in vibrant shades of pink and lavender, rendered with hyper-tactile plush textures and high-contrast specular highlights in a bright studio lighting setup." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmVoFpuEfSHzjKCvdsGnDghwxy2wYmOee2E2z57n1lwtTCkZauFuGPu_td54-FygPSUiT88-q13uPBcXDzBM98LPOzViypcCKxtk9EXZ5zrq66HyOYM4Geb3k4FTNuXCGecFp5rFt1lambjN4Vpi7-TNjUQmQcGrZ5tbObEb6iUjX5sfaGSpwZ8cbClfc56JsK1tPFa6iyVB1F_sT5LptVigMvOR1Zj1bW34-agAwj5BSUnxNl6ZvN"/>
+</button>
+</header>
+<!-- Main Content Area: Weekly Grid -->
+<main class="max-w-7xl mx-auto px-container-padding-sm md:px-container-padding-lg pt-8">
+<div class="mb-8 flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg text-primary drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)]">This Week</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Oct 16 - 22</p>
+</div>
+<div class="hidden md:flex gap-4">
+<button class="candy-drop candy-pink px-6 py-3 font-label-lg text-label-lg flex items-center gap-2">
+<span class="material-symbols-outlined">add</span> New Event
+                </button>
+</div>
+</div>
+<!-- Weekly Grid Scroll Container -->
+<div class="overflow-x-auto no-scrollbar pb-8 -mx-container-padding-sm px-container-padding-sm md:mx-0 md:px-0">
+<div class="flex gap-4 md:grid md:grid-cols-7 min-w-max md:min-w-0">
+<!-- Monday -->
+<div class="flex flex-col gap-4 w-32 md:w-auto shrink-0">
+<div class="text-center">
+<span class="block font-label-lg text-label-lg text-on-surface-variant uppercase opacity-70">Mon</span>
+<span class="block font-headline-lg-mobile text-headline-lg-mobile text-primary mt-1">16</span>
+</div>
+<div class="glass-tube h-[600px] p-2 flex flex-col gap-3">
+<div class="candy-drop candy-blue p-3 mt-4">
+<span class="block font-label-lg text-label-lg">Morning Yoga</span>
+<span class="block font-body-md text-body-md text-white/80 text-sm mt-1">8:00 AM</span>
+</div>
+<div class="candy-drop candy-pink p-3 mt-12 h-24 flex flex-col justify-center">
+<span class="block font-label-lg text-label-lg">Team Lunch</span>
+<span class="block font-body-md text-body-md text-white/80 text-sm mt-1">12:30 PM</span>
+</div>
+</div>
+</div>
+<!-- Tuesday -->
+<div class="flex flex-col gap-4 w-32 md:w-auto shrink-0">
+<div class="text-center">
+<span class="block font-label-lg text-label-lg text-on-surface-variant uppercase opacity-70">Tue</span>
+<span class="block font-headline-lg-mobile text-headline-lg-mobile text-primary mt-1">17</span>
+</div>
+<div class="glass-tube h-[600px] p-2 flex flex-col gap-3">
+<div class="candy-drop candy-purple p-3 mt-20">
+<span class="block font-label-lg text-label-lg">Design Sync</span>
+<span class="block font-body-md text-body-md text-white/80 text-sm mt-1">10:00 AM</span>
+</div>
+<div class="candy-drop candy-lavender p-3 mt-32">
+<span class="block font-label-lg text-label-lg">Grocery Run</span>
+<span class="block font-body-md text-body-md text-on-secondary-container/80 text-sm mt-1">5:00 PM</span>
+</div>
+</div>
+</div>
+<!-- Wednesday -->
+<div class="flex flex-col gap-4 w-32 md:w-auto shrink-0">
+<div class="text-center">
+<span class="block font-label-lg text-label-lg text-on-surface-variant uppercase opacity-70">Wed</span>
+<span class="block font-headline-lg-mobile text-headline-lg-mobile text-primary mt-1 bg-white/40 rounded-full w-12 h-12 flex items-center justify-center mx-auto shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_4px_8px_rgba(0,0,0,0.1)]">18</span>
+</div>
+<div class="glass-tube h-[600px] p-2 flex flex-col gap-3 bg-white/30 border-white/60">
+<div class="candy-drop candy-pink p-3 mt-8">
+<span class="block font-label-lg text-label-lg">Dentist</span>
+<span class="block font-body-md text-body-md text-white/80 text-sm mt-1">9:00 AM</span>
+</div>
+<div class="candy-drop candy-blue p-3 mt-4 h-32 flex flex-col justify-center">
+<span class="block font-label-lg text-label-lg">Deep Work</span>
+<span class="block font-body-md text-body-md text-white/80 text-sm mt-1">1:00 PM - 4:00 PM</span>
+</div>
+</div>
+</div>
+<!-- Thursday -->
+<div class="flex flex-col gap-4 w-32 md:w-auto shrink-0">
+<div class="text-center">
+<span class="block font-label-lg text-label-lg text-on-surface-variant uppercase opacity-70">Thu</span>
+<span class="block font-headline-lg-mobile text-headline-lg-mobile text-primary mt-1">19</span>
+</div>
+<div class="glass-tube h-[600px] p-2 flex flex-col gap-3">
+<div class="candy-drop candy-lavender p-3 mt-24">
+<span class="block font-label-lg text-label-lg">Client Call</span>
+<span class="block font-body-md text-body-md text-on-secondary-container/80 text-sm mt-1">11:00 AM</span>
+</div>
+</div>
+</div>
+<!-- Friday -->
+<div class="flex flex-col gap-4 w-32 md:w-auto shrink-0">
+<div class="text-center">
+<span class="block font-label-lg text-label-lg text-on-surface-variant uppercase opacity-70">Fri</span>
+<span class="block font-headline-lg-mobile text-headline-lg-mobile text-primary mt-1">20</span>
+</div>
+<div class="glass-tube h-[600px] p-2 flex flex-col gap-3">
+<div class="candy-drop candy-purple p-3 mt-auto mb-4 h-20 flex flex-col justify-center">
+<span class="block font-label-lg text-label-lg">Movie Night</span>
+<span class="block font-body-md text-body-md text-white/80 text-sm mt-1">7:30 PM</span>
+</div>
+</div>
+</div>
+<!-- Saturday -->
+<div class="flex flex-col gap-4 w-32 md:w-auto shrink-0 opacity-80">
+<div class="text-center">
+<span class="block font-label-lg text-label-lg text-on-surface-variant uppercase opacity-70">Sat</span>
+<span class="block font-headline-lg-mobile text-headline-lg-mobile text-primary mt-1">21</span>
+</div>
+<div class="glass-tube h-[600px] p-2 flex flex-col gap-3">
+<div class="candy-drop candy-blue p-3 mt-10 h-24 flex flex-col justify-center">
+<span class="block font-label-lg text-label-lg">Brunch</span>
+<span class="block font-body-md text-body-md text-white/80 text-sm mt-1">10:30 AM</span>
+</div>
+</div>
+</div>
+<!-- Sunday -->
+<div class="flex flex-col gap-4 w-32 md:w-auto shrink-0 opacity-80">
+<div class="text-center">
+<span class="block font-label-lg text-label-lg text-on-surface-variant uppercase opacity-70">Sun</span>
+<span class="block font-headline-lg-mobile text-headline-lg-mobile text-primary mt-1">22</span>
+</div>
+<div class="glass-tube h-[600px] p-2 flex flex-col gap-3">
+<div class="candy-drop candy-pink p-3 mt-32">
+<span class="block font-label-lg text-label-lg">Meal Prep</span>
+<span class="block font-body-md text-body-md text-white/80 text-sm mt-1">3:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (From JSON) -->
+<nav class="md:hidden bg-candy-glaze backdrop-blur-xl fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] rounded-full border border-white/40 shadow-[0_10px_30px_rgba(116,74,162,0.3)] z-50 flex justify-around items-center py-3">
+<button class="flex flex-col items-center justify-center text-on-secondary-fixed-variant px-5 py-2 hover:bg-white/20 transition-all duration-200 active:scale-90 transition-transform duration-100 rounded-full">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-lg text-label-lg mt-1 hidden sm:block">Today</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-2 shadow-[inset_0_-4px_8px_rgba(0,0,0,0.2),inset_0_4px_8px_rgba(255,255,255,0.4)] hover:bg-white/20 transition-all duration-200 active:scale-90 transition-transform duration-100">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="font-label-lg text-label-lg mt-1 hidden sm:block">Calendar</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-secondary-fixed-variant px-5 py-2 hover:bg-white/20 transition-all duration-200 active:scale-90 transition-transform duration-100 rounded-full">
+<span class="material-symbols-outlined">task_alt</span>
+<span class="font-label-lg text-label-lg mt-1 hidden sm:block">Tasks</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-secondary-fixed-variant px-5 py-2 hover:bg-white/20 transition-all duration-200 active:scale-90 transition-transform duration-100 rounded-full">
+<span class="material-symbols-outlined">stars</span>
+<span class="font-label-lg text-label-lg mt-1 hidden sm:block">Goals</span>
+</button>
+</nav>
+</body></html>

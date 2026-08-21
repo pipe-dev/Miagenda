@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Daily Delight - Planner Timeline</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "lavender-mist": "#e6e0f8",
+                    "primary": "#af0a78",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#e7e0e8",
+                    "surface-dim": "#ded8e0",
+                    "on-primary-fixed-variant": "#8a005e",
+                    "tertiary": "#006388",
+                    "inverse-on-surface": "#f5eff6",
+                    "secondary-fixed-dim": "#dbb8ff",
+                    "on-secondary-fixed": "#2b0052",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "cream-surface": "#fffcf2",
+                    "on-surface": "#1d1b20",
+                    "surface-container-high": "#ede6ee",
+                    "secondary-fixed": "#efdbff",
+                    "inverse-primary": "#ffafd5",
+                    "tertiary-container": "#007dab",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed-variant": "#5b3188",
+                    "secondary": "#744aa2",
+                    "primary-fixed-dim": "#ffafd5",
+                    "candy-glaze": "rgba(255, 255, 255, 0.4)",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f8f1f9",
+                    "outline": "#8a707b",
+                    "inverse-surface": "#322f35",
+                    "background": "#fef7ff",
+                    "surface-bright": "#fef7ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#e7e0e8",
+                    "surface": "#fef7ff",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#7ed0ff",
+                    "surface-tint": "#b2107b",
+                    "on-tertiary-fixed": "#001e2d",
+                    "on-tertiary-container": "#fcfcff",
+                    "primary-container": "#cf3192",
+                    "surface-container": "#f2ecf4",
+                    "on-primary-fixed": "#3d0027",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#004c6a",
+                    "secondary-container": "#cda0fe",
+                    "on-surface-variant": "#57414a",
+                    "on-primary-container": "#fffbff",
+                    "tertiary-fixed": "#c5e7ff",
+                    "primary-fixed": "#ffd8e8",
+                    "outline-variant": "#ddbfca",
+                    "on-background": "#1d1b20",
+                    "on-secondary-container": "#5a3086"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "gutter": "1.5rem",
+                    "container-padding-lg": "3rem",
+                    "container-padding-sm": "1.5rem",
+                    "stack-gap": "1rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "title-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+                    "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .plush-card {
+            background-color: #fffcf2;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 8px 24px rgba(175, 10, 120, 0.1);
+            border: 2px solid #f8f1f9;
+        }
+        .candy-accent {
+            background: radial-gradient(circle at 50% 10%, rgba(255,255,255,0.8) 0%, transparent 40%), var(--tw-bg-opacity);
+            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.1), inset 0 4px 8px rgba(255,255,255,0.6), 0 4px 12px rgba(175, 10, 120, 0.2);
+            position: relative;
+        }
+        .candy-accent::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 9999px;
+            filter: blur(1px);
+        }
+        .embossed-plastic {
+            background: linear-gradient(145deg, #ffffff, #e6e0f8);
+            box-shadow:  4px 4px 8px #d1cadf, -4px -4px 8px #ffffff;
+        }
+        .switch-well {
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(255,255,255,0.7);
+        }
+        .glass-bead {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.9), 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background pb-32 md:pb-8 min-h-screen">
+<!-- TopAppBar -->
+<header class="w-full rounded-b-lg bg-surface-container-high dark:bg-surface-container-highest border-b-2 border-surface-variant shadow-[inset_0px_2px_4px_rgba(255,255,255,0.8),0px_4px_12px_rgba(175,10,120,0.15)] flex justify-between items-center px-gutter py-4 sticky top-0 z-40">
+<button class="text-on-surface-variant opacity-80 hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight italic drop-shadow-sm">Daily Delight</h1>
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] hover:scale-105 transition-transform duration-300 cursor-pointer">
+<img class="object-cover w-full h-full" data-alt="A macro photograph of a perfectly spherical, glossy candy-like user avatar placeholder, rendered in soft pastel pinks and rich lavenders, sitting slightly recessed into a plush, creamy surface. The lighting is soft and high-key, creating brilliant specular highlights on the glossy sphere. The overall aesthetic is hyper-tactile, maximalist skeuomorphism with a playful, feminine energy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU5YToH8txuC9W2yBhwFehtz7e4GtU5emywEzwOlmdditY8wmcGDvLBhYWgEkmIwXrtVn0BNoIjNeibX3DqWrGlqGpk6z9DKIsZ9UnGO_AXoWNbF6H1ONNcNtNfA0l6N6JaMIipUhYZSW9ksmrDbWQm-Vli8hS0wM5EYESMfeN6meF79yUOAOJwD1oDPSHZ18llgiNoriVDEnaCnS03_RDJG03ai6MUC4d5nxhmVKeZ4wGVmUyIN4V"/>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-gutter py-8">
+<!-- Filter/Actions -->
+<div class="flex justify-between items-center mb-10">
+<h2 class="font-title-md text-title-md text-primary">Today's Flow</h2>
+<div class="flex items-center space-x-4">
+<div class="glass-bead px-4 py-1.5 rounded-full flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm text-secondary">filter_alt</span>
+<span class="font-label-lg text-label-lg text-secondary">All Tasks</span>
+</div>
+<!-- 3D Switch -->
+<div class="switch-well w-14 h-8 bg-surface-dim rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1 w-6 h-6 rounded-full bg-primary candy-accent transition-transform transform translate-x-0 shadow-sm"></div>
+</div>
+</div>
+</div>
+<!-- Timeline Container -->
+<div class="relative">
+<!-- Timeline Line -->
+<div class="absolute left-6 top-0 bottom-0 w-1 bg-surface-variant rounded-full shadow-[inset_1px_1px_3px_rgba(0,0,0,0.1)]"></div>
+<div class="space-y-12">
+<!-- Event 1 -->
+<div class="relative flex items-start group">
+<!-- Time Indicator -->
+<div class="embossed-plastic w-16 h-12 rounded-xl flex flex-col items-center justify-center shrink-0 z-10 border border-white">
+<span class="font-label-lg text-label-lg text-on-surface">09:00</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">AM</span>
+</div>
+<!-- Content Card -->
+<div class="ml-6 flex-1 plush-card rounded-xl p-5 hover:-translate-y-1 transition-transform duration-300 group-hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_12px_30px_rgba(175,10,120,0.15)] relative overflow-hidden">
+<!-- Candy Accent Bar -->
+<div class="absolute left-0 top-0 bottom-0 w-2 bg-primary candy-accent"></div>
+<div class="pl-2">
+<h3 class="font-title-md text-title-md text-on-surface mb-1">Morning Kickoff</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Review daily goals and sync with team.</p>
+<div class="flex space-x-2">
+<span class="glass-bead text-xs font-bold text-secondary px-3 py-1 rounded-full">Work</span>
+<span class="glass-bead text-xs font-bold text-tertiary px-3 py-1 rounded-full flex items-center"><span class="material-symbols-outlined text-[14px] mr-1">group</span> Sync</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Event 2 -->
+<div class="relative flex items-start group">
+<!-- Time Indicator -->
+<div class="embossed-plastic w-16 h-12 rounded-xl flex flex-col items-center justify-center shrink-0 z-10 border border-white">
+<span class="font-label-lg text-label-lg text-on-surface">11:30</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">AM</span>
+</div>
+<!-- Content Card -->
+<div class="ml-6 flex-1 plush-card rounded-xl p-5 hover:-translate-y-1 transition-transform duration-300 group-hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_12px_30px_rgba(175,10,120,0.15)] relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-2 bg-secondary candy-accent"></div>
+<div class="pl-2">
+<h3 class="font-title-md text-title-md text-on-surface mb-1">Design Review</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Finalize plush UI assets.</p>
+</div>
+</div>
+</div>
+<!-- Event 3 -->
+<div class="relative flex items-start group">
+<!-- Time Indicator -->
+<div class="embossed-plastic w-16 h-12 rounded-xl flex flex-col items-center justify-center shrink-0 z-10 border border-white">
+<span class="font-label-lg text-label-lg text-primary">01:00</span>
+<span class="text-[10px] text-primary uppercase tracking-widest font-bold">PM</span>
+</div>
+<!-- Content Card -->
+<div class="ml-6 flex-1 plush-card rounded-xl p-5 hover:-translate-y-1 transition-transform duration-300 group-hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_12px_30px_rgba(175,10,120,0.15)] relative overflow-hidden ring-2 ring-primary ring-offset-2 ring-offset-background">
+<div class="absolute left-0 top-0 bottom-0 w-2 bg-tertiary candy-accent"></div>
+<div class="pl-2">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface mb-1">Lunch Break</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Recharge and grab a bite.</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-tertiary candy-accent flex items-center justify-center text-white shadow-lg cursor-pointer hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile only) -->
+<nav class="md:hidden fixed bottom-6 left-0 right-0 mx-auto w-[90%] z-50 flex justify-around items-center py-3 bg-candy-glaze backdrop-blur-xl border border-white/40 shadow-[0_10px_30px_rgba(116,74,162,0.3)] rounded-full">
+<!-- Active Tab: Today -->
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-2 shadow-[inset_0_-4px_8px_rgba(0,0,0,0.2),inset_0_4px_8px_rgba(255,255,255,0.4)] scale-90 transition-transform duration-100" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-label-lg text-label-lg text-xs">Today</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant px-5 py-2 hover:bg-white/20 transition-all duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">calendar_month</span>
+<span class="font-label-lg text-label-lg text-xs">Calendar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant px-5 py-2 hover:bg-white/20 transition-all duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">task_alt</span>
+<span class="font-label-lg text-label-lg text-xs">Tasks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant px-5 py-2 hover:bg-white/20 transition-all duration-200 rounded-full" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">stars</span>
+<span class="font-label-lg text-label-lg text-xs">Goals</span>
+</a>
+</nav>
+</body></html>

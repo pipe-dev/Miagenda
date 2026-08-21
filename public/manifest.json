@@ -1,0 +1,29 @@
+{
+  "name": "Mi Agenda - Personal & Compartida",
+  "short_name": "Mi Agenda",
+  "description": "Mi Agenda: Agenda compartida y privada para parejas con dedicatorias, cupones y alarmas sincronizadas con iOS.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf8fb",
+  "theme_color": "#007dab",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

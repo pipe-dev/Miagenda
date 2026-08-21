@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>New Entry Modal</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<!-- Tailwind Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "lavender-mist": "#e6e0f8",
+                        "primary": "#af0a78",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e7e0e8",
+                        "surface-dim": "#ded8e0",
+                        "on-primary-fixed-variant": "#8a005e",
+                        "tertiary": "#006388",
+                        "inverse-on-surface": "#f5eff6",
+                        "secondary-fixed-dim": "#dbb8ff",
+                        "on-secondary-fixed": "#2b0052",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "cream-surface": "#fffcf2",
+                        "on-surface": "#1d1b20",
+                        "surface-container-high": "#ede6ee",
+                        "secondary-fixed": "#efdbff",
+                        "inverse-primary": "#ffafd5",
+                        "tertiary-container": "#007dab",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#5b3188",
+                        "secondary": "#744aa2",
+                        "primary-fixed-dim": "#ffafd5",
+                        "candy-glaze": "rgba(255, 255, 255, 0.4)",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f8f1f9",
+                        "outline": "#8a707b",
+                        "inverse-surface": "#322f35",
+                        "background": "#fef7ff",
+                        "surface-bright": "#fef7ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#e7e0e8",
+                        "surface": "#fef7ff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#7ed0ff",
+                        "surface-tint": "#b2107b",
+                        "on-tertiary-fixed": "#001e2d",
+                        "on-tertiary-container": "#fcfcff",
+                        "primary-container": "#cf3192",
+                        "surface-container": "#f2ecf4",
+                        "on-primary-fixed": "#3d0027",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004c6a",
+                        "secondary-container": "#cda0fe",
+                        "on-surface-variant": "#57414a",
+                        "on-primary-container": "#fffbff",
+                        "tertiary-fixed": "#c5e7ff",
+                        "primary-fixed": "#ffd8e8",
+                        "outline-variant": "#ddbfca",
+                        "on-background": "#1d1b20",
+                        "on-secondary-container": "#5a3086"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter": "1.5rem",
+                        "container-padding-lg": "3rem",
+                        "container-padding-sm": "1.5rem",
+                        "stack-gap": "1rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "label-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "title-md": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "800" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "800" }],
+                        "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,700;0,800;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body-md text-on-surface antialiased min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+<!-- Decorative background to showcase frosted glass -->
+<div class="absolute inset-0 pointer-events-none opacity-40">
+<div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-secondary-fixed-dim blur-[100px] mix-blend-multiply"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-primary-fixed blur-[120px] mix-blend-multiply"></div>
+</div>
+<!-- Modal Overlay Backdrop -->
+<div class="fixed inset-0 bg-inverse-surface/20 backdrop-blur-sm z-40"></div>
+<!-- Modal Container: Frosted Pink Glass -->
+<div class="relative z-50 w-full max-w-lg mx-auto bg-candy-glaze backdrop-blur-2xl rounded-xl border-2 border-white/60 p-container-padding-sm md:p-container-padding-lg shadow-[0_30px_60px_rgba(175,10,120,0.25),inset_0_4px_15px_rgba(255,255,255,0.9)] overflow-hidden">
+<!-- Subtle Pink Glass Tint Overlay -->
+<div class="absolute inset-0 bg-primary-container/10 pointer-events-none rounded-xl mix-blend-overlay"></div>
+<!-- Header -->
+<div class="relative flex justify-between items-center mb-6">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">New Entry</h2>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 text-on-surface-variant hover:bg-white hover:text-primary transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.05),inset_0_2px_4px_rgba(255,255,255,1)]">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Text Area Well: Carved into soft surface -->
+<div class="relative mb-8 group">
+<!-- Outer plush well -->
+<div class="bg-surface-container-high rounded-lg p-1.5 shadow-[inset_4px_4px_10px_rgba(87,65,74,0.15),inset_-4px_-4px_10px_rgba(255,255,255,1)] transition-shadow duration-300 group-focus-within:shadow-[inset_4px_4px_12px_rgba(175,10,120,0.2),inset_-4px_-4px_12px_rgba(255,255,255,1)] group-focus-within:bg-white/40">
+<textarea class="w-full h-48 bg-transparent outline-none border-none resize-none p-4 font-body-lg text-body-lg text-on-surface placeholder:text-outline-variant rounded-[1.5rem] focus:ring-0" placeholder="What's on your mind?"></textarea>
+</div>
+</div>
+<!-- Actions Row -->
+<div class="relative flex items-center justify-between">
+<!-- Media Buttons -->
+<div class="flex gap-4">
+<!-- 3D Camera Button -->
+<button class="relative w-14 h-14 flex items-center justify-center rounded-full bg-surface-container-low text-secondary shadow-[6px_6px_12px_rgba(175,10,120,0.1),-6px_-6px_12px_rgba(255,255,255,1)] hover:shadow-[4px_4px_8px_rgba(175,10,120,0.15),-4px_-4px_8px_rgba(255,255,255,1)] active:shadow-[inset_4px_4px_8px_rgba(175,10,120,0.15),inset_-4px_-4px_8px_rgba(255,255,255,1)] transition-all duration-200">
+<span class="material-symbols-outlined text-[28px]">photo_camera</span>
+</button>
+<!-- 3D Mic Button -->
+<button class="relative w-14 h-14 flex items-center justify-center rounded-full bg-surface-container-low text-secondary shadow-[6px_6px_12px_rgba(175,10,120,0.1),-6px_-6px_12px_rgba(255,255,255,1)] hover:shadow-[4px_4px_8px_rgba(175,10,120,0.15),-4px_-4px_8px_rgba(255,255,255,1)] active:shadow-[inset_4px_4px_8px_rgba(175,10,120,0.15),inset_-4px_-4px_8px_rgba(255,255,255,1)] transition-all duration-200">
+<span class="material-symbols-outlined text-[28px]">mic</span>
+</button>
+</div>
+<!-- Submit Candy Button -->
+<button class="group relative overflow-hidden px-8 py-4 rounded-full bg-gradient-to-b from-primary-fixed-dim to-primary shadow-[0_12px_24px_rgba(175,10,120,0.4),inset_0_-6px_12px_rgba(61,0,39,0.3),inset_0_6px_12px_rgba(255,255,255,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 ease-out flex items-center justify-center gap-2">
+<!-- Specular Highlight (The 'Candy' shine) -->
+<div class="absolute top-1.5 left-1/2 -translate-x-1/2 w-3/4 h-3 bg-white/60 rounded-full blur-[2px] pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity"></div>
+<!-- Refraction Glow -->
+<div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<span class="relative z-10 font-label-lg text-label-lg text-on-primary tracking-wide drop-shadow-md">Create</span>
+<span class="material-symbols-outlined relative z-10 text-on-primary text-[20px] drop-shadow-md">send</span>
+</button>
+</div>
+</div>
+</body></html>

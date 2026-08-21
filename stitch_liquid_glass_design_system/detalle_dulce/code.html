@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Event Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "lavender-mist": "#e6e0f8",
+                        "primary": "#af0a78",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e7e0e8",
+                        "surface-dim": "#ded8e0",
+                        "on-primary-fixed-variant": "#8a005e",
+                        "tertiary": "#006388",
+                        "inverse-on-surface": "#f5eff6",
+                        "secondary-fixed-dim": "#dbb8ff",
+                        "on-secondary-fixed": "#2b0052",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "cream-surface": "#fffcf2",
+                        "on-surface": "#1d1b20",
+                        "surface-container-high": "#ede6ee",
+                        "secondary-fixed": "#efdbff",
+                        "inverse-primary": "#ffafd5",
+                        "tertiary-container": "#007dab",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#5b3188",
+                        "secondary": "#744aa2",
+                        "primary-fixed-dim": "#ffafd5",
+                        "candy-glaze": "rgba(255, 255, 255, 0.4)",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f8f1f9",
+                        "outline": "#8a707b",
+                        "inverse-surface": "#322f35",
+                        "background": "#fef7ff",
+                        "surface-bright": "#fef7ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#e7e0e8",
+                        "surface": "#fef7ff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#7ed0ff",
+                        "surface-tint": "#b2107b",
+                        "on-tertiary-fixed": "#001e2d",
+                        "on-tertiary-container": "#fcfcff",
+                        "primary-container": "#cf3192",
+                        "surface-container": "#f2ecf4",
+                        "on-primary-fixed": "#3d0027",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004c6a",
+                        "secondary-container": "#cda0fe",
+                        "on-surface-variant": "#57414a",
+                        "on-primary-container": "#fffbff",
+                        "tertiary-fixed": "#c5e7ff",
+                        "primary-fixed": "#ffd8e8",
+                        "outline-variant": "#ddbfca",
+                        "on-background": "#1d1b20",
+                        "on-secondary-container": "#5a3086"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter": "1.5rem",
+                        "container-padding-lg": "3rem",
+                        "container-padding-sm": "1.5rem",
+                        "stack-gap": "1rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "title-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "800" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "800" }],
+                        "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Quilted Fabric Texture */
+        .bg-quilted {
+            background-color: theme('colors.surface-container-lowest');
+            background-image: 
+                linear-gradient(45deg, rgba(175,10,120,0.03) 25%, transparent 25%, transparent 75%, rgba(175,10,120,0.03) 75%, rgba(175,10,120,0.03)),
+                linear-gradient(45deg, rgba(175,10,120,0.03) 25%, transparent 25%, transparent 75%, rgba(175,10,120,0.03) 75%, rgba(175,10,120,0.03));
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+
+        /* Golden Candy Button Styling (Custom logic for strict color request) */
+        .btn-golden-candy {
+            background: linear-gradient(145deg, #FFE785 0%, #FFB700 100%);
+            box-shadow: 
+                inset 0 6px 12px rgba(255, 255, 255, 0.9), /* High top gloss */
+                inset 0 -8px 16px rgba(166, 91, 0, 0.5), /* Deep bottom inner shadow */
+                0 20px 40px rgba(255, 183, 0, 0.4), /* Ambient outer glow */
+                0 10px 15px rgba(0, 0, 0, 0.15); /* Ground shadow */
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-golden-candy::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            height: 25%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 999px;
+            pointer-events: none;
+        }
+        .btn-golden-candy:active {
+            transform: scale(0.95) translateY(4px);
+            box-shadow: 
+                inset 0 -4px 8px rgba(255, 255, 255, 0.5),
+                inset 0 8px 16px rgba(166, 91, 0, 0.6),
+                0 5px 10px rgba(255, 183, 0, 0.2);
+        }
+
+        /* Glass Bead Back Button */
+        .glass-bead {
+            box-shadow: 
+                inset 0 4px 8px rgba(255, 255, 255, 0.7),
+                inset 0 -4px 8px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Recessed Well (Inner Shadow) */
+        .recessed-well {
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.15), inset 0 -2px 4px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Candy Gloss Overlay */
+        .candy-gloss {
+            position: relative;
+        }
+        .candy-gloss::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 10%;
+            width: 80%;
+            height: 30%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 999px;
+            pointer-events: none;
+        }
+        
+        /* Animated Liquid Progress */
+        @keyframes liquidFill {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(0); }
+        }
+        .liquid-progress {
+            animation: liquidFill 3s ease-in-out infinite alternate;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface antialiased text-on-surface min-h-screen flex justify-center">
+<!-- Mobile Container Wrapper -->
+<main class="w-full max-w-md bg-surface relative overflow-hidden shadow-2xl flex flex-col h-screen">
+<!-- Suppressed Shared Navs: TopAppBar and BottomNavBar are hidden due to this being a task-focused detail view with a back action, prioritizing the canvas per the Semantic Shell Mandate. -->
+<!-- Hero Header Area -->
+<div class="relative w-full h-72 shrink-0">
+<!-- Glass Bead Back Button -->
+<button class="absolute top-6 left-6 z-20 w-12 h-12 rounded-full bg-candy-glaze backdrop-blur-xl border border-white/60 glass-bead flex items-center justify-center text-primary hover:scale-105 active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<!-- Hero Image -->
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="A hyper-realistic, brightly lit, macro photograph of a surreal candy-coated architectural space. The room is constructed of soft, plush, bubblegum-pink cushions and giant translucent jelly structures. Glossy specular highlights reflect off curved surfaces. The atmosphere is playful, energetic, and sensory, bathed in a soft, high-key pastel light mode aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBp_lNjgDFT7i6qVEJQIoBcvAWsxfPBLx1J8G4k5N9eVRJBLHb-u6OkuHTF8s_Et5PjRGr7jho3xeZ-QdlLWCj3pDavXNPIOv0v6frj99AFFImcqUn0nxvc-HKChbjid2LOS__NUmfVfv5BWUYY8e4zPgHPmjnlkgEFgellbr95mH-JisSMqLGZF3w88njphY7s-xMqFpvuDzOyMbGGq4z3mpQMbCgoPaZ2X0mnqy-58HndeoggT6pE')">
+<!-- Inner Shadow Overlay for depth -->
+<div class="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-surface-container-lowest shadow-[inset_0_-20px_40px_rgba(255,255,255,1)]"></div>
+</div>
+</div>
+<!-- Content Area (Plush Card with Quilted Texture) -->
+<div class="bg-quilted flex-1 -mt-12 rounded-t-xl relative z-10 flex flex-col overflow-y-auto pb-32">
+<!-- Seam/Piping border simulation -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-b from-white/80 to-transparent rounded-t-xl"></div>
+<div class="px-gutter pt-8 pb-6 flex flex-col gap-6">
+<!-- Event Title & Info -->
+<div class="flex flex-col gap-2">
+<span class="font-label-lg text-label-lg text-secondary uppercase tracking-widest">Interactive Workshop</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary leading-tight">Sugar Rush Sound Design</h1>
+<div class="flex items-center gap-2 mt-2 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" data-icon="calendar_month">calendar_month</span>
+<span>Sat, Oct 14 • 2:00 PM</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary" data-icon="location_on">location_on</span>
+<span>The Candy Factory, Studio B</span>
+</div>
+</div>
+<!-- Description -->
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Dive into the tactile world of synthetic audio. Learn to sculpt sounds that feel like they can be touched, using our proprietary plush synthesis techniques.
+                </p>
+<!-- Voice Note Player (Retro Toy / Candy Bar) -->
+<div class="mt-4 p-4 rounded-xl bg-inverse-primary shadow-[inset_0_-4px_8px_rgba(0,0,0,0.15),inset_0_4px_12px_rgba(255,255,255,0.6),0_10px_20px_rgba(175,10,120,0.2)] border-2 border-white/40 flex flex-col gap-3 relative overflow-hidden candy-gloss">
+<!-- Top subtle ridge for toy-like feel -->
+<div class="absolute top-1 left-1/2 -translate-x-1/2 w-16 h-1 rounded-full bg-white/50"></div>
+<div class="flex items-center justify-between gap-4 mt-2 relative z-10">
+<!-- Play Button (Popping Sphere) -->
+<button class="w-12 h-12 shrink-0 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[inset_0_-4px_8px_rgba(0,0,0,0.3),inset_0_4px_8px_rgba(255,255,255,0.6),0_4px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_4px_8px_rgba(0,0,0,0.4)] active:scale-90 transition-all duration-150 candy-gloss">
+<span class="material-symbols-outlined" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<!-- Progress Section -->
+<div class="flex-1 flex flex-col gap-1.5">
+<div class="flex justify-between font-label-lg text-label-lg text-on-primary-fixed-variant text-[10px]">
+<span>Preview</span>
+<span>0:45</span>
+</div>
+<!-- Recessed Tube Progress Bar -->
+<div class="h-4 rounded-full bg-black/10 recessed-well overflow-hidden relative border border-white/20">
+<!-- Glowing Liquid Fill -->
+<div class="absolute top-0 left-0 h-full w-[60%] bg-gradient-to-r from-primary to-primary-container shadow-[0_0_10px_rgba(175,10,120,0.8)] rounded-full liquid-progress"></div>
+<!-- Specular highlight on liquid -->
+<div class="absolute top-[1px] left-0 h-[4px] w-full bg-gradient-to-b from-white/40 to-transparent rounded-full z-10"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Fixed Bottom Action Area (Plush Base) -->
+<div class="absolute bottom-0 left-0 w-full bg-surface/80 backdrop-blur-xl pb-8 pt-6 px-gutter rounded-t-[3rem] shadow-[0_-10px_30px_rgba(175,10,120,0.1)] border-t border-white/50 z-20">
+<!-- Massive 3D Golden Candy Button -->
+<button class="w-full relative h-20 rounded-[2rem] btn-golden-candy flex items-center justify-center gap-3 text-[#5A3500] group overflow-hidden">
+<span class="material-symbols-outlined text-[28px] group-active:scale-90 transition-transform duration-200" data-icon="event_available" style="font-variation-settings: 'FILL' 1;">event_available</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-[22px] tracking-tight group-active:scale-95 transition-transform duration-200">Add to Calendar</span>
+</button>
+</div>
+</main>
+</body></html>
