@@ -71,11 +71,7 @@ export default function Header({ activeProfile, onProfileChange, onOpenSettings,
           whileTap={{ scale: 0.9 }}
           onClick={() => {
             hapticService.playPhysicalThud(0.28, 0.18);
-            if (onOpenProfileSetup) {
-              onOpenProfileSetup();
-            } else {
-              onProfileChange(isPartner1 ? 'partner2' : 'partner1');
-            }
+            onProfileChange(isPartner1 ? 'partner2' : 'partner1');
           }}
           className={`w-10 h-10 rounded-full p-0.5 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_4px_10px_rgba(0,0,0,0.12)] cursor-pointer select-none active:brightness-95 flex items-center justify-center border-2 ${
             isBlue ? 'bg-gradient-to-b from-[#7ed0ff] to-[#006388] border-white' : 'bg-gradient-to-b from-[#f9a8d4] to-[#af0a78] border-white'

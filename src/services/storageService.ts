@@ -273,7 +273,7 @@ export const getProfileConfig = (): ProfileConfig => {
         partner1Color: parsed.partner1Color || 'blue',
         partner2Color: parsed.partner2Color || 'pink',
         activeProfile: active,
-        isSetupComplete: Boolean(parsed.isSetupComplete),
+        isSetupComplete: Boolean(parsed.isSetupComplete || (p1 && p1 !== 'Tú') || (p2 && p2 !== 'Pareja')),
         coupleId: parsed.coupleId || coupleId,
         wakeTime: parsed.wakeTime || '07:00',
         wakeTimeWeekdays: parsed.wakeTimeWeekdays || parsed.wakeTime || '07:00',

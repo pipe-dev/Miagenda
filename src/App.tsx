@@ -661,7 +661,6 @@ export default function App() {
         activeProfile={activeProfile}
         onProfileChange={handleProfileChange}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenProfileSetup={() => setIsWelcomeOpen(true)}
         onStartTour={() => tourService.startTour(currentView, true)}
       />
 
