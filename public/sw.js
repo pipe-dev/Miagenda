@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mi-agenda-v1';
+const CACHE_NAME = 'mi-agenda-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -6,12 +6,12 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -29,19 +29,34 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+// Network-First Strategy for HTML/JS/CSS to ensure instant updates on mobile PWA
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // Ignore chrome extensions or non-http requests
+  if (!event.request.url.startsWith('http')) return;
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return (
-        cachedResponse ||
-        fetch(event.request).catch(() => {
+    fetch(event.request)
+      .then((networkResponse) => {
+        // Cache successful responses for offline use
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        // Offline fallback from cache
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
           if (event.request.headers.get('accept')?.includes('text/html')) {
             return caches.match('/index.html');
           }
-        })
-      );
-    })
+        });
+      })
   );
 });
 
