@@ -53,7 +53,8 @@ import {
   getActiveProfile,
   setActiveProfile as persistActiveProfile,
   getProfileConfig,
-  getUserDisplayName
+  getUserDisplayName,
+  getUserProfileColor
 } from './services/storageService';
 
 import {
