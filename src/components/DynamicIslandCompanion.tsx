@@ -13,63 +13,43 @@ interface DynamicIslandCompanionProps {
   onOpenMoodCheckin?: () => void;
 }
 
-// Chibi Boy Peeking Down from Island (Head + Little Hands holding the island edge)
+// Chibi Boy Peeking Down from Island (Head + Little Hands)
 const ChibiBoyPeeker = ({
-  isKissing = false,
   isHoldingLetter = false,
-  isDrinking = false,
-  isWaving = false
+  isDrinking = false
 }: {
-  isKissing?: boolean;
   isHoldingLetter?: boolean;
   isDrinking?: boolean;
-  isWaving?: boolean;
 }) => {
   return (
     <div className="relative w-8 h-8 select-none pointer-events-none drop-shadow-md flex items-center justify-center">
       <svg viewBox="0 0 44 44" className="w-8 h-8 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Soft shadow */}
-        <ellipse cx="22" cy="40" rx="9" ry="2" fill="rgba(0,0,0,0.15)" />
+        <ellipse cx="22" cy="38" rx="9" ry="2" fill="rgba(0,0,0,0.12)" />
 
         {/* Cute Head hanging down */}
         <circle cx="22" cy="20" r="13" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.6" />
 
-        {/* Boy styled hair hanging upside down/peeking */}
+        {/* Boy styled hair */}
         <path d="M10 18C10 9 16 6 22 6C28 6 34 9 34 18C31 13 27 12 22 12C17 12 13 13 10 18Z" fill="#1e293b" />
         <path d="M9 18C11 15 14 14 17 14C15 17 14 19 14 20C12 20 10 19 9 18Z" fill="#1e293b" />
         <path d="M35 18C33 15 30 14 27 14C29 17 30 19 30 20C32 20 34 19 35 18Z" fill="#1e293b" />
-        {/* Hair shine */}
         <path d="M16 9C19 7.5 25 7.5 28 9" stroke="#475569" strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
 
-        {/* Sanrio Sparkle Eyes (Looking toward center/partner) */}
-        {isKissing ? (
-          /* Happy curved closed eyes when kissing */
-          <>
-            <path d="M16 20C17.5 18.5 19.5 18.5 21 20" stroke="#0f172a" strokeWidth="1.6" strokeLinecap="round" />
-            <path d="M25 20C26.5 18.5 28.5 18.5 30 20" stroke="#0f172a" strokeWidth="1.6" strokeLinecap="round" />
-          </>
-        ) : (
-          /* Big sweet open eyes */
-          <>
-            <circle cx="18" cy="20" r="2" fill="#0f172a" />
-            <circle cx="26" cy="20" r="2" fill="#0f172a" />
-            <circle cx="18.8" cy="19.2" r="0.7" fill="#ffffff" />
-            <circle cx="26.8" cy="19.2" r="0.7" fill="#ffffff" />
-          </>
-        )}
+        {/* Sanrio Happy Eyes */}
+        <circle cx="18" cy="20" r="2" fill="#0f172a" />
+        <circle cx="26" cy="20" r="2" fill="#0f172a" />
+        <circle cx="18.8" cy="19.2" r="0.7" fill="#ffffff" />
+        <circle cx="26.8" cy="19.2" r="0.7" fill="#ffffff" />
 
-        {/* Rosy Cheeks (Blushing intensifies when kissing) */}
-        <ellipse cx="14" cy="23.5" rx={isKissing ? 3 : 2.2} ry={isKissing ? 2 : 1.4} fill="#ff80a0" opacity={isKissing ? 0.95 : 0.75} />
-        <ellipse cx="30" cy="23.5" rx={isKissing ? 3 : 2.2} ry={isKissing ? 2 : 1.4} fill="#ff80a0" opacity={isKissing ? 0.95 : 0.75} />
+        {/* Rosy Cheeks */}
+        <ellipse cx="14" cy="23.5" rx="2.5" ry="1.6" fill="#ff80a0" opacity="0.85" />
+        <ellipse cx="30" cy="23.5" rx="2.5" ry="1.6" fill="#ff80a0" opacity="0.85" />
 
-        {/* Cute Smile / Kiss mouth */}
-        {isKissing ? (
-          <path d="M21 25C22 26 24 26 25 25" stroke="#e11d48" strokeWidth="1.8" strokeLinecap="round" />
-        ) : (
-          <path d="M20 24C21 25.5 23 25.5 24 24" stroke="#0f172a" strokeWidth="1.3" strokeLinecap="round" />
-        )}
+        {/* Cute Smile */}
+        <path d="M20 24C21 25.5 23 25.5 24 24" stroke="#0f172a" strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* Tiny hands holding the island edge at the top */}
+        {/* Tiny hands holding the island edge */}
         <ellipse cx="12" cy="8" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
         <ellipse cx="32" cy="8" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
 
@@ -93,37 +73,26 @@ const ChibiBoyPeeker = ({
             <path d="M2 -3C1 -1 4 -2 3 0" stroke="#ffffff" strokeWidth="0.9" strokeLinecap="round" opacity="0.8" />
           </g>
         )}
-
-        {/* Waving Hand Prop */}
-        {isWaving && (
-          <g transform="translate(31, 12)">
-            <circle cx="2" cy="2" r="3.5" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.2" />
-          </g>
-        )}
       </svg>
     </div>
   );
 };
 
-// Chibi Girl Peeking Down from Island (Head + Sweet hair bow + Little Hands)
+// Chibi Girl Peeking Down from Island (Head + Ribbon + Little Hands)
 const ChibiGirlPeeker = ({
-  isKissing = false,
   isHoldingLetter = false,
-  isDrinking = false,
-  isWaving = false
+  isDrinking = false
 }: {
-  isKissing?: boolean;
   isHoldingLetter?: boolean;
   isDrinking?: boolean;
-  isWaving?: boolean;
 }) => {
   return (
     <div className="relative w-8 h-8 select-none pointer-events-none drop-shadow-md flex items-center justify-center">
       <svg viewBox="0 0 44 44" className="w-8 h-8 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Soft shadow */}
-        <ellipse cx="22" cy="40" rx="9" ry="2" fill="rgba(0,0,0,0.15)" />
+        <ellipse cx="22" cy="38" rx="9" ry="2" fill="rgba(0,0,0,0.12)" />
 
-        {/* Hair background flowing down */}
+        {/* Hair flowing down */}
         <path d="M10 18C10 26 12 34 12 34C12 34 32 34 32 34C32 34 34 26 34 18" fill="#d97706" />
 
         {/* Cute Head */}
@@ -141,40 +110,25 @@ const ChibiGirlPeeker = ({
         </g>
 
         {/* Sanrio Sparkle Eyes with Eyelashes */}
-        {isKissing ? (
-          /* Happy curved closed eyes when kissing */
-          <>
-            <path d="M16 20C17.5 18.5 19.5 18.5 21 20" stroke="#451a03" strokeWidth="1.6" strokeLinecap="round" />
-            <path d="M25 20C26.5 18.5 28.5 18.5 30 20" stroke="#451a03" strokeWidth="1.6" strokeLinecap="round" />
-          </>
-        ) : (
-          /* Sweet eyes with eyelashes */
-          <>
-            <circle cx="18" cy="20" r="2" fill="#451a03" />
-            <circle cx="26" cy="20" r="2" fill="#451a03" />
-            <circle cx="18.8" cy="19.2" r="0.7" fill="#ffffff" />
-            <circle cx="26.8" cy="19.2" r="0.7" fill="#ffffff" />
-            <path d="M16.5 18L15.5 17" stroke="#451a03" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M27.5 18L28.5 17" stroke="#451a03" strokeWidth="1.2" strokeLinecap="round" />
-          </>
-        )}
+        <circle cx="18" cy="20" r="2" fill="#451a03" />
+        <circle cx="26" cy="20" r="2" fill="#451a03" />
+        <circle cx="18.8" cy="19.2" r="0.7" fill="#ffffff" />
+        <circle cx="26.8" cy="19.2" r="0.7" fill="#ffffff" />
+        <path d="M16.5 18L15.5 17" stroke="#451a03" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M27.5 18L28.5 17" stroke="#451a03" strokeWidth="1.2" strokeLinecap="round" />
 
-        {/* Rosy Cheeks (Blushing intensifies when kissing) */}
-        <ellipse cx="14" cy="23.5" rx={isKissing ? 3 : 2.2} ry={isKissing ? 2 : 1.4} fill="#f43f5e" opacity={isKissing ? 0.95 : 0.8} />
-        <ellipse cx="30" cy="23.5" rx={isKissing ? 3 : 2.2} ry={isKissing ? 2 : 1.4} fill="#f43f5e" opacity={isKissing ? 0.95 : 0.8} />
+        {/* Rosy Cheeks */}
+        <ellipse cx="14" cy="23.5" rx="2.5" ry="1.6" fill="#f43f5e" opacity="0.9" />
+        <ellipse cx="30" cy="23.5" rx="2.5" ry="1.6" fill="#f43f5e" opacity="0.9" />
 
-        {/* Cute Smile / Kiss mouth */}
-        {isKissing ? (
-          <path d="M21 25C22 26 24 26 25 25" stroke="#e11d48" strokeWidth="1.8" strokeLinecap="round" />
-        ) : (
-          <path d="M20 24C21 25.5 23 25.5 24 24" stroke="#451a03" strokeWidth="1.3" strokeLinecap="round" />
-        )}
+        {/* Cute Smile */}
+        <path d="M20 24C21 25.5 23 25.5 24 24" stroke="#451a03" strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* Tiny hands holding the island edge at the top */}
+        {/* Tiny hands holding the island edge */}
         <ellipse cx="12" cy="8" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
         <ellipse cx="32" cy="8" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
 
-        {/* Little pink dress collar */}
+        {/* Little pink collar */}
         <path d="M18 31L22 35L26 31" fill="#ec4899" stroke="#ffffff" strokeWidth="1" />
 
         {/* Letter Prop */}
@@ -194,13 +148,6 @@ const ChibiGirlPeeker = ({
             <path d="M2 -3C1 -1 4 -2 3 0" stroke="#ffffff" strokeWidth="0.9" strokeLinecap="round" opacity="0.8" />
           </g>
         )}
-
-        {/* Waving Hand Prop */}
-        {isWaving && (
-          <g transform="translate(31, 12)">
-            <circle cx="2" cy="2" r="3.5" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.2" />
-          </g>
-        )}
       </svg>
     </div>
   );
@@ -214,66 +161,46 @@ export default function DynamicIslandCompanion({
   onOpenSurprise,
   onOpenMoodCheckin
 }: DynamicIslandCompanionProps) {
+  const [cycleKey, setCycleKey] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const [isKissing, setIsKissing] = useState(false);
-  const [isWaving, setIsWaving] = useState(false);
-  const [heartBurst, setHeartBurst] = useState(false);
-  const [tapCount, setTapCount] = useState(0);
   const animTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const isPartnerLowBattery = Boolean(partnerMood?.battery && partnerMood.battery > 0 && partnerMood.battery <= 35);
   const hasSharedEventToday = todayEvents.some((e) => e.privacy === 'shared');
 
-  // Trigger the peek, kiss and hide animation cycle
-  const triggerPeekAnimation = () => {
+  // Trigger full animation sequence (5.5 seconds)
+  const triggerFullAnimation = () => {
     setIsVisible(true);
-    setIsKissing(false);
-    setIsWaving(false);
-    setHeartBurst(false);
+    setCycleKey((prev) => prev + 1);
 
     if (animTimerRef.current) clearTimeout(animTimerRef.current);
 
-    // 1. Move to center and start kissing at 3.5s
-    setTimeout(() => {
-      setIsKissing(true);
-      setHeartBurst(true);
-    }, 3500);
-
-    // 2. Wave goodbye at 7.5s
-    setTimeout(() => {
-      setIsKissing(false);
-      setIsWaving(true);
-      setHeartBurst(false);
-    }, 7500);
-
-    // 3. Hide back into the island at 10.5s
+    // Hide cleanly after 5.6 seconds when animation completes
     animTimerRef.current = setTimeout(() => {
       setIsVisible(false);
-      setIsWaving(false);
-    }, 10500);
+    }, 5600);
   };
 
-  // On App Mount: trigger peek & kiss greeting
+  // 1. On Mount: trigger full peek, meet, kiss, hide sequence
   useEffect(() => {
-    triggerPeekAnimation();
+    triggerFullAnimation();
     return () => {
       if (animTimerRef.current) clearTimeout(animTimerRef.current);
     };
   }, []);
 
-  // Periodic greeting every 2.5 minutes
+  // 2. Periodic greeting every 2 minutes
   useEffect(() => {
     const interval = setInterval(() => {
-      triggerPeekAnimation();
-    }, 150000);
+      triggerFullAnimation();
+    }, 120000);
     return () => clearInterval(interval);
   }, []);
 
-  // Handle tap on island
+  // 3. Handle user tap: immediately trigger the peek & kiss animation
   const handleCompanionTap = () => {
-    hapticService.playPhysicalThud(0.25, 0.15);
-    setTapCount((c) => c + 1);
-    triggerPeekAnimation();
+    hapticService.playPhysicalThud(0.28, 0.18);
+    triggerFullAnimation();
 
     if (hasUnreadDedication && onOpenSurprise) {
       onOpenSurprise();
@@ -288,107 +215,133 @@ export default function DynamicIslandCompanion({
     <div
       onClick={handleCompanionTap}
       className="absolute companion-island-container left-1/2 -translate-x-1/2 z-30 cursor-pointer select-none flex items-center justify-center pointer-events-auto h-8 px-4"
-      title="Toca para que la parejita se asome ✨"
+      title="Toca para ver el besito de la parejita ✨"
     >
       <AnimatePresence mode="wait">
-        {/* 🌟 1. ACTIVE PEEK & KISS FROM ISLAND */}
+        {/* 🌟 1. FULL ANIMATED SEQUENCE: PEEK -> SLIDE TO CENTER -> KISS -> HIDE */}
         {isVisible ? (
-          <motion.div
-            key={`peeking-active-${tapCount}`}
-            initial={{ y: -24, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -24, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 340, damping: 24 }}
-            className="relative flex items-center justify-center w-40 h-8"
-          >
+          <div key={`cycle-${cycleKey}`} className="relative flex items-center justify-center w-36 h-8">
             {hasUnreadDedication ? (
-              /* 💌 Dedicated Love Letter Messenger */
+              /* 💌 Love letter delivery */
               <motion.div
-                animate={{ y: [0, 3, 0] }}
-                transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+                initial={{ y: -25, opacity: 0 }}
+                animate={{
+                  y: [-25, 0, 0, 0, -25],
+                  opacity: [0, 1, 1, 1, 0]
+                }}
+                transition={{ duration: 5.5, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
                 className="flex items-center space-x-1 bg-pink-100/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-pink-300 shadow-sm"
               >
                 {activeProfile === 'partner1' ? (
-                  <ChibiGirlPeeker isHoldingLetter isWaving={isWaving} />
+                  <ChibiGirlPeeker isHoldingLetter />
                 ) : (
-                  <ChibiBoyPeeker isHoldingLetter isWaving={isWaving} />
+                  <ChibiBoyPeeker isHoldingLetter />
                 )}
                 <span className="text-[10px] font-black text-pink-700 animate-pulse">
                   ¡Tienes una cartita! 💌
                 </span>
               </motion.div>
             ) : isPartnerLowBattery ? (
-              /* ☕ Partner Low Battery Cozy Coffee */
+              /* ☕ Partner Low battery cozy cup */
               <motion.div
-                animate={{ y: [0, 2, 0] }}
-                transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+                initial={{ y: -25, opacity: 0 }}
+                animate={{
+                  y: [-25, 0, 0, 0, -25],
+                  opacity: [0, 1, 1, 1, 0]
+                }}
+                transition={{ duration: 5.5, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
                 className="flex items-center space-x-1.5 bg-amber-50/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-amber-200 shadow-sm"
               >
                 {activeProfile === 'partner1' ? (
-                  <ChibiGirlPeeker isDrinking isWaving={isWaving} />
+                  <ChibiGirlPeeker isDrinking />
                 ) : (
-                  <ChibiBoyPeeker isDrinking isWaving={isWaving} />
+                  <ChibiBoyPeeker isDrinking />
                 )}
                 <span className="text-[10px] font-extrabold text-amber-800">
                   {getPartnerDisplayName(activeProfile)} necesita apapacho ☕
                 </span>
               </motion.div>
             ) : hasSharedEventToday ? (
-              /* 🎈 Shared Date Balloon */
-              <div className="flex items-center space-x-2 bg-purple-50/90 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-purple-200 shadow-sm">
-                <ChibiBoyPeeker isKissing={isKissing} isWaving={isWaving} />
+              /* 🎈 Shared date celebration */
+              <motion.div
+                initial={{ y: -25, opacity: 0 }}
+                animate={{
+                  y: [-25, 0, 0, 0, -25],
+                  opacity: [0, 1, 1, 1, 0]
+                }}
+                transition={{ duration: 5.5, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
+                className="flex items-center space-x-2 bg-purple-50/90 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-purple-200 shadow-sm"
+              >
+                <ChibiBoyPeeker />
                 <span className="text-xs">🎈</span>
-                <ChibiGirlPeeker isKissing={isKissing} isWaving={isWaving} />
-              </div>
+                <ChibiGirlPeeker />
+              </motion.div>
             ) : (
-              /* 💑 Normal Couple Peek, Meet in Center, Kiss and Disappear */
+              /* 💑 The Romantic Kiss Flow */
               <>
-                {/* Boy sliding from left to center */}
+                {/* 👦 Chibi Boy: Peeks down on left, slides to center, tilts for kiss, hides */}
                 <motion.div
+                  initial={{ y: -25, x: -38, opacity: 0, rotate: 0 }}
                   animate={{
-                    x: isKissing ? -5 : [-36, -5, -5, -36],
-                    rotate: isKissing ? 8 : [0, 6, 6, 0]
+                    y: [-25, 0, 0, 0, 0, -25],
+                    x: [-38, -38, -4, -4, -30, -30],
+                    rotate: [0, 0, 10, 10, 0, 0],
+                    opacity: [0, 1, 1, 1, 1, 0]
                   }}
-                  transition={{ duration: 10, times: [0, 0.35, 0.75, 1], ease: 'easeInOut' }}
+                  transition={{
+                    duration: 5.5,
+                    times: [0, 0.15, 0.42, 0.78, 0.92, 1],
+                    ease: 'easeInOut'
+                  }}
                   className="absolute"
                 >
-                  <ChibiBoyPeeker isKissing={isKissing} isWaving={isWaving} />
+                  <ChibiBoyPeeker />
                 </motion.div>
 
-                {/* Floating Heart burst during the kiss */}
-                <AnimatePresence>
-                  {heartBurst && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.3, y: 4 }}
-                      animate={{ opacity: 1, scale: [0.8, 1.4, 1.1], y: 14 }}
-                      exit={{ opacity: 0, scale: 0.5, y: 22 }}
-                      transition={{ duration: 1.5 }}
-                      className="absolute z-20 pointer-events-none text-xs flex items-center space-x-0.5"
-                    >
-                      <span>💖</span>
-                      <span className="text-[10px]">✨</span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Girl sliding from right to center */}
+                {/* 💖 Floating Heart Burst during kiss */}
                 <motion.div
+                  initial={{ opacity: 0, scale: 0.2, y: 4 }}
                   animate={{
-                    x: isKissing ? 5 : [36, 5, 5, 36],
-                    rotate: isKissing ? -8 : [0, -6, -6, 0]
+                    opacity: [0, 0, 1, 1, 0],
+                    scale: [0.2, 0.2, 1.4, 1.1, 0.4],
+                    y: [4, 4, -12, -20, -26]
                   }}
-                  transition={{ duration: 10, times: [0, 0.35, 0.75, 1], ease: 'easeInOut' }}
+                  transition={{
+                    duration: 5.5,
+                    times: [0, 0.38, 0.52, 0.75, 0.88],
+                    ease: 'easeOut'
+                  }}
+                  className="absolute z-20 pointer-events-none text-xs flex items-center space-x-0.5"
+                >
+                  <span>💖</span>
+                  <span className="text-[10px]">✨</span>
+                </motion.div>
+
+                {/* 👧 Chibi Girl: Peeks down on right, slides to center, tilts for kiss, hides */}
+                <motion.div
+                  initial={{ y: -25, x: 38, opacity: 0, rotate: 0 }}
+                  animate={{
+                    y: [-25, 0, 0, 0, 0, -25],
+                    x: [38, 38, 4, 4, 30, 30],
+                    rotate: [0, 0, -10, -10, 0, 0],
+                    opacity: [0, 1, 1, 1, 1, 0]
+                  }}
+                  transition={{
+                    duration: 5.5,
+                    times: [0, 0.15, 0.42, 0.78, 0.92, 1],
+                    ease: 'easeInOut'
+                  }}
                   className="absolute"
                 >
-                  <ChibiGirlPeeker isKissing={isKissing} isWaving={isWaving} />
+                  <ChibiGirlPeeker />
                 </motion.div>
               </>
             )}
-          </motion.div>
+          </div>
         ) : shouldShowNotificationPeek ? (
-          /* 👀 2. Subtle peek on standby */
+          /* 👀 Standby subtle note */
           <motion.div
-            key="standby-peek"
+            key="standby-note"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
