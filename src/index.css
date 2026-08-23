@@ -54,28 +54,26 @@
 
 /* iOS Safe Area & Dynamic Island Header Support */
 .safe-top-header {
-  padding-top: 16px;
-  padding-top: env(safe-area-inset-top, 16px);
-  padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
-  min-height: calc(env(safe-area-inset-top, 0px) + 64px);
+  padding-top: max(calc(env(safe-area-inset-top, 0px) + 14px), 60px) !important;
+  min-height: max(calc(env(safe-area-inset-top, 0px) + 68px), 112px) !important;
 }
 
 /* Standalone iOS PWA / Safari iPhone Guarantee for Dynamic Island */
 @supports (-webkit-touch-callout: none) {
   .safe-top-header {
-    padding-top: max(calc(env(safe-area-inset-top, 0px) + 12px), 56px) !important;
-    min-height: max(calc(env(safe-area-inset-top, 0px) + 64px), 100px) !important;
+    padding-top: max(calc(env(safe-area-inset-top, 0px) + 14px), 62px) !important;
+    min-height: max(calc(env(safe-area-inset-top, 0px) + 70px), 114px) !important;
   }
 }
 
 @media all and (display-mode: standalone) {
   .safe-top-header {
-    padding-top: max(calc(env(safe-area-inset-top, 0px) + 14px), 58px) !important;
-    min-height: max(calc(env(safe-area-inset-top, 0px) + 64px), 104px) !important;
+    padding-top: max(calc(env(safe-area-inset-top, 0px) + 16px), 64px) !important;
+    min-height: max(calc(env(safe-area-inset-top, 0px) + 72px), 118px) !important;
   }
 
   .safe-bottom-dock {
-    padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 14px), 24px) !important;
+    padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 16px), 28px) !important;
   }
 }
 
