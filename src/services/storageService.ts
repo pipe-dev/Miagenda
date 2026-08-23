@@ -354,6 +354,11 @@ export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfi
     connectedSince: config.connectedSince || current.connectedSince || (isCoupleLinked() ? new Date().toISOString() : undefined)
   };
   localStorage.setItem(PROFILE_CONFIG_KEY, JSON.stringify(fullConfig));
+  try {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('couple_profile_updated'));
+    }
+  } catch {}
   if (config.activeProfile) {
     setActiveProfile(config.activeProfile);
   }
@@ -463,13 +468,11 @@ export const getPartnerDisplayName = (profile: UserProfile): string => {
 // ==========================================
 export const isCoupleLinked = (): boolean => {
   const config = getProfileConfig();
-  const otherPartner = config.activeProfile === 'partner1' ? config.partner2Name : config.partner1Name;
-  return Boolean(
-    otherPartner &&
-    otherPartner !== 'Pareja' &&
-    otherPartner !== 'Tú' &&
-    otherPartner.trim().length > 0
-  );
+  const p1 = config.partner1Name?.trim();
+  const p2 = config.partner2Name?.trim();
+  const hasValidP1 = Boolean(p1 && p1 !== 'Tú' && p1 !== 'Pareja' && p1.length > 0);
+  const hasValidP2 = Boolean(p2 && p2 !== 'Tú' && p2 !== 'Pareja' && p2.length > 0);
+  return hasValidP1 && hasValidP2;
 };
 
 

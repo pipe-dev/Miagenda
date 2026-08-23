@@ -36,8 +36,8 @@ export default function CoupleSoftLockGate({
   useEffect(() => {
     const checkLinkStatus = () => {
       const linked = isCoupleLinked();
+      setIsLinked(linked);
       if (linked && !isLinked) {
-        setIsLinked(true);
         hapticService.playSuccess();
         try {
           confetti({
@@ -51,12 +51,14 @@ export default function CoupleSoftLockGate({
     };
 
     checkLinkStatus();
-    const interval = setInterval(checkLinkStatus, 1500);
+    const interval = setInterval(checkLinkStatus, 800);
     window.addEventListener('storage', checkLinkStatus);
+    window.addEventListener('couple_profile_updated', checkLinkStatus);
 
     return () => {
       clearInterval(interval);
       window.removeEventListener('storage', checkLinkStatus);
+      window.removeEventListener('couple_profile_updated', checkLinkStatus);
     };
   }, [isLinked]);
 

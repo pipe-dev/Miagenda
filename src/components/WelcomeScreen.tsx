@@ -176,6 +176,12 @@ export default function WelcomeScreen({ onComplete }: WelcomeScreenProps) {
       coupleId: finalCoupleId
     });
 
+    try {
+      if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch {}
+
     onComplete(selectedProfile);
   };
 

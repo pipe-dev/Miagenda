@@ -95,9 +95,14 @@ export default function App() {
   const hasInviteParam = Boolean(urlParams.get('pareja') || urlParams.get('join') || urlParams.get('codigo'));
 
   // Profile Setup & Active Profile
-  const profileConfig = getProfileConfig();
-  const [activeProfile, setActiveProfileState] = useState<UserProfile>(getActiveProfile());
-  const [isWelcomeOpen, setIsWelcomeOpen] = useState(!profileConfig.isSetupComplete || hasInviteParam);
+  const [activeProfile, setActiveProfileState] = useState<UserProfile>(() => getActiveProfile());
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState(() => {
+    const config = getProfileConfig();
+    const params = new URLSearchParams(window.location.search);
+    const hasInvite = Boolean(params.get('pareja') || params.get('join') || params.get('codigo'));
+    if (config.isSetupComplete && !hasInvite) return false;
+    return true;
+  });
   
   // Data State
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -304,8 +309,20 @@ export default function App() {
     });
 
     const unsubProfile = subscribeToCloudProfileConfig((cloudConfig) => {
-      localStorage.setItem('daily_delight_profile_config_v1', JSON.stringify(cloudConfig));
+      const currentConfig = getProfileConfig();
+      const localActive = getActiveProfile();
+      const mergedConfig: ProfileConfig = {
+        ...currentConfig,
+        ...cloudConfig,
+        activeProfile: localActive
+      };
+      localStorage.setItem('daily_delight_profile_config_v1', JSON.stringify(mergedConfig));
       setProfileVersion((v) => v + 1);
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('couple_profile_updated'));
+        }
+      } catch {}
     });
 
     return () => {
@@ -368,10 +385,10 @@ export default function App() {
     };
   }, [events, activeProfile]);
 
-  // Dynamic theme class & iOS Status bar / Dynamic Island color sync
+  // Dynamic theme class based on active profile chosen color & iOS Status bar tinting
   useEffect(() => {
-    const isMale = activeProfile === 'partner1';
-    if (isMale) {
+    const userColor = getUserProfileColor(activeProfile);
+    if (userColor === 'blue') {
       document.documentElement.classList.remove('theme-female');
       document.documentElement.classList.add('theme-male');
     } else {
@@ -387,7 +404,7 @@ export default function App() {
       document.head.appendChild(metaTheme);
     }
     metaTheme.setAttribute('content', '#ffffff');
-  }, [activeProfile]);
+  }, [activeProfile, profileVersion]);
 
   // ==========================================
   // PWA NATIVE BACK BUTTON & NAVIGATION HISTORY
