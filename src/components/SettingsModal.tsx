@@ -544,22 +544,6 @@ export default function SettingsModal({
                 <p>3. Selecciona <strong>"Añadir a pantalla de inicio"</strong>.</p>
               </div>
             </div>
-
-            {/* Reset / Clear Data */}
-            <div className="pt-3 text-center">
-              <button
-                type="button"
-                onClick={() => {
-                  if (window.confirm('¿Deseas reiniciar la aplicación y volver a la pantalla de bienvenida?')) {
-                    onResetData();
-                    onClose();
-                  }
-                }}
-                className="text-xs text-on-surface-variant/70 hover:text-red-500 font-medium transition-colors underline"
-              >
-                Restablecer datos y configuración inicial
-              </button>
-            </div>
           </div>
         </motion.div>
       </motion.div>

@@ -1,26 +1,52 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UserProfile } from '../types';
+import { UserProfile, CoupleMoodStatus, EventItem } from '../types';
 import { getUserDisplayName, getUserProfileColor, getUserPhotoUrl } from '../services/storageService';
 import { hapticService } from '../services/hapticService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
+import DynamicIslandCompanion from './DynamicIslandCompanion';
 
 interface HeaderProps {
   onStartTour?: () => void;
   activeProfile: UserProfile;
   onOpenSettings: () => void;
   onOpenProfile: () => void;
+  hasUnreadDedication?: boolean;
+  partnerMood?: CoupleMoodStatus;
+  todayEvents?: EventItem[];
+  onOpenSurprise?: () => void;
+  onOpenMoodCheckin?: () => void;
 }
 
-export default function Header({ activeProfile, onOpenSettings, onOpenProfile, onStartTour }: HeaderProps) {
+export default function Header({
+  activeProfile,
+  onOpenSettings,
+  onOpenProfile,
+  onStartTour,
+  hasUnreadDedication,
+  partnerMood,
+  todayEvents,
+  onOpenSurprise,
+  onOpenMoodCheckin
+}: HeaderProps) {
   const profileColor = getUserProfileColor(activeProfile);
   const isBlue = profileColor === 'blue';
   const currentUserName = getUserDisplayName(activeProfile);
   const userPhoto = getUserPhotoUrl(activeProfile);
 
   return (
-    <header className="w-full bg-white/92 backdrop-blur-2xl border-b border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.08)] sticky top-0 z-40 safe-top-header pb-3 px-4 sm:px-6 transition-all duration-300 select-none">
-      <div className="w-full max-w-4xl mx-auto flex justify-between items-center min-h-[48px]">
+    <header className="w-full bg-white/92 backdrop-blur-2xl border-b border-white/60 shadow-[0_4px_24px_rgba(0,0,0,0.08)] sticky top-0 z-40 safe-top-header pb-3 px-4 sm:px-6 transition-all duration-300 select-none relative">
+      {/* 🏝️ Dynamic Island Chibi Companion */}
+      <DynamicIslandCompanion
+        activeProfile={activeProfile}
+        hasUnreadDedication={hasUnreadDedication}
+        partnerMood={partnerMood}
+        todayEvents={todayEvents}
+        onOpenSurprise={onOpenSurprise}
+        onOpenMoodCheckin={onOpenMoodCheckin}
+      />
+
+      <div className="w-full max-w-4xl mx-auto flex justify-between items-center min-h-[48px] relative z-10">
         {/* Menu / Settings Button */}
         <div className="flex items-center space-x-1">
           <motion.button

@@ -689,6 +689,14 @@ export default function App() {
         onOpenProfile={() => setIsProfileModalOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onStartTour={() => tourService.startTour(currentView, true)}
+        hasUnreadDedication={hasUnread}
+        partnerMood={coupleMoods[activeProfile === 'partner1' ? 'partner2' : 'partner1']}
+        todayEvents={events.filter((e) => e.date === getLocalDateStr())}
+        onOpenSurprise={() => {
+          const s = getPendingSurprise(activeProfile);
+          if (s) setActiveSurprise(s);
+        }}
+        onOpenMoodCheckin={() => setIsMoodCheckinOpen(true)}
       />
 
       {/* Main Content Area */}
