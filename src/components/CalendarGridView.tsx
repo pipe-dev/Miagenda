@@ -96,11 +96,8 @@ export default function CalendarGridView({
           const isDropTarget = dragOverDate === dateStr;
 
           return (
-            <motion.div
+            <div
               key={dateStr}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.04 }}
               onDragOver={(e) => {
                 e.preventDefault();
                 setDragOverDate(dateStr);
@@ -208,7 +205,7 @@ export default function CalendarGridView({
                   ))}
                 </div>
               )}
-            </motion.div>
+            </div>
           );
         })}
       </div>
