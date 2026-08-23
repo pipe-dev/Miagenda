@@ -76,10 +76,17 @@ export const getEvents = (): EventItem[] => {
 
 export const saveEvent = (eventData: Partial<EventItem> & { title: string }): EventItem[] => {
   const events = getEvents();
+  const coupleLinked = isCoupleLinked();
+  const effectivePrivacy: PrivacyType = coupleLinked ? (eventData.privacy || 'mine') : 'mine';
+
   let updatedEvents: EventItem[];
   let savedItem: EventItem;
   if (eventData.id) {
-    updatedEvents = events.map(e => e.id === eventData.id ? { ...e, ...eventData } as EventItem : e);
+    updatedEvents = events.map(e =>
+      e.id === eventData.id
+        ? ({ ...e, ...eventData, privacy: coupleLinked ? (eventData.privacy || e.privacy) : 'mine' } as EventItem)
+        : e
+    );
     savedItem = updatedEvents.find(e => e.id === eventData.id)!;
   } else {
     const newEvent: EventItem = {
@@ -89,7 +96,7 @@ export const saveEvent = (eventData: Partial<EventItem> & { title: string }): Ev
       date: eventData.date || new Date().toISOString().split('T')[0],
       startTime: eventData.startTime || '10:00',
       endTime: eventData.endTime || '11:00',
-      privacy: eventData.privacy || 'shared',
+      privacy: effectivePrivacy,
       category: eventData.category || 'date',
       author: (eventData.author === 'partner2' || (eventData.author as any) === 'ella') ? 'partner2' : 'partner1',
       hasAlarm: eventData.hasAlarm ?? true,

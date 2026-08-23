@@ -60,6 +60,25 @@
   min-height: calc(env(safe-area-inset-top, 0px) + 64px);
 }
 
+/* Standalone iOS PWA / Safari iPhone Guarantee for Dynamic Island */
+@supports (-webkit-touch-callout: none) {
+  .safe-top-header {
+    padding-top: max(calc(env(safe-area-inset-top, 0px) + 12px), 56px) !important;
+    min-height: max(calc(env(safe-area-inset-top, 0px) + 64px), 100px) !important;
+  }
+}
+
+@media all and (display-mode: standalone) {
+  .safe-top-header {
+    padding-top: max(calc(env(safe-area-inset-top, 0px) + 14px), 58px) !important;
+    min-height: max(calc(env(safe-area-inset-top, 0px) + 64px), 104px) !important;
+  }
+
+  .safe-bottom-dock {
+    padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 14px), 24px) !important;
+  }
+}
+
 .safe-top-modal {
   padding-top: 16px;
   padding-top: env(safe-area-inset-top, 16px);
