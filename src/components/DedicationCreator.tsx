@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { audioRecorder, AudioRecordingResult } from '../services/audioService';
 import { UserProfile, DedicationItem } from '../types';
-import { getUserDisplayName } from '../services/storageService';
+import { getUserDisplayName, getUserProfileColor } from '../services/storageService';
 import { hapticService } from '../services/hapticService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
 
@@ -16,6 +16,9 @@ interface DedicationCreatorProps {
 
 export default function DedicationCreator({ activeProfile, onClose, onSave }: DedicationCreatorProps) {
   const partnerProfile: UserProfile = activeProfile === 'partner1' ? 'partner2' : 'partner1';
+  const myColor = getUserProfileColor(activeProfile);
+  const partnerColor = getUserProfileColor(partnerProfile);
+
   const [recipient, setRecipient] = useState<UserProfile>(partnerProfile);
   const [note, setNote] = useState('');
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -143,7 +146,7 @@ export default function DedicationCreator({ activeProfile, onClose, onSave }: De
           className="relative z-10 w-full max-w-lg max-h-[92vh] sm:max-h-[86vh] flex flex-col candy-modal-card rounded-t-[32px] sm:rounded-3xl shadow-2xl overflow-hidden cursor-default"
         >
           {/* Pinned Dedication Header */}
-          <div className="p-5 sm:p-6 pb-2 shrink-0 border-b border-white/60">
+          <div className="p-5 sm:p-6 pb-3 shrink-0 border-b border-white/60">
             <div className="w-12 h-1.5 bg-outline-variant/60 rounded-full mx-auto mb-3 cursor-grab" />
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
@@ -177,35 +180,40 @@ export default function DedicationCreator({ activeProfile, onClose, onSave }: De
           </div>
 
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto modal-scroll-area p-5 sm:p-6 space-y-4 overscroll-contain">
-          <div className="w-12 h-1 bg-outline-variant/60 rounded-full mx-auto mb-3 cursor-grab" />
-          
-          {/* Header */}
-          
-            {/* Recipient selection */}
-            <div className="flex items-center justify-between bg-white/70 p-2.5 rounded-2xl border border-white">
+            {/* Recipient selection con colores dinamicos invertidos */}
+            <div className="flex items-center justify-between bg-white/80 p-2.5 rounded-2xl border border-white/80 shadow-2xs">
               <span className="text-xs font-bold text-on-surface-variant ml-1">Destinatario:</span>
               <div className="flex space-x-2">
+                {/* Boton Pareja (Destinatario principal) */}
                 <button
                   type="button"
-                  onClick={() => setRecipient('partner2')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                    recipient === 'partner2'
-                      ? 'candy-btn text-white shadow-sm'
-                      : 'bg-surface-variant text-on-surface-variant'
+                  onClick={() => {
+                    hapticService.playLightTap();
+                    setRecipient(partnerProfile);
+                  }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all select-none ${
+                    recipient === partnerProfile
+                      ? (partnerColor === 'blue' ? 'candy-btn-blue text-white shadow-md' : 'candy-btn-pink text-white shadow-md')
+                      : (partnerColor === 'blue' ? 'bg-blue-50/70 text-blue-900 border border-blue-200/70 hover:bg-blue-100/80' : 'bg-pink-50/70 text-pink-900 border border-pink-200/70 hover:bg-pink-100/80')
                   }`}
                 >
-                  Para {getUserDisplayName('partner2')}
+                  Para {getUserDisplayName(partnerProfile)}
                 </button>
+
+                {/* Boton Mi Perfil */}
                 <button
                   type="button"
-                  onClick={() => setRecipient('partner1')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                    recipient === 'partner1'
-                      ? 'bg-tertiary text-white shadow-sm'
-                      : 'bg-surface-variant text-on-surface-variant'
+                  onClick={() => {
+                    hapticService.playLightTap();
+                    setRecipient(activeProfile);
+                  }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all select-none ${
+                    recipient === activeProfile
+                      ? (myColor === 'blue' ? 'candy-btn-blue text-white shadow-md' : 'candy-btn-pink text-white shadow-md')
+                      : (myColor === 'blue' ? 'bg-blue-50/70 text-blue-900 border border-blue-200/70 hover:bg-blue-100/80' : 'bg-pink-50/70 text-pink-900 border border-pink-200/70 hover:bg-pink-100/80')
                   }`}
                 >
-                  Para {getUserDisplayName('partner1')}
+                  Para {getUserDisplayName(activeProfile)}
                 </button>
               </div>
             </div>
@@ -240,14 +248,17 @@ export default function DedicationCreator({ activeProfile, onClose, onSave }: De
               />
             )}
 
-            {/* Note Input */}
-            <div className="sunken-well rounded-2xl p-2 focus-within:sunken-well-focus transition-all">
+            {/* Note Input - Estandar Sunken Plush Well */}
+            <div className="sunken-well bg-slate-50/85 focus-within:bg-white rounded-2xl p-3.5 border-2 border-slate-200/90 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/15 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)]">
+              <label className="block text-[11px] font-extrabold text-on-surface-variant mb-1 uppercase tracking-wider">
+                Mensaje / Carta de Amor
+              </label>
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                rows={3}
-                placeholder="Escribe tu dedicatoria, recordatorio o mensaje..."
-                className="w-full bg-transparent outline-none border-none resize-none p-2 font-medium text-sm sm:text-base text-on-surface placeholder:text-outline-variant/80"
+                rows={4}
+                placeholder="Escribe tu dedicatoria, recordatorio o mensaje de amor..."
+                className="w-full bg-transparent outline-none border-none resize-none font-semibold text-sm sm:text-base text-slate-800 placeholder:text-slate-400 leading-relaxed"
               />
             </div>
 
