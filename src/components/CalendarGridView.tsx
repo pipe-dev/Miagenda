@@ -33,60 +33,32 @@ export default function CalendarGridView({
   activeTab,
   onSelectEvent,
   onNewEvent,
-  onMoveEventDate,
   onEditEvent
 }: CalendarGridViewProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [dragOverDate, setDragOverDate] = useState<string | null>(null);
-  const [draggingEventId, setDraggingEventId] = useState<string | null>(null);
 
   const startDate = selectedDate;
   const weekDays = Array.from({ length: 7 }).map((_, i) => addDays(startDate, i));
 
   // Filter events based on active privacy tab: 'mine' vs 'shared'
-  const filteredEvents = events.filter(event => {
+  const filteredEvents = events.filter((event) => {
     if (activeTab === 'mine') return event.privacy === 'mine';
     if (activeTab === 'shared') return event.privacy === 'shared';
     return true;
   });
 
-  const handleDragStart = (e: React.DragEvent, eventId: string) => {
-    e.dataTransfer.setData('text/plain', eventId);
-    e.dataTransfer.effectAllowed = 'move';
-    setDraggingEventId(eventId);
-  };
-
-  const handleDragEnd = () => {
-    setDraggingEventId(null);
-    setDragOverDate(null);
-  };
-
-  const handleDrop = (e: React.DragEvent, targetDateStr: string) => {
-    e.preventDefault();
-    const eventId = e.dataTransfer.getData('text/plain') || draggingEventId;
-    if (eventId && onMoveEventDate) {
-      onMoveEventDate(eventId, targetDateStr);
-    }
-    setDraggingEventId(null);
-    setDragOverDate(null);
-  };
-
-    const calendarContent = (
+  const calendarContent = (
     <>
       {/* 📊 Balance de Tiempo Semanal */}
-      <div id="tour-cal-view-selector"><WeeklyTimeBalanceCard
-        weekDays={weekDays}
-        events={filteredEvents}
-        activeTab={activeTab}
-      /></div>
-
-      {/* Drag & Drop Hint */}
-      <div className="flex items-center justify-center space-x-1 text-[11px] font-bold text-on-surface-variant/70 mb-4 select-none">
-        <span className="material-symbols-outlined text-[16px]">swap_horiz</span>
-        <span>Arrastra cualquier evento de un día a otro para reprogramarlo</span>
+      <div id="tour-cal-view-selector">
+        <WeeklyTimeBalanceCard
+          weekDays={weekDays}
+          events={filteredEvents}
+          activeTab={activeTab}
+        />
       </div>
 
-      {/* Week Days List - Clean Minimalist with Full Drag & Drop Support */}
+      {/* Week Days List */}
       <div id="tour-cal-grid" className="space-y-3.5">
         {weekDays.map((day, index) => {
           const dateStr = format(day, 'yyyy-MM-dd');
@@ -98,16 +70,8 @@ export default function CalendarGridView({
           return (
             <div
               key={dateStr}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDragOverDate(dateStr);
-              }}
-              onDragLeave={() => setDragOverDate(null)}
-              onDrop={(e) => handleDrop(e, dateStr)}
               className={`plush-card rounded-3xl p-4 border-2 transition-all duration-200 ${
-                isDropTarget
-                  ? 'border-primary bg-primary/5 scale-[1.01] shadow-lg ring-2 ring-primary/20'
-                  : isToday
+                isToday
                   ? 'border-primary/40 bg-white/90 shadow-md'
                   : 'border-white bg-white/70 shadow-xs hover:bg-white/90'
               }`}
@@ -164,17 +128,15 @@ export default function CalendarGridView({
               ) : (
                 <div className="space-y-2">
                   {dayEvents.map((evt) => (
-                    <div
+                    <motion.div
                       key={evt.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, evt.id)}
-                      onDragEnd={handleDragEnd}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => {
                         hapticService.playLightTap();
                         if (onEditEvent) onEditEvent(evt);
                         else onSelectEvent(evt);
                       }}
-                      className={`p-3 rounded-2xl border border-white flex items-center justify-between cursor-pointer transition-all hover:shadow-sm ${
+                      className={`p-3 rounded-2xl border border-white flex items-center justify-between cursor-pointer transition-all active:brightness-95 hover:shadow-sm ${
                         evt.privacy === 'shared'
                           ? 'bg-gradient-to-r from-pink-50/70 to-cyan-50/70'
                           : 'bg-white/80'
@@ -189,7 +151,7 @@ export default function CalendarGridView({
                         </span>
                       </div>
 
-                      <div className="flex items-center space-x-1 shrink-0">
+                      <div className="flex items-center space-x-1.5 shrink-0">
                         <span
                           className={`text-[9px] font-black px-2 py-0.5 rounded-full text-white ${
                             evt.privacy === 'shared' ? 'candy-accent-bicolor' : 'bg-primary'
@@ -197,11 +159,11 @@ export default function CalendarGridView({
                         >
                           {evt.privacy === 'shared' ? '👥' : '🔒'}
                         </span>
-                        <span className="material-symbols-outlined text-[14px] text-on-surface-variant/40">
-                          drag_indicator
+                        <span className="material-symbols-outlined text-[15px] text-on-surface-variant/50">
+                          edit
                         </span>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               )}
