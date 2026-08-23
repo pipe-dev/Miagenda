@@ -53,6 +53,11 @@ class TourService {
           showProgress: true,
           animate: true,
           smoothScroll: true,
+          allowClose: false,
+          disableActiveInteraction: true,
+          overlayClickBehavior: () => {
+            // Evita que tocar fuera cierre el tutorial
+          },
           skipMissingElement: true,
           waitForElement: 2000,
           overlayOpacity: 0.65,
