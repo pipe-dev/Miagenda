@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserProfile, CoupleMoodStatus, EventItem } from '../types';
-import { getUserDisplayName, getPartnerDisplayName, getUserProfileColor } from '../services/storageService';
+import { getUserDisplayName, getPartnerDisplayName } from '../services/storageService';
 import { hapticService } from '../services/hapticService';
 
 interface DynamicIslandCompanionProps {
@@ -14,11 +14,27 @@ interface DynamicIslandCompanionProps {
 }
 
 // Kawaii Chibi Boy SVG Character (Sanrio / Sticker Style)
-const ChibiBoy = ({ isWalking = true, isHappy = true, isHoldingLetter = false, isDrinking = false }: { isWalking?: boolean; isHappy?: boolean; isHoldingLetter?: boolean; isDrinking?: boolean }) => {
+const ChibiBoy = ({
+  isWalking = true,
+  isHoldingLetter = false,
+  isDrinking = false,
+  isWaving = false
+}: {
+  isWalking?: boolean;
+  isHoldingLetter?: boolean;
+  isDrinking?: boolean;
+  isWaving?: boolean;
+}) => {
   return (
     <motion.div
-      animate={isWalking ? { y: [0, -3, 0], rotate: [-2, 2, -2] } : { y: [0, -1, 0] }}
-      transition={{ repeat: Infinity, duration: isWalking ? 0.45 : 1.6, ease: 'easeInOut' }}
+      animate={
+        isWaving
+          ? { y: [0, -4, 0], rotate: [-4, 4, -4] }
+          : isWalking
+          ? { y: [0, -3, 0], rotate: [-2, 2, -2] }
+          : { y: [0, -1, 0] }
+      }
+      transition={{ repeat: Infinity, duration: isWaving ? 0.35 : isWalking ? 0.45 : 1.6, ease: 'easeInOut' }}
       className="relative w-8 h-8 select-none pointer-events-none drop-shadow-sm flex items-center justify-center"
     >
       <svg viewBox="0 0 48 48" className="w-8 h-8 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -75,17 +91,40 @@ const ChibiBoy = ({ isWalking = true, isHappy = true, isHoldingLetter = false, i
             <path d="M2 -3C1 -1 4 -2 3 0" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.8" />
           </g>
         )}
+
+        {/* Waving Hand Prop */}
+        {isWaving && (
+          <g transform="translate(32, 14)">
+            <circle cx="2" cy="2" r="3" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
+          </g>
+        )}
       </svg>
     </motion.div>
   );
 };
 
 // Kawaii Chibi Girl SVG Character (Sanrio / Sticker Style)
-const ChibiGirl = ({ isWalking = true, isHappy = true, isHoldingLetter = false, isDrinking = false }: { isWalking?: boolean; isHappy?: boolean; isHoldingLetter?: boolean; isDrinking?: boolean }) => {
+const ChibiGirl = ({
+  isWalking = true,
+  isHoldingLetter = false,
+  isDrinking = false,
+  isWaving = false
+}: {
+  isWalking?: boolean;
+  isHoldingLetter?: boolean;
+  isDrinking?: boolean;
+  isWaving?: boolean;
+}) => {
   return (
     <motion.div
-      animate={isWalking ? { y: [0, -3, 0], rotate: [2, -2, 2] } : { y: [0, -1, 0] }}
-      transition={{ repeat: Infinity, duration: isWalking ? 0.45 : 1.6, ease: 'easeInOut' }}
+      animate={
+        isWaving
+          ? { y: [0, -4, 0], rotate: [4, -4, 4] }
+          : isWalking
+          ? { y: [0, -3, 0], rotate: [2, -2, 2] }
+          : { y: [0, -1, 0] }
+      }
+      transition={{ repeat: Infinity, duration: isWaving ? 0.35 : isWalking ? 0.45 : 1.6, ease: 'easeInOut' }}
       className="relative w-8 h-8 select-none pointer-events-none drop-shadow-sm flex items-center justify-center"
     >
       <svg viewBox="0 0 48 48" className="w-8 h-8 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -152,6 +191,13 @@ const ChibiGirl = ({ isWalking = true, isHappy = true, isHoldingLetter = false, 
             <path d="M2 -3C1 -1 4 -2 3 0" stroke="#ffffff" strokeWidth="0.8" strokeLinecap="round" opacity="0.8" />
           </g>
         )}
+
+        {/* Waving Hand Prop */}
+        {isWaving && (
+          <g transform="translate(32, 14)">
+            <circle cx="2" cy="2" r="3" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
+          </g>
+        )}
       </svg>
     </motion.div>
   );
@@ -165,27 +211,69 @@ export default function DynamicIslandCompanion({
   onOpenSurprise,
   onOpenMoodCheckin
 }: DynamicIslandCompanionProps) {
+  const [isVisible, setIsVisible] = useState(true);
+  const [isWaving, setIsWaving] = useState(false);
   const [tapBounce, setTapBounce] = useState(0);
   const [heartBurst, setHeartBurst] = useState(false);
+  const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Check contextual triggers
   const isPartnerLowBattery = Boolean(partnerMood?.battery && partnerMood.battery > 0 && partnerMood.battery <= 35);
   const hasSharedEventToday = todayEvents.some((e) => e.privacy === 'shared');
 
-  // Trigger heart burst periodically during walking meeting
+  // Trigger apparition for duration (default: 12 seconds)
+  const triggerApparition = (durationMs = 12000) => {
+    setIsVisible(true);
+    setIsWaving(false);
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+
+    // Wave goodbye 2.5 seconds before hiding
+    setTimeout(() => {
+      setIsWaving(true);
+    }, Math.max(1000, durationMs - 2500));
+
+    hideTimerRef.current = setTimeout(() => {
+      setIsVisible(false);
+      setIsWaving(false);
+    }, durationMs);
+  };
+
+  // 1. Initial 12-second greeting upon opening the app
   useEffect(() => {
-    const interval = setInterval(() => {
-      setHeartBurst(true);
-      setTimeout(() => setHeartBurst(false), 2400);
-    }, 9000);
-    return () => clearInterval(interval);
+    triggerApparition(12000);
+    return () => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
   }, []);
 
+  // 2. Periodic gentle stroll every 2.5 minutes (150 seconds)
+  useEffect(() => {
+    const periodicInterval = setInterval(() => {
+      triggerApparition(10000);
+    }, 150000);
+    return () => clearInterval(periodicInterval);
+  }, []);
+
+  // 3. Periodic heart burst when characters meet
+  useEffect(() => {
+    const heartInterval = setInterval(() => {
+      if (isVisible) {
+        setHeartBurst(true);
+        setTimeout(() => setHeartBurst(false), 2400);
+      }
+    }, 6000);
+    return () => clearInterval(heartInterval);
+  }, [isVisible]);
+
+  // 4. Handle tap: wake up immediately or trigger contextual modal
   const handleCompanionTap = () => {
     hapticService.playPhysicalThud(0.25, 0.15);
     setTapBounce((b) => b + 1);
     setHeartBurst(true);
     setTimeout(() => setHeartBurst(false), 2000);
+
+    // Wake up for 10 seconds if asleep
+    triggerApparition(10000);
 
     if (hasUnreadDedication && onOpenSurprise) {
       onOpenSurprise();
@@ -194,122 +282,153 @@ export default function DynamicIslandCompanion({
     }
   };
 
+  // Peek mode: when walking is hidden, but a surprise or low battery needs subtle attention
+  const shouldPeek = !isVisible && (hasUnreadDedication || isPartnerLowBattery);
+
   return (
     <div
       onClick={handleCompanionTap}
-      className="absolute top-1 left-1/2 -translate-x-1/2 z-30 cursor-pointer select-none flex items-center justify-center pointer-events-auto h-7 px-4 group"
-      title="Toca para interactuar con tu pareja ✨"
+      className="absolute top-0.5 left-1/2 -translate-x-1/2 z-30 cursor-pointer select-none flex items-center justify-center pointer-events-auto h-8 px-4 group"
+      title="Toca para interactuar con tu parejita ✨"
     >
-      {/* 💌 CASE 1: UNREAD DEDICATION (Messenger running with love letter) */}
-      {hasUnreadDedication ? (
-        <motion.div
-          key={`letter-runner-${tapBounce}`}
-          initial={{ x: -40, opacity: 0 }}
-          animate={{ x: [-20, 20, -20], opacity: 1 }}
-          transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-          className="flex items-center space-x-1 bg-pink-100/90 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-pink-300 shadow-xs"
-        >
-          {activeProfile === 'partner1' ? (
-            <ChibiGirl isWalking isHoldingLetter />
-          ) : (
-            <ChibiBoy isWalking isHoldingLetter />
-          )}
-          <span className="text-[10px] font-black text-pink-700 animate-pulse">
-            ¡Tienes una cartita! 💌
-          </span>
-        </motion.div>
-      ) : isPartnerLowBattery ? (
-        /* 🔋 CASE 2: PARTNER LOW BATTERY (Resting comfortably with coffee) */
-        <motion.div
-          key={`resting-coffee-${tapBounce}`}
-          initial={{ scale: 0.9 }}
-          animate={{ scale: [0.95, 1.05, 0.95] }}
-          transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-          className="flex items-center space-x-1.5 bg-amber-50/90 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-amber-200 shadow-xs"
-        >
-          {activeProfile === 'partner1' ? (
-            <ChibiGirl isWalking={false} isDrinking />
-          ) : (
-            <ChibiBoy isWalking={false} isDrinking />
-          )}
-          <span className="text-[10px] font-extrabold text-amber-800">
-            {getPartnerDisplayName(activeProfile)} necesita apapacho ☕
-          </span>
-        </motion.div>
-      ) : hasSharedEventToday ? (
-        /* 🎈 CASE 3: SHARED DATE TODAY (Walking together holding party balloon) */
-        <motion.div
-          key={`date-balloon-${tapBounce}`}
-          animate={{ y: [0, -4, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-          className="flex items-center space-x-2 bg-purple-50/85 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-purple-200 shadow-xs"
-        >
-          <ChibiBoy isWalking />
+      <AnimatePresence mode="wait">
+        {/* 🌟 1. ACTIVE WALKING / GREETING MODE */}
+        {isVisible ? (
           <motion.div
-            animate={{ rotate: [-6, 6, -6], y: [-2, 2, -2] }}
-            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-            className="text-xs"
+            key={`active-companion-${tapBounce}`}
+            initial={{ opacity: 0, y: -8, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.8 }}
+            transition={{ duration: 0.4 }}
+            className="flex items-center justify-center"
           >
-            🎈
-          </motion.div>
-          <ChibiGirl isWalking />
-        </motion.div>
-      ) : (
-        /* ✨ CASE 4: NORMAL COUPLE STROLL (Walking, meeting & kissing with hearts) */
-        <div className="relative flex items-center justify-center w-36 h-7">
-          {/* Boy Walker */}
-          <motion.div
-            key={`boy-walk-${tapBounce}`}
-            animate={{
-              x: [-40, -6, -6, -40],
-              scaleX: [1, 1, -1, -1]
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 9,
-              times: [0, 0.45, 0.55, 1],
-              ease: 'easeInOut'
-            }}
-            className="absolute"
-          >
-            <ChibiBoy isWalking />
-          </motion.div>
-
-          {/* Floating Kiss Hearts at center meeting */}
-          <AnimatePresence>
-            {heartBurst && (
+            {/* 💌 CASE A: UNREAD DEDICATION (Messenger running with love letter) */}
+            {hasUnreadDedication ? (
               <motion.div
-                initial={{ opacity: 0, scale: 0.4, y: 0 }}
-                animate={{ opacity: 1, scale: [0.8, 1.3, 1], y: -16 }}
-                exit={{ opacity: 0, scale: 0.6, y: -24 }}
-                transition={{ duration: 1.4 }}
-                className="absolute z-20 pointer-events-none text-xs flex items-center space-x-0.5"
+                animate={{ x: [-15, 15, -15] }}
+                transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
+                className="flex items-center space-x-1 bg-pink-100/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-pink-300 shadow-xs"
               >
-                <span>💖</span>
-                <span className="text-[10px]">✨</span>
+                {activeProfile === 'partner1' ? (
+                  <ChibiGirl isWalking isHoldingLetter isWaving={isWaving} />
+                ) : (
+                  <ChibiBoy isWalking isHoldingLetter isWaving={isWaving} />
+                )}
+                <span className="text-[10px] font-black text-pink-700 animate-pulse">
+                  ¡Tienes una cartita! 💌
+                </span>
               </motion.div>
-            )}
-          </AnimatePresence>
+            ) : isPartnerLowBattery ? (
+              /* 🔋 CASE B: PARTNER LOW BATTERY (Resting comfortably with coffee) */
+              <motion.div
+                animate={{ scale: [0.96, 1.04, 0.96] }}
+                transition={{ repeat: Infinity, duration: 2.8, ease: 'easeInOut' }}
+                className="flex items-center space-x-1.5 bg-amber-50/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-amber-200 shadow-xs"
+              >
+                {activeProfile === 'partner1' ? (
+                  <ChibiGirl isWalking={false} isDrinking isWaving={isWaving} />
+                ) : (
+                  <ChibiBoy isWalking={false} isDrinking isWaving={isWaving} />
+                )}
+                <span className="text-[10px] font-extrabold text-amber-800">
+                  {getPartnerDisplayName(activeProfile)} necesita apapacho ☕
+                </span>
+              </motion.div>
+            ) : hasSharedEventToday ? (
+              /* 🎈 CASE C: SHARED DATE TODAY (Walking together holding party balloon) */
+              <motion.div
+                animate={{ y: [0, -3, 0] }}
+                transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+                className="flex items-center space-x-2 bg-purple-50/90 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-purple-200 shadow-xs"
+              >
+                <ChibiBoy isWalking isWaving={isWaving} />
+                <motion.div
+                  animate={{ rotate: [-6, 6, -6], y: [-2, 2, -2] }}
+                  transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+                  className="text-xs"
+                >
+                  🎈
+                </motion.div>
+                <ChibiGirl isWalking isWaving={isWaving} />
+              </motion.div>
+            ) : (
+              /* ✨ CASE D: NORMAL COUPLE STROLL (Walking, meeting & kissing with hearts) */
+              <div className="relative flex items-center justify-center w-36 h-7">
+                {/* Boy Walker */}
+                <motion.div
+                  animate={{
+                    x: [-40, -6, -6, -40],
+                    scaleX: [1, 1, -1, -1]
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 8,
+                    times: [0, 0.45, 0.55, 1],
+                    ease: 'easeInOut'
+                  }}
+                  className="absolute"
+                >
+                  <ChibiBoy isWalking isWaving={isWaving} />
+                </motion.div>
 
-          {/* Girl Walker */}
-          <motion.div
-            key={`girl-walk-${tapBounce}`}
-            animate={{
-              x: [40, 6, 6, 40],
-              scaleX: [-1, -1, 1, 1]
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 9,
-              times: [0, 0.45, 0.55, 1],
-              ease: 'easeInOut'
-            }}
-            className="absolute"
-          >
-            <ChibiGirl isWalking />
+                {/* Floating Kiss Hearts at center meeting */}
+                <AnimatePresence>
+                  {heartBurst && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.4, y: 0 }}
+                      animate={{ opacity: 1, scale: [0.8, 1.3, 1], y: -16 }}
+                      exit={{ opacity: 0, scale: 0.6, y: -24 }}
+                      transition={{ duration: 1.4 }}
+                      className="absolute z-20 pointer-events-none text-xs flex items-center space-x-0.5"
+                    >
+                      <span>💖</span>
+                      <span className="text-[10px]">✨</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Girl Walker */}
+                <motion.div
+                  animate={{
+                    x: [40, 6, 6, 40],
+                    scaleX: [-1, -1, 1, 1]
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 8,
+                    times: [0, 0.45, 0.55, 1],
+                    ease: 'easeInOut'
+                  }}
+                  className="absolute"
+                >
+                  <ChibiGirl isWalking isWaving={isWaving} />
+                </motion.div>
+              </div>
+            )}
           </motion.div>
-        </div>
-      )}
+        ) : shouldPeek ? (
+          /* 👀 2. PEEK-A-BOO MODE (Subtle notification peek when resting) */
+          <motion.div
+            key="peek-mode"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="flex items-center space-x-1 bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded-full border border-pink-200/90 shadow-xs text-[10px] font-bold text-pink-600 hover:scale-105 transition-transform"
+          >
+            {hasUnreadDedication ? (
+              <>
+                <span>💌</span>
+                <span className="text-[9px] font-black">1 Sorpresa</span>
+              </>
+            ) : (
+              <>
+                <span>☕</span>
+                <span className="text-[9px] font-black">{getPartnerDisplayName(activeProfile)}</span>
+              </>
+            )}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
