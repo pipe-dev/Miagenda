@@ -65,7 +65,6 @@ export default function CalendarGridView({
           const dayEvents = filteredEvents.filter((e) => isEventActiveOnDate(e, dateStr));
           const isToday = isSameDay(day, new Date());
           const isSelected = isSameDay(day, selectedDate);
-          const isDropTarget = dragOverDate === dateStr;
 
           return (
             <div
