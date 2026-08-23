@@ -96,8 +96,8 @@ class TourService {
           {
             element: '#tour-header-avatar',
             popover: {
-              title: '👤 Tu Perfil',
-              description: 'Toca tu avatar en cualquier momento para alternar rápidamente entre tu espacio y el de tu pareja.',
+              title: '👤 Mi Perfil & Foto',
+              description: 'Toca tu foto para subir o borrar tu foto con ImgBB, alternar el color del tema (Azul o Rosa) y editar tu nombre.',
               side: 'bottom',
               align: 'end'
             }

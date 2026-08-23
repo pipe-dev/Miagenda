@@ -58,6 +58,8 @@ export interface ProfileConfig {
   partner2Name: string;
   partner1Color?: 'blue' | 'pink';
   partner2Color?: 'blue' | 'pink';
+  partner1PhotoUrl?: string;
+  partner2PhotoUrl?: string;
   maleName?: string;
   femaleName?: string;
   activeProfile: UserProfile;

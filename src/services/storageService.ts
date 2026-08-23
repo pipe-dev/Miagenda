@@ -272,6 +272,8 @@ export const getProfileConfig = (): ProfileConfig => {
         partner2Name: p2,
         partner1Color: parsed.partner1Color || 'blue',
         partner2Color: parsed.partner2Color || 'pink',
+        partner1PhotoUrl: parsed.partner1PhotoUrl || undefined,
+        partner2PhotoUrl: parsed.partner2PhotoUrl || undefined,
         activeProfile: active,
         isSetupComplete: Boolean(parsed.isSetupComplete || (p1 && p1 !== 'Tú') || (p2 && p2 !== 'Pareja')),
         coupleId: parsed.coupleId || coupleId,
@@ -292,6 +294,8 @@ export const getProfileConfig = (): ProfileConfig => {
     partner2Name: 'Pareja',
     partner1Color: 'blue',
     partner2Color: 'pink',
+    partner1PhotoUrl: undefined,
+    partner2PhotoUrl: undefined,
     activeProfile: getActiveProfile(),
     isSetupComplete: false,
     coupleId: getCoupleId(),
@@ -314,11 +318,16 @@ export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfi
   const cId = config.coupleId || current.coupleId || getCoupleId();
   saveCoupleId(cId);
 
+  const p1Photo = config.partner1PhotoUrl !== undefined ? config.partner1PhotoUrl : current.partner1PhotoUrl;
+  const p2Photo = config.partner2PhotoUrl !== undefined ? config.partner2PhotoUrl : current.partner2PhotoUrl;
+
   const fullConfig: ProfileConfig = {
     partner1Name: p1,
     partner2Name: p2,
     partner1Color: p1Color,
     partner2Color: p2Color,
+    partner1PhotoUrl: p1Photo,
+    partner2PhotoUrl: p2Photo,
     activeProfile: config.activeProfile || current.activeProfile,
     isSetupComplete: config.isSetupComplete !== undefined ? config.isSetupComplete : current.isSetupComplete,
     coupleId: cId,
@@ -377,6 +386,37 @@ export const saveUserSchedule = (schedule: Partial<ProfileConfig>) => {
     ...current,
     ...schedule
   });
+};
+
+
+// Helper: Get user's avatar photo URL (if any)
+export const getUserPhotoUrl = (profile: UserProfile): string | undefined => {
+  const config = getProfileConfig();
+  return profile === 'partner1' ? config.partner1PhotoUrl : config.partner2PhotoUrl;
+};
+
+// Helper: Save or delete user's avatar photo URL
+export const saveUserPhotoUrl = (profile: UserProfile, photoUrl: string | undefined): void => {
+  const config = getProfileConfig();
+  if (profile === 'partner1') {
+    saveProfileConfig({ ...config, partner1PhotoUrl: photoUrl });
+  } else {
+    saveProfileConfig({ ...config, partner2PhotoUrl: photoUrl });
+  }
+};
+
+// Helper: Toggle user's personal theme color ('blue' <-> 'pink')
+export const toggleUserProfileColor = (profile: UserProfile): 'blue' | 'pink' => {
+  const config = getProfileConfig();
+  const currentColor = profile === 'partner1' ? (config.partner1Color || 'blue') : (config.partner2Color || 'pink');
+  const newColor: 'blue' | 'pink' = currentColor === 'blue' ? 'pink' : 'blue';
+  
+  if (profile === 'partner1') {
+    saveProfileConfig({ ...config, partner1Color: newColor });
+  } else {
+    saveProfileConfig({ ...config, partner2Color: newColor });
+  }
+  return newColor;
 };
 
 // Helper: Get the profile color ('blue' | 'pink')

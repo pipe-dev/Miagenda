@@ -16,6 +16,7 @@ import WelcomeScreen from './components/WelcomeScreen';
 import ConfirmDeleteModal from './components/ConfirmDeleteModal';
 import CoupleMoodCheckinModal from './components/CoupleMoodCheckinModal';
 import MedicationTracker from './components/MedicationTracker';
+import ProfileModal from './components/ProfileModal';
 
 import {
   getEvents,
@@ -113,6 +114,8 @@ export default function App() {
   const [isMoodCheckinOpen, setIsMoodCheckinOpen] = useState(false);
   const [activeSurprise, setActiveSurprise] = useState<DedicationItem | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileVersion, setProfileVersion] = useState(0);
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
   const [newEventDefaultDate, setNewEventDefaultDate] = useState<string | null>(null);
 
@@ -649,17 +652,19 @@ export default function App() {
     setIsWelcomeOpen(true);
   };
 
-  const hasUnread = Boolean(getPendingSurprise(activeProfile));
+  const currentProfileColor = getUserProfileColor(activeProfile);
+  const themeClass = currentProfileColor === 'blue' ? 'theme-male' : 'theme-female';
 
   return (
     <div
-      className={`min-h-screen flex flex-col relative text-on-surface transition-colors duration-300 ${activeProfile === 'partner1' ? 'theme-male' : 'theme-female'}`}
+      key={`app-root-${profileVersion}`}
+      className={`min-h-screen flex flex-col relative text-on-surface transition-colors duration-300 ${themeClass}`}
       style={{ backgroundColor: 'var(--app-bg, #d6cddb)' }}
     >
       {/* Top Header */}
       <Header
         activeProfile={activeProfile}
-        onProfileChange={handleProfileChange}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onStartTour={() => tourService.startTour(currentView, true)}
       />
@@ -857,6 +862,18 @@ export default function App() {
             activeProfile={activeProfile}
             onClose={() => setIsMoodCheckinOpen(false)}
             onSave={handleSaveCoupleMood}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MODAL 8: Profile Modal (Foto de ImgBB, Color de Tema y Nombre) */}
+      <AnimatePresence>
+        {isProfileModalOpen && (
+          <ProfileModal
+            isOpen={isProfileModalOpen}
+            activeProfile={activeProfile}
+            onClose={() => setIsProfileModalOpen(false)}
+            onProfileUpdated={() => setProfileVersion((v) => v + 1)}
           />
         )}
       </AnimatePresence>
