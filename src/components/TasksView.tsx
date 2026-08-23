@@ -180,30 +180,26 @@ export default function TasksView({
     switch (category) {
       case 'groceries':
         return (
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center space-x-1">
-            <span>🥑</span>
-            <span>Supermercado</span>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            Supermercado
           </span>
         );
       case 'pharmacy':
         return (
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 flex items-center space-x-1">
-            <span>💊</span>
-            <span>Farmacia</span>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+            Farmacia
           </span>
         );
       case 'home':
         return (
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 flex items-center space-x-1">
-            <span>🏠</span>
-            <span>Hogar</span>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+            Hogar
           </span>
         );
       case 'bills':
         return (
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center space-x-1">
-            <span>💡</span>
-            <span>Cuentas</span>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+            Cuentas
           </span>
         );
       default:
@@ -397,45 +393,70 @@ export default function TasksView({
                     className="overflow-hidden pt-3 border-t border-surface-variant/40 mt-2 space-y-2"
                   >
                     {/* Priority */}
-                    <div className="flex items-center space-x-2">
-                      <span className="text-[11px] font-extrabold text-on-surface-variant uppercase tracking-wider">
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      <span className="text-[11px] font-extrabold text-on-surface-variant uppercase tracking-wider min-w-[72px] shrink-0">
                         Prioridad:
                       </span>
-                      {(['normal', 'urgent', 'low'] as const).map((p) => (
-                        <button
-                          key={p}
-                          type="button"
-                          onClick={() => setSelectedPriority(p)}
-                          className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all ${
-                            selectedPriority === p
-                              ? 'candy-btn text-white shadow-sm'
-                              : 'bg-white/80 text-on-surface-variant border border-white'
-                          }`}
-                        >
-                          {p === 'urgent' ? '🔥 Urgente' : p === 'low' ? 'Baja' : 'Normal'}
-                        </button>
-                      ))}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {[
+                          { id: 'normal', label: 'Normal' },
+                          { id: 'urgent', label: 'Urgente' },
+                          { id: 'low', label: 'Baja' }
+                        ].map((p) => {
+                          const isSelected = selectedPriority === p.id;
+                          return (
+                            <button
+                              key={p.id}
+                              type="button"
+                              onClick={() => {
+                                hapticService.playLightTap();
+                                setSelectedPriority(p.id as any);
+                              }}
+                              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 select-none ${
+                                isSelected
+                                  ? 'candy-btn text-white shadow-sm'
+                                  : 'bg-white/85 text-on-surface-variant border border-white hover:bg-white'
+                              }`}
+                            >
+                              {p.label}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     {/* Category */}
-                    <div className="flex items-center space-x-2">
-                      <span className="text-[11px] font-extrabold text-on-surface-variant uppercase tracking-wider">
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      <span className="text-[11px] font-extrabold text-on-surface-variant uppercase tracking-wider min-w-[72px] shrink-0">
                         Categoría:
                       </span>
-                      {(['general', 'work', 'home', 'errand'] as const).map((c) => (
-                        <button
-                          key={c}
-                          type="button"
-                          onClick={() => setSelectedCategory(c)}
-                          className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all ${
-                            selectedCategory === c
-                              ? 'candy-btn text-white shadow-sm'
-                              : 'bg-white/80 text-on-surface-variant border border-white'
-                          }`}
-                        >
-                          {c === 'work' ? '💼 Trabajo' : c === 'home' ? '🏠 Casa' : c === 'errand' ? '🛒 Diligencia' : 'General'}
-                        </button>
-                      ))}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {[
+                          { id: 'general', label: 'General' },
+                          { id: 'work', label: 'Trabajo' },
+                          { id: 'home', label: 'Casa' },
+                          { id: 'errand', label: 'Diligencia' }
+                        ].map((c) => {
+                          const isSelected = selectedCategory === c.id;
+                          return (
+                            <button
+                              key={c.id}
+                              type="button"
+                              onClick={() => {
+                                hapticService.playLightTap();
+                                setSelectedCategory(c.id as any);
+                              }}
+                              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 select-none ${
+                                isSelected
+                                  ? 'candy-btn text-white shadow-sm'
+                                  : 'bg-white/85 text-on-surface-variant border border-white hover:bg-white'
+                              }`}
+                            >
+                              {c.label}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -661,29 +682,37 @@ export default function TasksView({
               </div>
 
               {/* Grocery Category Pills */}
-              <div className="flex items-center space-x-1.5 pt-1 border-t border-surface-variant/40 overflow-x-auto pb-0.5">
-                <span className="text-[10px] font-extrabold text-on-surface-variant uppercase tracking-wider shrink-0">
+              <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-surface-variant/40">
+                <span className="text-[10px] font-extrabold text-on-surface-variant uppercase tracking-wider shrink-0 min-w-[50px]">
                   Tipo:
                 </span>
-                {[
-                  { id: 'groceries', label: '🥑 Súper' },
-                  { id: 'pharmacy', label: '💊 Farmacia' },
-                  { id: 'home', label: '🏠 Hogar' },
-                  { id: 'bills', label: '💡 Cuentas' }
-                ].map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setSelectedGroceryCategory(cat.id as any)}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all shrink-0 ${
-                      selectedGroceryCategory === cat.id
-                        ? 'candy-accent-bicolor text-white shadow-sm'
-                        : 'bg-white/80 text-on-surface-variant border border-white'
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { id: 'groceries', label: 'Súper' },
+                    { id: 'pharmacy', label: 'Farmacia' },
+                    { id: 'home', label: 'Hogar' },
+                    { id: 'bills', label: 'Cuentas' }
+                  ].map((cat) => {
+                    const isSelected = selectedGroceryCategory === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => {
+                          hapticService.playLightTap();
+                          setSelectedGroceryCategory(cat.id as any);
+                        }}
+                        className={`px-3 py-1 rounded-full text-xs font-bold transition-all shrink-0 select-none ${
+                          isSelected
+                            ? 'candy-accent-bicolor text-white shadow-sm'
+                            : 'bg-white/85 text-on-surface-variant border border-white hover:bg-white'
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </form>
