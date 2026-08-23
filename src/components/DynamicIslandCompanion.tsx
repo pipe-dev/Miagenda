@@ -22,51 +22,54 @@ const InvertedChibiBoy = ({
   isDrinking?: boolean;
 }) => {
   return (
-    <div className="relative w-8 h-8 select-none pointer-events-none drop-shadow-md flex items-center justify-center rotate-180">
-      <svg viewBox="0 0 44 44" className="w-8 h-8 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div className="relative w-11 h-11 select-none pointer-events-none drop-shadow-lg flex items-center justify-center rotate-180">
+      <svg viewBox="0 0 44 44" className="w-11 h-11 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Soft shadow */}
+        <ellipse cx="22" cy="38" rx="10" ry="2.5" fill="rgba(0,0,0,0.14)" />
+
         {/* Cute Head */}
-        <circle cx="22" cy="20" r="13" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.6" />
+        <circle cx="22" cy="20" r="13.5" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.8" />
 
         {/* Boy styled hair */}
-        <path d="M10 18C10 9 16 6 22 6C28 6 34 9 34 18C31 13 27 12 22 12C17 12 13 13 10 18Z" fill="#1e293b" />
-        <path d="M9 18C11 15 14 14 17 14C15 17 14 19 14 20C12 20 10 19 9 18Z" fill="#1e293b" />
-        <path d="M35 18C33 15 30 14 27 14C29 17 30 19 30 20C32 20 34 19 35 18Z" fill="#1e293b" />
-        <path d="M16 9C19 7.5 25 7.5 28 9" stroke="#475569" strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
+        <path d="M10 18C10 8.5 16 5.5 22 5.5C28 5.5 34 8.5 34 18C31 12.5 27 11.5 22 11.5C17 11.5 13 12.5 10 18Z" fill="#1e293b" />
+        <path d="M9 18C11 14.5 14 13.5 17 13.5C15 16.5 14 18.5 14 19.5C12 19.5 10 18.5 9 18Z" fill="#1e293b" />
+        <path d="M35 18C33 14.5 30 13.5 27 13.5C29 16.5 30 18.5 30 19.5C32 19.5 34 18.5 35 18Z" fill="#1e293b" />
+        <path d="M16 8.5C19 7 25 7 28 8.5" stroke="#475569" strokeWidth="1.3" strokeLinecap="round" opacity="0.7" />
 
         {/* Sanrio Happy Eyes */}
-        <circle cx="18" cy="20" r="2" fill="#0f172a" />
-        <circle cx="26" cy="20" r="2" fill="#0f172a" />
-        <circle cx="18.8" cy="19.2" r="0.7" fill="#ffffff" />
-        <circle cx="26.8" cy="19.2" r="0.7" fill="#ffffff" />
+        <circle cx="17.5" cy="20" r="2.2" fill="#0f172a" />
+        <circle cx="26.5" cy="20" r="2.2" fill="#0f172a" />
+        <circle cx="18.3" cy="19.1" r="0.8" fill="#ffffff" />
+        <circle cx="27.3" cy="19.1" r="0.8" fill="#ffffff" />
 
         {/* Rosy Cheeks */}
-        <ellipse cx="14" cy="23.5" rx="2.5" ry="1.6" fill="#ff80a0" opacity="0.85" />
-        <ellipse cx="30" cy="23.5" rx="2.5" ry="1.6" fill="#ff80a0" opacity="0.85" />
+        <ellipse cx="13.5" cy="23.8" rx="2.8" ry="1.8" fill="#ff80a0" opacity="0.85" />
+        <ellipse cx="30.5" cy="23.8" rx="2.8" ry="1.8" fill="#ff80a0" opacity="0.85" />
 
         {/* Cute Smile */}
-        <path d="M20 24C21 25.5 23 25.5 24 24" stroke="#0f172a" strokeWidth="1.4" strokeLinecap="round" />
+        <path d="M19.5 24.5C20.5 26.2 23.5 26.2 24.5 24.5" stroke="#0f172a" strokeWidth="1.5" strokeLinecap="round" />
 
         {/* Little hands gripping the island edge */}
-        <ellipse cx="12" cy="7" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
-        <ellipse cx="32" cy="7" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
+        <ellipse cx="11.5" cy="6.5" rx="3" ry="2.2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.2" />
+        <ellipse cx="32.5" cy="6.5" rx="3" ry="2.2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.2" />
 
         {/* Little blue shirt collar */}
-        <path d="M18 31L22 35L26 31" fill="#0284c7" stroke="#ffffff" strokeWidth="1" />
+        <path d="M17.5 31.5L22 36L26.5 31.5" fill="#0284c7" stroke="#ffffff" strokeWidth="1.2" />
 
         {/* Letter Prop */}
         {isHoldingLetter && (
-          <g transform="translate(14, 25)">
-            <rect x="0" y="0" width="16" height="11" rx="2" fill="#ffffff" stroke="#e11d48" strokeWidth="1.2" />
-            <path d="M0 0L8 7L16 0" stroke="#e11d48" strokeWidth="1.2" fill="none" />
-            <circle cx="8" cy="7.5" r="2" fill="#e11d48" />
+          <g transform="translate(13, 24)">
+            <rect x="0" y="0" width="18" height="12" rx="2" fill="#ffffff" stroke="#e11d48" strokeWidth="1.3" />
+            <path d="M0 0L9 8L18 0" stroke="#e11d48" strokeWidth="1.3" fill="none" />
+            <circle cx="9" cy="8" r="2.2" fill="#e11d48" />
           </g>
         )}
 
         {/* Coffee Cup Prop */}
         {isDrinking && (
-          <g transform="translate(24, 22)">
-            <rect x="0" y="0" width="8" height="10" rx="2" fill="#d97706" stroke="#ffffff" strokeWidth="1" />
-            <path d="M8 2.5C10 2.5 10 7.5 8 7.5" stroke="#ffffff" strokeWidth="1.2" fill="none" />
+          <g transform="translate(25, 21)">
+            <rect x="0" y="0" width="9" height="11" rx="2" fill="#d97706" stroke="#ffffff" strokeWidth="1.2" />
+            <path d="M9 2.5C11 2.5 11 8.5 9 8.5" stroke="#ffffff" strokeWidth="1.2" fill="none" />
           </g>
         )}
       </svg>
@@ -83,61 +86,61 @@ const InvertedChibiGirl = ({
   isDrinking?: boolean;
 }) => {
   return (
-    <div className="relative w-8 h-8 select-none pointer-events-none drop-shadow-md flex items-center justify-center rotate-180">
-      <svg viewBox="0 0 44 44" className="w-8 h-8 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div className="relative w-11 h-11 select-none pointer-events-none drop-shadow-lg flex items-center justify-center rotate-180">
+      <svg viewBox="0 0 44 44" className="w-11 h-11 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Hair flowing down */}
-        <path d="M10 18C10 26 12 34 12 34C12 34 32 34 32 34C32 34 34 26 34 18" fill="#d97706" />
+        <path d="M9.5 18C9.5 26.5 11.5 35 11.5 35C11.5 35 32.5 35 32.5 35C32.5 35 34.5 26.5 34.5 18" fill="#d97706" />
 
         {/* Cute Head */}
-        <circle cx="22" cy="20" r="13" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.6" />
+        <circle cx="22" cy="20" r="13.5" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.8" />
 
         {/* Cute bangs */}
-        <path d="M10 18C10 9 15 6 22 6C29 6 34 9 34 18C32 13 27 12 22 12C17 12 12 13 10 18Z" fill="#eab308" />
-        <path d="M12 16C15 13 20 13 23 15C26 13 30 13 32 16" stroke="#ca8a04" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M10 18C10 8.5 15 5.5 22 5.5C29 5.5 34 8.5 34 18C32 12.5 27 11.5 22 11.5C17 11.5 12 12.5 10 18Z" fill="#eab308" />
+        <path d="M12 15.5C15 12.5 20 12.5 23 14.5C26 12.5 30 12.5 32 15.5" stroke="#ca8a04" strokeWidth="1.3" strokeLinecap="round" />
 
         {/* Pink Ribbon Bow */}
-        <g transform="translate(26, 4)">
-          <ellipse cx="2" cy="3" rx="2.8" ry="2" fill="#f43f5e" />
-          <ellipse cx="7" cy="3" rx="2.8" ry="2" fill="#f43f5e" />
-          <circle cx="4.5" cy="3" r="1.8" fill="#ffffff" />
+        <g transform="translate(26, 3.5)">
+          <ellipse cx="2" cy="3" rx="3.2" ry="2.2" fill="#f43f5e" />
+          <ellipse cx="7.5" cy="3" rx="3.2" ry="2.2" fill="#f43f5e" />
+          <circle cx="4.8" cy="3" r="2" fill="#ffffff" />
         </g>
 
         {/* Sanrio Sparkle Eyes with Eyelashes */}
-        <circle cx="18" cy="20" r="2" fill="#451a03" />
-        <circle cx="26" cy="20" r="2" fill="#451a03" />
-        <circle cx="18.8" cy="19.2" r="0.7" fill="#ffffff" />
-        <circle cx="26.8" cy="19.2" r="0.7" fill="#ffffff" />
-        <path d="M16.5 18L15.5 17" stroke="#451a03" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M27.5 18L28.5 17" stroke="#451a03" strokeWidth="1.2" strokeLinecap="round" />
+        <circle cx="17.5" cy="20" r="2.2" fill="#451a03" />
+        <circle cx="26.5" cy="20" r="2.2" fill="#451a03" />
+        <circle cx="18.3" cy="19.1" r="0.8" fill="#ffffff" />
+        <circle cx="27.3" cy="19.1" r="0.8" fill="#ffffff" />
+        <path d="M16 17.5L14.8 16.3" stroke="#451a03" strokeWidth="1.3" strokeLinecap="round" />
+        <path d="M28 17.5L29.2 16.3" stroke="#451a03" strokeWidth="1.3" strokeLinecap="round" />
 
         {/* Rosy Cheeks */}
-        <ellipse cx="14" cy="23.5" rx="2.5" ry="1.6" fill="#f43f5e" opacity="0.9" />
-        <ellipse cx="30" cy="23.5" rx="2.5" ry="1.6" fill="#f43f5e" opacity="0.9" />
+        <ellipse cx="13.5" cy="23.8" rx="2.8" ry="1.8" fill="#f43f5e" opacity="0.9" />
+        <ellipse cx="30.5" cy="23.8" rx="2.8" ry="1.8" fill="#f43f5e" opacity="0.9" />
 
         {/* Cute Smile */}
-        <path d="M20 24C21 25.5 23 25.5 24 24" stroke="#451a03" strokeWidth="1.4" strokeLinecap="round" />
+        <path d="M19.5 24.5C20.5 26.2 23.5 26.2 24.5 24.5" stroke="#451a03" strokeWidth="1.5" strokeLinecap="round" />
 
         {/* Little hands gripping the island edge */}
-        <ellipse cx="12" cy="7" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
-        <ellipse cx="32" cy="7" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
+        <ellipse cx="11.5" cy="6.5" rx="3" ry="2.2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.2" />
+        <ellipse cx="32.5" cy="6.5" rx="3" ry="2.2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.2" />
 
         {/* Little pink dress collar */}
-        <path d="M18 31L22 35L26 31" fill="#ec4899" stroke="#ffffff" strokeWidth="1" />
+        <path d="M17.5 31.5L22 36L26.5 31.5" fill="#ec4899" stroke="#ffffff" strokeWidth="1.2" />
 
         {/* Letter Prop */}
         {isHoldingLetter && (
-          <g transform="translate(14, 25)">
-            <rect x="0" y="0" width="16" height="11" rx="2" fill="#ffffff" stroke="#e11d48" strokeWidth="1.2" />
-            <path d="M0 0L8 7L16 0" stroke="#e11d48" strokeWidth="1.2" fill="none" />
-            <circle cx="8" cy="7.5" r="2" fill="#e11d48" />
+          <g transform="translate(13, 24)">
+            <rect x="0" y="0" width="18" height="12" rx="2" fill="#ffffff" stroke="#e11d48" strokeWidth="1.3" />
+            <path d="M0 0L9 8L18 0" stroke="#e11d48" strokeWidth="1.3" fill="none" />
+            <circle cx="9" cy="8" r="2.2" fill="#e11d48" />
           </g>
         )}
 
         {/* Coffee Cup Prop */}
         {isDrinking && (
-          <g transform="translate(24, 22)">
-            <rect x="0" y="0" width="8" height="10" rx="2" fill="#ec4899" stroke="#ffffff" strokeWidth="1" />
-            <path d="M8 2.5C10 2.5 10 7.5 8 7.5" stroke="#ffffff" strokeWidth="1.2" fill="none" />
+          <g transform="translate(25, 21)">
+            <rect x="0" y="0" width="9" height="11" rx="2" fill="#ec4899" stroke="#ffffff" strokeWidth="1.2" />
+            <path d="M9 2.5C11 2.5 11 8.5 9 8.5" stroke="#ffffff" strokeWidth="1.2" fill="none" />
           </g>
         )}
       </svg>
@@ -211,74 +214,74 @@ export default function DynamicIslandCompanion({
   return (
     <div
       onClick={handleCompanionTap}
-      className="absolute companion-island-container left-1/2 -translate-x-1/2 z-30 cursor-pointer select-none flex items-center justify-center pointer-events-auto h-8 px-4"
+      className="absolute companion-island-container left-1/2 -translate-x-1/2 z-30 cursor-pointer select-none flex items-center justify-center pointer-events-auto h-11 px-4"
       title="Toca para ver a la parejita asomarse y darse el beso ✨"
     >
       <AnimatePresence mode="wait">
         {/* 🌟 1. STORYBOARD ANIMATION */}
         {isVisible ? (
-          <div key={`story-cycle-${cycleKey}`} className="relative flex items-center justify-center w-36 h-8 overflow-visible">
+          <div key={`story-cycle-${cycleKey}`} className="relative flex items-center justify-center w-48 h-11 overflow-visible">
             {hasUnreadDedication ? (
               /* 💌 Love letter delivery inverted peek */
               <motion.div
-                initial={{ y: -32, opacity: 0 }}
+                initial={{ y: -44, opacity: 0 }}
                 animate={{
-                  y: [-32, -14, -14, 0, 0, -14, -32],
+                  y: [-44, -20, -20, 0, 0, -20, -44],
                   opacity: [0, 1, 1, 1, 1, 1, 0]
                 }}
                 transition={{ duration: 5.8, times: [0, 0.12, 0.22, 0.35, 0.82, 0.92, 1], ease: 'easeInOut' }}
-                className="flex items-center space-x-1 bg-pink-100/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-pink-300 shadow-sm"
+                className="flex items-center space-x-1.5 bg-pink-100/95 backdrop-blur-xs px-3 py-1 rounded-full border border-pink-300 shadow-md"
               >
                 {activeProfile === 'partner1' ? (
                   <InvertedChibiGirl isHoldingLetter />
                 ) : (
                   <InvertedChibiBoy isHoldingLetter />
                 )}
-                <span className="text-[10px] font-black text-pink-700 animate-pulse">
+                <span className="text-xs font-black text-pink-700 animate-pulse">
                   ¡Tienes una cartita! 💌
                 </span>
               </motion.div>
             ) : isPartnerLowBattery ? (
               /* ☕ Partner Low battery cozy coffee */
               <motion.div
-                initial={{ y: -32, opacity: 0 }}
+                initial={{ y: -44, opacity: 0 }}
                 animate={{
-                  y: [-32, -14, -14, 0, 0, -14, -32],
+                  y: [-44, -20, -20, 0, 0, -20, -44],
                   opacity: [0, 1, 1, 1, 1, 1, 0]
                 }}
                 transition={{ duration: 5.8, times: [0, 0.12, 0.22, 0.35, 0.82, 0.92, 1], ease: 'easeInOut' }}
-                className="flex items-center space-x-1.5 bg-amber-50/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-amber-200 shadow-sm"
+                className="flex items-center space-x-1.5 bg-amber-50/95 backdrop-blur-xs px-3 py-1 rounded-full border border-amber-200 shadow-md"
               >
                 {activeProfile === 'partner1' ? (
                   <InvertedChibiGirl isDrinking />
                 ) : (
                   <InvertedChibiBoy isDrinking />
                 )}
-                <span className="text-[10px] font-extrabold text-amber-800">
+                <span className="text-xs font-extrabold text-amber-800">
                   {getPartnerDisplayName(activeProfile)} necesita apapacho ☕
                 </span>
               </motion.div>
             ) : (
-              /* 💑 2-STEP PEEK & 2-STEP HIDE STORYBOARD */
+              /* 💑 2-STEP PEEK & 2-STEP HIDE STORYBOARD (LARGER SIZE) */
               <>
                 {/* 👦 Chibi Boy: 
-                    - 0.0s - 0.08s: y = -32 (escondido)
-                    - 0.08s - 0.16s: y = -14 (asoma MITAD de cara por la izquierda)
-                    - 0.16s - 0.24s: y = -14 (pausa mirando)
+                    - 0.0s - 0.08s: y = -44 (escondido)
+                    - 0.08s - 0.16s: y = -20 (asoma MITAD de cara por la izquierda)
+                    - 0.16s - 0.24s: y = -20 (pausa mirando)
                     - 0.24s - 0.32s: y = 0 (baja completo)
                     - 0.32s - 0.40s: espera a la chica
-                    - 0.40s - 0.58s: se desliza al centro (x: -36 -> -4)
-                    - 0.58s - 0.78s: EL BESO en el centro (x: -4, y: 0)
-                    - 0.78s - 0.88s: suben juntos hasta la MITAD (x: -4, y: -14)
+                    - 0.40s - 0.58s: se desliza al centro (x: -46 -> -5)
+                    - 0.58s - 0.78s: EL BESO en el centro (x: -5, y: 0)
+                    - 0.78s - 0.88s: suben juntos hasta la MITAD (x: -5, y: -20)
                     - 0.88s - 0.94s: pausa juntos en mitad de cara
-                    - 0.94s - 1.0s: suben completamente hasta esconderse (x: -4, y: -32)
+                    - 0.94s - 1.0s: suben completamente hasta esconderse (x: -5, y: -44)
                 */}
                 <motion.div
-                  initial={{ y: -32, x: -36, opacity: 0 }}
+                  initial={{ y: -44, x: -46, opacity: 0 }}
                   animate={{
-                    y: [-32, -14, -14, 0, 0, -4, -4, -14, -14, -32],
-                    x: [-36, -36, -36, -36, -36, -4, -4, -4, -4, -4],
-                    rotate: [0, 0, 0, 0, 0, 10, 10, 0, 0, 0],
+                    y: [-44, -20, -20, 0, 0, -4, -4, -20, -20, -44],
+                    x: [-46, -46, -46, -46, -46, -5, -5, -5, -5, -5],
+                    rotate: [0, 0, 0, 0, 0, 12, 12, 0, 0, 0],
                     opacity: [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
                   }}
                   transition={{
@@ -296,37 +299,37 @@ export default function DynamicIslandCompanion({
                   initial={{ opacity: 0, scale: 0.2, y: -2 }}
                   animate={{
                     opacity: [0, 0, 0, 1, 1, 0],
-                    scale: [0.2, 0.2, 0.2, 1.4, 1.1, 0.3],
-                    y: [-2, -2, -2, 14, 22, 28]
+                    scale: [0.2, 0.2, 0.2, 1.6, 1.2, 0.3],
+                    y: [-2, -2, -2, 18, 28, 36]
                   }}
                   transition={{
                     duration: 5.8,
                     times: [0, 0.48, 0.56, 0.65, 0.76, 0.88],
                     ease: 'easeOut'
                   }}
-                  className="absolute z-20 pointer-events-none text-xs flex items-center space-x-0.5"
+                  className="absolute z-20 pointer-events-none text-base flex items-center space-x-1"
                 >
                   <span>💖</span>
-                  <span className="text-[10px]">✨</span>
+                  <span className="text-xs">✨</span>
                 </motion.div>
 
                 {/* 👧 Chibi Girl: 
-                    - 0.0s - 0.20s: y = -32 (espera)
-                    - 0.20s - 0.28s: y = -14 (asoma MITAD de cara por la derecha)
-                    - 0.28s - 0.36s: y = -14 (pausa mirando)
+                    - 0.0s - 0.20s: y = -44 (espera)
+                    - 0.20s - 0.28s: y = -20 (asoma MITAD de cara por la derecha)
+                    - 0.28s - 0.36s: y = -20 (pausa mirando)
                     - 0.36s - 0.44s: y = 0 (baja completo)
-                    - 0.44s - 0.58s: se desliza al centro (x: 36 -> 4)
-                    - 0.58s - 0.78s: EL BESO en el centro (x: 4, y: 0)
-                    - 0.78s - 0.88s: suben juntos hasta la MITAD (x: 4, y: -14)
+                    - 0.44s - 0.58s: se desliza al centro (x: 46 -> 5)
+                    - 0.58s - 0.78s: EL BESO en el centro (x: 5, y: 0)
+                    - 0.78s - 0.88s: suben juntos hasta la MITAD (x: 5, y: -20)
                     - 0.88s - 0.94s: pausa juntos en mitad de cara
-                    - 0.94s - 1.0s: suben completamente hasta esconderse (x: 4, y: -32)
+                    - 0.94s - 1.0s: suben completamente hasta esconderse (x: 5, y: -44)
                 */}
                 <motion.div
-                  initial={{ y: -32, x: 36, opacity: 0 }}
+                  initial={{ y: -44, x: 46, opacity: 0 }}
                   animate={{
-                    y: [-32, -32, -14, -14, 0, -4, -4, -14, -14, -32],
-                    x: [36, 36, 36, 36, 36, 4, 4, 4, 4, 4],
-                    rotate: [0, 0, 0, 0, 0, -10, -10, 0, 0, 0],
+                    y: [-44, -44, -20, -20, 0, -4, -4, -20, -20, -44],
+                    x: [46, 46, 46, 46, 46, 5, 5, 5, 5, 5],
+                    rotate: [0, 0, 0, 0, 0, -12, -12, 0, 0, 0],
                     opacity: [0, 0, 1, 1, 1, 1, 1, 1, 1, 0]
                   }}
                   transition={{
@@ -348,17 +351,17 @@ export default function DynamicIslandCompanion({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex items-center space-x-1 bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded-full border border-pink-200 shadow-xs text-[10px] font-bold text-pink-600 hover:scale-105 transition-transform"
+            className="flex items-center space-x-1.5 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-full border border-pink-200 shadow-sm text-xs font-bold text-pink-600 hover:scale-105 transition-transform"
           >
             {hasUnreadDedication ? (
               <>
                 <span>💌</span>
-                <span className="text-[9px] font-black">1 Sorpresa</span>
+                <span className="text-[10px] font-black">1 Sorpresa</span>
               </>
             ) : (
               <>
                 <span>☕</span>
-                <span className="text-[9px] font-black">{getPartnerDisplayName(activeProfile)}</span>
+                <span className="text-[10px] font-black">{getPartnerDisplayName(activeProfile)}</span>
               </>
             )}
           </motion.div>
