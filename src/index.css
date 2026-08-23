@@ -63,12 +63,21 @@
   padding-bottom: 12px;
 }
 
+/* Dynamic Island Companion Positioning */
+.companion-island-container {
+  top: 4px;
+}
+
 /* Standalone PWA Only (iOS / Android Added to Home Screen) */
 @media all and (display-mode: standalone) {
   .safe-top-header {
     padding-top: max(calc(env(safe-area-inset-top, 0px) + 14px), 58px) !important;
     min-height: max(calc(env(safe-area-inset-top, 0px) + 68px), 108px) !important;
     padding-bottom: 12px !important;
+  }
+
+  .companion-island-container {
+    top: max(calc(env(safe-area-inset-top, 0px) - 4px), 50px) !important;
   }
 
   .safe-bottom-dock {
@@ -81,6 +90,10 @@
   padding-top: max(calc(env(safe-area-inset-top, 0px) + 14px), 58px) !important;
   min-height: max(calc(env(safe-area-inset-top, 0px) + 68px), 108px) !important;
   padding-bottom: 12px !important;
+}
+
+.pwa-standalone .companion-island-container {
+  top: max(calc(env(safe-area-inset-top, 0px) - 4px), 50px) !important;
 }
 
 .pwa-standalone .safe-bottom-dock {

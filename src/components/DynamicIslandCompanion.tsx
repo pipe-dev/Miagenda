@@ -288,7 +288,7 @@ export default function DynamicIslandCompanion({
   return (
     <div
       onClick={handleCompanionTap}
-      className="absolute top-0.5 left-1/2 -translate-x-1/2 z-30 cursor-pointer select-none flex items-center justify-center pointer-events-auto h-8 px-4 group"
+      className="absolute companion-island-container left-1/2 -translate-x-1/2 z-30 cursor-pointer select-none flex items-center justify-center pointer-events-auto h-8 px-4 group"
       title="Toca para interactuar con tu parejita ✨"
     >
       <AnimatePresence mode="wait">
