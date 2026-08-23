@@ -2,25 +2,25 @@ import { driver, DriveStep } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { hapticService } from './hapticService';
 
-const TOUR_STORAGE_PREFIX = 'daily_delight_tour_seen_';
+const TOUR_STORAGE_PREFIX = 'mi_agenda_tour_screen_seen_';
 
 export type TourScreen = 'today' | 'calendar' | 'tasks' | 'memories';
 
 class TourService {
-  // Check if tour was already shown for this screen
+  // Check if tour was already completed for this specific screen
   public hasSeenTour(screen: TourScreen): boolean {
     if (typeof localStorage === 'undefined') return false;
     return localStorage.getItem(TOUR_STORAGE_PREFIX + screen) === 'true';
   }
 
-  // Mark tour as completed
+  // Mark tour as completed for this specific screen
   public markTourSeen(screen: TourScreen): void {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(TOUR_STORAGE_PREFIX + screen, 'true');
     }
   }
 
-  // Reset all tours so user can re-experience them
+  // Reset all screen tours
   public resetAllTours(): void {
     if (typeof localStorage !== 'undefined') {
       ['today', 'calendar', 'tasks', 'memories'].forEach((s) => {
@@ -29,36 +29,44 @@ class TourService {
     }
   }
 
-  // Launch tour for a specific screen
+  // Launch screen-specific tour
   public startTour(screen: TourScreen, force: boolean = false): void {
     if (!force && this.hasSeenTour(screen)) {
       return;
     }
 
-    const steps = this.getStepsForScreen(screen);
-    if (!steps || steps.length === 0) return;
+    setTimeout(() => {
+      const rawSteps = this.getStepsForScreen(screen);
+      const availableSteps = rawSteps.filter((s) => {
+        if (!s.element) return true;
+        const el = typeof s.element === 'string' ? document.querySelector(s.element) : s.element;
+        return el !== null;
+      });
 
-    hapticService.playLightTap();
+      if (availableSteps.length === 0) return;
 
-    const driverObj = driver({
-      showProgress: true,
-      animate: true,
-      overlayOpacity: 0.65,
-      popoverClass: 'driverjs-candy-theme',
-      nextBtnText: 'Siguiente →',
-      prevBtnText: '← Atrás',
-      doneBtnText: '¡Listo! ✨',
-      onDestroyStarted: () => {
-        this.markTourSeen(screen);
-        driverObj.destroy();
-      },
-      steps
-    });
+      hapticService.playLightTap();
 
-    driverObj.drive();
+      const driverObj = driver({
+        showProgress: true,
+        animate: true,
+        overlayOpacity: 0.65,
+        popoverClass: 'driverjs-candy-theme',
+        nextBtnText: 'Siguiente →',
+        prevBtnText: '← Atrás',
+        doneBtnText: '¡Entendido! ✨',
+        onDestroyStarted: () => {
+          this.markTourSeen(screen);
+          driverObj.destroy();
+        },
+        steps: availableSteps
+      });
+
+      driverObj.drive();
+    }, 450);
   }
 
-  // Define steps per screen
+  // Steps customized specifically per screen
   private getStepsForScreen(screen: TourScreen): DriveStep[] {
     switch (screen) {
       case 'today':
@@ -67,7 +75,7 @@ class TourService {
             element: '#tour-header-settings',
             popover: {
               title: '⚙️ Ajustes & Horarios',
-              description: 'Configura tu hora de despertar (semana y fin de semana), hora de dormir, notificaciones y conexión en pareja.',
+              description: 'Configura tus horas de despertar (semana y fin de semana), hora de acostarte y alarmas.',
               side: 'bottom',
               align: 'start'
             }
@@ -75,8 +83,8 @@ class TourService {
           {
             element: '#tour-header-avatar',
             popover: {
-              title: '👤 Cambiar de Perfil',
-              description: 'Toca tu avatar para alternar de inmediato entre tu espacio y el de tu pareja.',
+              title: '👤 Tu Perfil',
+              description: 'Toca tu avatar en cualquier momento para alternar rápidamente entre tu espacio y el de tu pareja.',
               side: 'bottom',
               align: 'end'
             }
@@ -85,7 +93,7 @@ class TourService {
             element: '#tour-privacy-toggle',
             popover: {
               title: '🔒 Mi Agenda vs Compartido',
-              description: 'Alterna entre tus citas personales y los planes que compartes en pareja.',
+              description: 'Alterna entre tus citas personales y los eventos que compartes en pareja.',
               side: 'bottom',
               align: 'center'
             }
@@ -94,7 +102,7 @@ class TourService {
             element: '#tour-morning-banner',
             popover: {
               title: '☀️ Avance de la Jornada',
-              description: 'Mira el progreso exacto de tu día según tu hora configurada de despertar y acostarte.',
+              description: 'Visualiza el progreso de tu día según tu horario programado de levantarte y dormir.',
               side: 'bottom',
               align: 'center'
             }
@@ -102,8 +110,8 @@ class TourService {
           {
             element: '#tour-today-timeline',
             popover: {
-              title: '📅 Tus Citas de Hoy',
-              description: 'Todas tus citas y recordatorios organizados cronológicamente con alarmas a tu teléfono.',
+              title: '📅 Citas de Hoy',
+              description: 'Tus compromisos organizados por hora. Puedes arrastrar las tarjetas para reordenarlas.',
               side: 'top',
               align: 'center'
             }
@@ -111,8 +119,8 @@ class TourService {
           {
             element: '#tour-add-event-btn',
             popover: {
-              title: '➕ Añadir Nueva Cita',
-              description: 'Crea citas con alarmas, horarios, rutinas repetitivas y notas.',
+              title: '➕ Añadir Cita',
+              description: 'Toca el botón flotante para programar una nueva cita con alarma y recordatorio.',
               side: 'top',
               align: 'center'
             }
@@ -120,21 +128,21 @@ class TourService {
           {
             element: '#tour-bottom-nav',
             popover: {
-              title: '🧭 Menú de Navegación',
-              description: 'Explora el Calendario completo, Tareas & Pastillero, y el Baúl de Recuerdos de Pareja.',
+              title: '🧭 Menú de Pantallas',
+              description: 'Usa esta barra inferior para navegar entre Hoy, Calendario, Tareas y Recuerdos.',
               side: 'top',
               align: 'center'
             }
           }
-        ].filter(s => document.querySelector(s.element as string) !== null);
+        ];
 
       case 'calendar':
         return [
           {
             element: '#tour-cal-view-selector',
             popover: {
-              title: '🗓️ Vista Semana o Mes',
-              description: 'Alterna entre una vista semanal detallada por horas o el calendario mensual completo.',
+              title: '🗓️ Balance Semanal',
+              description: 'Visualiza tus horas ocupadas y los tiempos libres disponibles durante la semana.',
               side: 'bottom',
               align: 'center'
             }
@@ -142,30 +150,21 @@ class TourService {
           {
             element: '#tour-cal-grid',
             popover: {
-              title: '📆 Cuadrícula de Citas',
-              description: 'Toca cualquier día para ver sus eventos programados o planificar una nueva cita.',
+              title: '📆 Cuadrícula de Días',
+              description: 'Toca cualquier día para ver sus eventos o arrastra citas entre días para reprogramarlas.',
               side: 'top',
               align: 'center'
             }
-          },
-          {
-            element: '#tour-privacy-toggle',
-            popover: {
-              title: '🔒 Filtro de Privacidad',
-              description: 'Visualiza únicamente tus eventos privados o el calendario conjunto de ambos.',
-              side: 'bottom',
-              align: 'center'
-            }
           }
-        ].filter(s => document.querySelector(s.element as string) !== null);
+        ];
 
       case 'tasks':
         return [
           {
             element: '#tour-tasks-tabs',
             popover: {
-              title: '📋 3 Pestañas Clave',
-              description: 'Gestiona tus Tareas Personales, el Pastillero Compartido y la Lista del Súper.',
+              title: '📋 3 Secciones Clave',
+              description: 'Alterna fácilmente entre tus Pendientes Personales, Compras del Hogar y el Pastillero de Medicamentos.',
               side: 'bottom',
               align: 'center'
             }
@@ -173,44 +172,35 @@ class TourService {
           {
             element: '#tour-tasks-content',
             popover: {
-              title: '✅ Registro & Check',
-              description: 'Marca tareas completadas, tomas de medicamentos diarios y compras de despensa en vivo.',
+              title: '✅ Registro & Progreso',
+              description: 'Agrega nuevas tareas o marcas las realizadas para llenar tu barra de progreso diaria.',
               side: 'top',
               align: 'center'
             }
           }
-        ].filter(s => document.querySelector(s.element as string) !== null);
+        ];
 
       case 'memories':
         return [
           {
             element: '#tour-vault-dedications',
             popover: {
-              title: '💌 Baúl de Cartitas',
-              description: 'Escribe dedicatorias sorpresa con notas de voz y fotos que se abren automáticamente en el celular de tu pareja.',
+              title: '💖 Espacio de Amor en Pareja',
+              description: 'Explora tu Batería de Energía, Cupones 3D interactivos y el Baúl de Dedicatorias sorpresa.',
               side: 'bottom',
-              align: 'center'
-            }
-          },
-          {
-            element: '#tour-vault-coupons',
-            popover: {
-              title: '🎟️ Cuponera 3D',
-              description: 'Rasca cupones de amor interactivos (masaje, cena, noche de películas) para canjearlos.',
-              side: 'top',
               align: 'center'
             }
           },
           {
             element: '#tour-vault-mood',
             popover: {
-              title: '💖 Sintonizador de Pareja',
-              description: 'Ajusta tu batería emocional en tiempo real y pide apapachos o tiempo a solas.',
+              title: '🔋 Sintonizador de Energía',
+              description: 'Indica tu nivel de batería y lo que necesitas (apapacho, charla o espacio) en tiempo real.',
               side: 'top',
               align: 'center'
             }
           }
-        ].filter(s => document.querySelector(s.element as string) !== null);
+        ];
 
       default:
         return [];

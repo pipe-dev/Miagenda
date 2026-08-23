@@ -294,13 +294,10 @@ export default function App() {
     };
   }, [activeProfile, isWelcomeOpen]);
 
-  // Auto launch screen tour when user enters a view (first time per screen)
+  // Auto launch screen tour when user enters a specific screen (first time per screen)
   useEffect(() => {
-    if (!isWelcomeOpen && !isAnyModalOpen) {
-      const timer = setTimeout(() => {
-        tourService.startTour(currentView, false);
-      }, 900);
-      return () => clearTimeout(timer);
+    if (!isWelcomeOpen && !isEventModalOpen && !isSettingsOpen && !isDedicationOpen && !isMedicationModalOpen) {
+      tourService.startTour(currentView, false);
     }
   }, [currentView, isWelcomeOpen]);
 

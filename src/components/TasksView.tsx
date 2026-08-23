@@ -214,7 +214,7 @@ export default function TasksView({
   return (
     <div className="w-full max-w-3xl mx-auto px-4 pb-32 pt-2">
       {/* 🌟 Segmented Switch: Mis Pendientes vs Compras & Hogar vs Pastillero */}
-      <div className="flex justify-center items-center mb-6">
+      <div id="tour-tasks-tabs" className="flex justify-center items-center mb-6">
         <div className="sunken-well bg-white/75 p-1.5 rounded-full flex items-center space-x-1 border border-white/60 shadow-inner">
           {/* 1. Mis Pendientes */}
           <motion.button
@@ -316,7 +316,7 @@ export default function TasksView({
             </div>
 
             {/* 3D Candy Progress Bar Card */}
-            <div className="plush-card rounded-2xl p-4 border border-white shadow-sm">
+            <div id="tour-tasks-content" className="plush-card rounded-2xl p-4 border border-white shadow-sm">
               <div className="flex justify-between items-center text-xs font-extrabold text-on-surface mb-2">
                 <span>Progreso Personal</span>
                 <span className="text-primary font-black" style={{ color: 'var(--primary)' }}>

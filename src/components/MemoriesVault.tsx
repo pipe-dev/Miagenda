@@ -80,7 +80,7 @@ export default function MemoriesVault({
   return (
     <div className="w-full max-w-3xl mx-auto px-4 pb-32 pt-2">
       {/* 🌟 Segmented Switch: Energía vs Cupones vs Recuerdos */}
-      <div className="flex justify-center items-center mb-6">
+      <div id="tour-vault-dedications" className="flex justify-center items-center mb-6">
         <div className="sunken-well bg-white/75 p-1.5 rounded-full flex items-center space-x-1 border border-white/60 shadow-inner">
           <motion.button
             whileTap={{ scale: 0.94 }}
@@ -157,6 +157,7 @@ export default function MemoriesVault({
       {/* ========================================================= */}
       {tabMode === 'mood' && (
         <motion.div
+          id="tour-vault-mood"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}

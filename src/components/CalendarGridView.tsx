@@ -74,11 +74,11 @@ export default function CalendarGridView({
     const calendarContent = (
     <>
       {/* 📊 Balance de Tiempo Semanal */}
-      <WeeklyTimeBalanceCard
+      <div id="tour-cal-view-selector"><WeeklyTimeBalanceCard
         weekDays={weekDays}
         events={filteredEvents}
         activeTab={activeTab}
-      />
+      /></div>
 
       {/* Drag & Drop Hint */}
       <div className="flex items-center justify-center space-x-1 text-[11px] font-bold text-on-surface-variant/70 mb-4 select-none">
@@ -87,7 +87,7 @@ export default function CalendarGridView({
       </div>
 
       {/* Week Days List - Clean Minimalist with Full Drag & Drop Support */}
-      <div className="space-y-3.5">
+      <div id="tour-cal-grid" className="space-y-3.5">
         {weekDays.map((day, index) => {
           const dateStr = format(day, 'yyyy-MM-dd');
           const dayEvents = filteredEvents.filter((e) => isEventActiveOnDate(e, dateStr));
