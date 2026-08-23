@@ -296,8 +296,11 @@ export default function App() {
 
   // Auto launch screen tour when user enters a specific screen (first time per screen)
   useEffect(() => {
-    if (!isWelcomeOpen && !isEventModalOpen && !isSettingsOpen && !isDedicationOpen && !isMedicationModalOpen) {
-      tourService.startTour(currentView, false);
+    if (!isWelcomeOpen && !isEventModalOpen && !isSettingsOpen && !isDedicationModalOpen) {
+      const timer = setTimeout(() => {
+        tourService.startTour(currentView, false);
+      }, 350);
+      return () => clearTimeout(timer);
     }
   }, [currentView, isWelcomeOpen]);
 

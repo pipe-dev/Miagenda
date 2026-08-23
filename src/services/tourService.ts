@@ -35,6 +35,7 @@ class TourService {
       return;
     }
 
+    // Small delay to ensure all DOM elements are mounted
     setTimeout(() => {
       const rawSteps = this.getStepsForScreen(screen);
       const availableSteps = rawSteps.filter((s) => {
@@ -45,25 +46,32 @@ class TourService {
 
       if (availableSteps.length === 0) return;
 
-      hapticService.playLightTap();
+      try {
+        hapticService.playLightTap();
 
-      const driverObj = driver({
-        showProgress: true,
-        animate: true,
-        overlayOpacity: 0.65,
-        popoverClass: 'driverjs-candy-theme',
-        nextBtnText: 'Siguiente →',
-        prevBtnText: '← Atrás',
-        doneBtnText: '¡Entendido! ✨',
-        onDestroyStarted: () => {
-          this.markTourSeen(screen);
-          driverObj.destroy();
-        },
-        steps: availableSteps
-      });
+        const driverObj = driver({
+          showProgress: true,
+          animate: true,
+          smoothScroll: true,
+          skipMissingElement: true,
+          waitForElement: 2000,
+          overlayOpacity: 0.65,
+          popoverClass: 'driverjs-candy-theme',
+          nextBtnText: 'Siguiente →',
+          prevBtnText: '← Atrás',
+          doneBtnText: '¡Entendido! ✨',
+          onDestroyStarted: () => {
+            this.markTourSeen(screen);
+            driverObj.destroy();
+          },
+          steps: availableSteps
+        });
 
-      driverObj.drive();
-    }, 450);
+        driverObj.drive();
+      } catch (err) {
+        console.error('Error starting driver.js tour:', err);
+      }
+    }, 400);
   }
 
   // Steps customized specifically per screen
