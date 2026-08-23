@@ -11,7 +11,7 @@ const formatTime12H = (time24?: string): string => {
 import React from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { getFirebaseServices } from '../services/firebase';
-import { getProfileConfig, getUserSchedule, saveUserSchedule } from '../services/storageService';
+import { getProfileConfig, getUserSchedule, saveUserSchedule, isCoupleLinked, getDaysTogether } from '../services/storageService';
 import { isFirestoreConfigured, getFirestoreConfig } from '../services/firestoreSync';
 import { hapticService } from '../services/hapticService';
 import { notificationService } from '../services/notificationService';
@@ -414,62 +414,89 @@ export default function SettingsModal({
               </div>
             </div>
 
-            {/* Invitar a Pareja / Código de Pareja */}
-            <div className="plush-card rounded-2xl p-4 border-2 border-pink-100 bg-pink-50/70 space-y-3 shadow-xs">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <span className="text-lg">💑</span>
-                  <div>
-                    <h4 className="text-xs font-bold text-on-surface">Vincular con tu Pareja</h4>
-                    <p className="text-[10px] text-on-surface-variant">
-                      Código de espacio: <strong className="text-primary font-mono">{getProfileConfig().coupleId || 'AMOR-1001'}</strong>
+            {/* Estado de Pareja Conectado / Invitar a Pareja */}
+            {isCoupleLinked() ? (
+              <div className="plush-card rounded-2xl p-4 border-2 border-pink-200/80 bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 space-y-2 shadow-xs text-center">
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center shadow-inner">
+                    <span className="material-symbols-outlined text-[18px]">favorite</span>
+                  </div>
+                  <span className="text-xs font-black text-pink-700 uppercase tracking-wider">
+                    Espacio de Pareja Conectado
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-black text-slate-800 tracking-tight">
+                    {getProfileConfig().partner1Name} & {getProfileConfig().partner2Name}
+                  </h4>
+                  <div className="py-1.5 px-3 bg-white/90 rounded-xl border border-pink-100 shadow-2xs inline-block">
+                    <p className="text-xs font-extrabold text-pink-700 flex items-center justify-center gap-1.5 flex-wrap">
+                      <span>✨ Llevan compartiendo</span>
+                      <span className="text-sm font-black text-pink-600 underline decoration-pink-300 decoration-2">
+                        {getDaysTogether()} {getDaysTogether() === 1 ? 'día' : 'días'}
+                      </span>
+                      <span>la vida juntos</span>
                     </p>
                   </div>
                 </div>
               </div>
+            ) : (
+              <div className="plush-card rounded-2xl p-4 border-2 border-pink-100 bg-pink-50/70 space-y-3 shadow-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg">💑</span>
+                    <div>
+                      <h4 className="text-xs font-bold text-on-surface">Vincular con tu Pareja</h4>
+                      <p className="text-[10px] text-on-surface-variant">
+                        Código de espacio: <strong className="text-primary font-mono">{getProfileConfig().coupleId || 'AMOR-1001'}</strong>
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                <a
-                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
-                    `¡Hola! Creé nuestra agenda compartida en Mi Agenda 💕. Entra aquí para conectarte conmigo: ${window.location.origin}${window.location.pathname}?pareja=${getProfileConfig().coupleId || 'AMOR-1001'}`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => hapticService.playLightTap()}
-                  className="py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold shadow-sm flex items-center justify-center space-x-1.5 transition-all"
-                >
-                  <svg viewBox="0 0 24 24" width={16} height={16} className="fill-current text-white shrink-0" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-5.705 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.842-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
-                  </svg>
-                  <span>Invitar por WhatsApp</span>
-                </a>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                      `¡Hola! Creé nuestra agenda compartida en Mi Agenda 💕. Entra aquí para conectarte conmigo: ${window.location.origin}${window.location.pathname}?pareja=${getProfileConfig().coupleId || 'AMOR-1001'}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => hapticService.playLightTap()}
+                    className="py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold shadow-sm flex items-center justify-center space-x-1.5 transition-all"
+                  >
+                    <svg viewBox="0 0 24 24" width={16} height={16} className="fill-current text-white shrink-0" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-5.705 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.842-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                    </svg>
+                    <span>Invitar por WhatsApp</span>
+                  </a>
 
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    const link = `${window.location.origin}${window.location.pathname}?pareja=${getProfileConfig().coupleId || 'AMOR-1001'}`;
-                    navigator.clipboard.writeText(link);
-                    hapticService.playSuccess();
-                    const target = e.currentTarget;
-                    const span = target.querySelector('.copy-text');
-                    if (span) span.textContent = '¡Copiado!';
-                    setTimeout(() => {
-                      if (span) span.textContent = 'Copiar Enlace';
-                    }, 2400);
-                  }}
-                  className="py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 text-on-surface text-xs font-bold border border-slate-200 shadow-xs flex items-center justify-center space-x-1.5 transition-colors"
-                >
-                  <LordIcon
-                    src={LORDICON_ICONS.link}
-                    trigger="hover"
-                    size={16}
-                    primaryColor="#af0a78"
-                    secondaryColor="#007dab"
-                  />
-                  <span className="copy-text">Copiar Enlace</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      const link = `${window.location.origin}${window.location.pathname}?pareja=${getProfileConfig().coupleId || 'AMOR-1001'}`;
+                      navigator.clipboard.writeText(link);
+                      hapticService.playSuccess();
+                      const target = e.currentTarget;
+                      const span = target.querySelector('.copy-text');
+                      if (span) span.textContent = '¡Copiado!';
+                      setTimeout(() => {
+                        if (span) span.textContent = 'Copiar Enlace';
+                      }, 2400);
+                    }}
+                    className="py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 text-on-surface text-xs font-bold border border-slate-200 shadow-xs flex items-center justify-center space-x-1.5 transition-colors"
+                  >
+                    <LordIcon
+                      src={LORDICON_ICONS.link}
+                      trigger="hover"
+                      size={16}
+                      primaryColor="#af0a78"
+                      secondaryColor="#007dab"
+                    />
+                    <span className="copy-text">Copiar Enlace</span>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Editar Perfiles y Nombres */}
             {onOpenProfileSetup && (

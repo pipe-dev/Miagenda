@@ -151,17 +151,12 @@ const InvertedChibiGirl = ({
 export default function DynamicIslandCompanion({
   activeProfile,
   hasUnreadDedication = false,
-  partnerMood,
   todayEvents = [],
-  onOpenSurprise,
-  onOpenMoodCheckin
+  onOpenSurprise
 }: DynamicIslandCompanionProps) {
   const [cycleKey, setCycleKey] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const animTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const isPartnerLowBattery = Boolean(partnerMood?.battery && partnerMood.battery > 0 && partnerMood.battery <= 35);
-  const hasSharedEventToday = todayEvents.some((e) => e.privacy === 'shared');
 
   // Trigger storyboard:
   // 1. Asoma 1 (mitad -> pausa -> completo)
@@ -204,12 +199,10 @@ export default function DynamicIslandCompanion({
 
     if (hasUnreadDedication && onOpenSurprise) {
       onOpenSurprise();
-    } else if (isPartnerLowBattery && onOpenMoodCheckin) {
-      onOpenMoodCheckin();
     }
   };
 
-  const shouldShowNotificationPeek = !isVisible && (hasUnreadDedication || isPartnerLowBattery);
+  const shouldShowNotificationPeek = !isVisible && hasUnreadDedication;
 
   return (
     <div
@@ -239,26 +232,6 @@ export default function DynamicIslandCompanion({
                 )}
                 <span className="text-[11px] font-black text-pink-700 animate-pulse">
                   ¡Tienes una cartita! 💌
-                </span>
-              </motion.div>
-            ) : isPartnerLowBattery ? (
-              /* ☕ Partner Low battery cozy coffee */
-              <motion.div
-                initial={{ y: -38, opacity: 0 }}
-                animate={{
-                  y: [-38, -17, -17, 0, 0, -17, -38],
-                  opacity: [0, 1, 1, 1, 1, 1, 0]
-                }}
-                transition={{ duration: 5.8, times: [0, 0.12, 0.22, 0.35, 0.82, 0.92, 1], ease: 'easeInOut' }}
-                className="flex items-center space-x-1.5 bg-amber-50/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-amber-200 shadow-md"
-              >
-                {activeProfile === 'partner1' ? (
-                  <InvertedChibiGirl isDrinking />
-                ) : (
-                  <InvertedChibiBoy isDrinking />
-                )}
-                <span className="text-[11px] font-extrabold text-amber-800">
-                  {getPartnerDisplayName(activeProfile)} necesita apapacho ☕
                 </span>
               </motion.div>
             ) : (

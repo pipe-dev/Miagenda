@@ -40,10 +40,8 @@ export default function Header({
       <DynamicIslandCompanion
         activeProfile={activeProfile}
         hasUnreadDedication={hasUnreadDedication}
-        partnerMood={partnerMood}
         todayEvents={todayEvents}
         onOpenSurprise={onOpenSurprise}
-        onOpenMoodCheckin={onOpenMoodCheckin}
       />
 
       <div className="w-full max-w-4xl mx-auto flex justify-between items-center min-h-[48px] relative z-10">
