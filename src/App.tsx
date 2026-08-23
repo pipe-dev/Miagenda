@@ -655,6 +655,7 @@ export default function App() {
 
   const currentProfileColor = getUserProfileColor(activeProfile);
   const themeClass = currentProfileColor === 'blue' ? 'theme-male' : 'theme-female';
+  const hasUnread = Boolean(getPendingSurprise(activeProfile));
 
   return (
     <div
