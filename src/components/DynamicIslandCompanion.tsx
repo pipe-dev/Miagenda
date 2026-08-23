@@ -13,8 +13,8 @@ interface DynamicIslandCompanionProps {
   onOpenMoodCheckin?: () => void;
 }
 
-// Chibi Boy Peeking Down from Island (Head + Little Hands)
-const ChibiBoyPeeker = ({
+// Inverted Chibi Boy Peeking Down from Island (Upside down from top rim)
+const InvertedChibiBoy = ({
   isHoldingLetter = false,
   isDrinking = false
 }: {
@@ -22,12 +22,9 @@ const ChibiBoyPeeker = ({
   isDrinking?: boolean;
 }) => {
   return (
-    <div className="relative w-8 h-8 select-none pointer-events-none drop-shadow-md flex items-center justify-center">
+    <div className="relative w-8 h-8 select-none pointer-events-none drop-shadow-md flex items-center justify-center rotate-180">
       <svg viewBox="0 0 44 44" className="w-8 h-8 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Soft shadow */}
-        <ellipse cx="22" cy="38" rx="9" ry="2" fill="rgba(0,0,0,0.12)" />
-
-        {/* Cute Head hanging down */}
+        {/* Cute Head */}
         <circle cx="22" cy="20" r="13" fill="#ffebd3" stroke="#ffffff" strokeWidth="1.6" />
 
         {/* Boy styled hair */}
@@ -49,11 +46,11 @@ const ChibiBoyPeeker = ({
         {/* Cute Smile */}
         <path d="M20 24C21 25.5 23 25.5 24 24" stroke="#0f172a" strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* Tiny hands holding the island edge */}
-        <ellipse cx="12" cy="8" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
-        <ellipse cx="32" cy="8" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
+        {/* Little hands gripping the island edge */}
+        <ellipse cx="12" cy="7" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
+        <ellipse cx="32" cy="7" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
 
-        {/* Little blue collar */}
+        {/* Little blue shirt collar */}
         <path d="M18 31L22 35L26 31" fill="#0284c7" stroke="#ffffff" strokeWidth="1" />
 
         {/* Letter Prop */}
@@ -70,7 +67,6 @@ const ChibiBoyPeeker = ({
           <g transform="translate(24, 22)">
             <rect x="0" y="0" width="8" height="10" rx="2" fill="#d97706" stroke="#ffffff" strokeWidth="1" />
             <path d="M8 2.5C10 2.5 10 7.5 8 7.5" stroke="#ffffff" strokeWidth="1.2" fill="none" />
-            <path d="M2 -3C1 -1 4 -2 3 0" stroke="#ffffff" strokeWidth="0.9" strokeLinecap="round" opacity="0.8" />
           </g>
         )}
       </svg>
@@ -78,8 +74,8 @@ const ChibiBoyPeeker = ({
   );
 };
 
-// Chibi Girl Peeking Down from Island (Head + Ribbon + Little Hands)
-const ChibiGirlPeeker = ({
+// Inverted Chibi Girl Peeking Down from Island (Upside down from top rim)
+const InvertedChibiGirl = ({
   isHoldingLetter = false,
   isDrinking = false
 }: {
@@ -87,11 +83,8 @@ const ChibiGirlPeeker = ({
   isDrinking?: boolean;
 }) => {
   return (
-    <div className="relative w-8 h-8 select-none pointer-events-none drop-shadow-md flex items-center justify-center">
+    <div className="relative w-8 h-8 select-none pointer-events-none drop-shadow-md flex items-center justify-center rotate-180">
       <svg viewBox="0 0 44 44" className="w-8 h-8 overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Soft shadow */}
-        <ellipse cx="22" cy="38" rx="9" ry="2" fill="rgba(0,0,0,0.12)" />
-
         {/* Hair flowing down */}
         <path d="M10 18C10 26 12 34 12 34C12 34 32 34 32 34C32 34 34 26 34 18" fill="#d97706" />
 
@@ -124,11 +117,11 @@ const ChibiGirlPeeker = ({
         {/* Cute Smile */}
         <path d="M20 24C21 25.5 23 25.5 24 24" stroke="#451a03" strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* Tiny hands holding the island edge */}
-        <ellipse cx="12" cy="8" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
-        <ellipse cx="32" cy="8" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
+        {/* Little hands gripping the island edge */}
+        <ellipse cx="12" cy="7" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
+        <ellipse cx="32" cy="7" rx="2.5" ry="2" fill="#ffebd3" stroke="#ffffff" strokeWidth="1" />
 
-        {/* Little pink collar */}
+        {/* Little pink dress collar */}
         <path d="M18 31L22 35L26 31" fill="#ec4899" stroke="#ffffff" strokeWidth="1" />
 
         {/* Letter Prop */}
@@ -145,7 +138,6 @@ const ChibiGirlPeeker = ({
           <g transform="translate(24, 22)">
             <rect x="0" y="0" width="8" height="10" rx="2" fill="#ec4899" stroke="#ffffff" strokeWidth="1" />
             <path d="M8 2.5C10 2.5 10 7.5 8 7.5" stroke="#ffffff" strokeWidth="1.2" fill="none" />
-            <path d="M2 -3C1 -1 4 -2 3 0" stroke="#ffffff" strokeWidth="0.9" strokeLinecap="round" opacity="0.8" />
           </g>
         )}
       </svg>
@@ -168,39 +160,39 @@ export default function DynamicIslandCompanion({
   const isPartnerLowBattery = Boolean(partnerMood?.battery && partnerMood.battery > 0 && partnerMood.battery <= 35);
   const hasSharedEventToday = todayEvents.some((e) => e.privacy === 'shared');
 
-  // Trigger full animation sequence (5.5 seconds)
-  const triggerFullAnimation = () => {
+  // Trigger storyboard: 1. Asoma 1 luego el otro -> 2. Salen a juntarse -> 3. Beso con corazón -> 4. Suben a esconderse juntos
+  const triggerStorySequence = () => {
     setIsVisible(true);
     setCycleKey((prev) => prev + 1);
 
     if (animTimerRef.current) clearTimeout(animTimerRef.current);
 
-    // Hide cleanly after 5.6 seconds when animation completes
+    // Sequence runs for 5.2 seconds then hides cleanly
     animTimerRef.current = setTimeout(() => {
       setIsVisible(false);
-    }, 5600);
+    }, 5300);
   };
 
-  // 1. On Mount: trigger full peek, meet, kiss, hide sequence
+  // 1. On Mount: trigger full storyboard
   useEffect(() => {
-    triggerFullAnimation();
+    triggerStorySequence();
     return () => {
       if (animTimerRef.current) clearTimeout(animTimerRef.current);
     };
   }, []);
 
-  // 2. Periodic greeting every 2 minutes
+  // 2. Periodic greeting every 2.5 minutes
   useEffect(() => {
     const interval = setInterval(() => {
-      triggerFullAnimation();
-    }, 120000);
+      triggerStorySequence();
+    }, 150000);
     return () => clearInterval(interval);
   }, []);
 
-  // 3. Handle user tap: immediately trigger the peek & kiss animation
+  // 3. Handle user tap: re-trigger the full sequence with haptics
   const handleCompanionTap = () => {
     hapticService.playPhysicalThud(0.28, 0.18);
-    triggerFullAnimation();
+    triggerStorySequence();
 
     if (hasUnreadDedication && onOpenSurprise) {
       onOpenSurprise();
@@ -215,100 +207,90 @@ export default function DynamicIslandCompanion({
     <div
       onClick={handleCompanionTap}
       className="absolute companion-island-container left-1/2 -translate-x-1/2 z-30 cursor-pointer select-none flex items-center justify-center pointer-events-auto h-8 px-4"
-      title="Toca para ver el besito de la parejita ✨"
+      title="Toca para ver a la parejita asomarse y darse el beso ✨"
     >
       <AnimatePresence mode="wait">
-        {/* 🌟 1. FULL ANIMATED SEQUENCE: PEEK -> SLIDE TO CENTER -> KISS -> HIDE */}
+        {/* 🌟 1. STORYBOARD ANIMATION */}
         {isVisible ? (
-          <div key={`cycle-${cycleKey}`} className="relative flex items-center justify-center w-36 h-8">
+          <div key={`story-cycle-${cycleKey}`} className="relative flex items-center justify-center w-36 h-8 overflow-visible">
             {hasUnreadDedication ? (
-              /* 💌 Love letter delivery */
+              /* 💌 Love letter delivery inverted peek */
               <motion.div
-                initial={{ y: -25, opacity: 0 }}
+                initial={{ y: -30, opacity: 0 }}
                 animate={{
-                  y: [-25, 0, 0, 0, -25],
+                  y: [-30, 0, 0, 0, -30],
                   opacity: [0, 1, 1, 1, 0]
                 }}
-                transition={{ duration: 5.5, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
+                transition={{ duration: 5.2, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
                 className="flex items-center space-x-1 bg-pink-100/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-pink-300 shadow-sm"
               >
                 {activeProfile === 'partner1' ? (
-                  <ChibiGirlPeeker isHoldingLetter />
+                  <InvertedChibiGirl isHoldingLetter />
                 ) : (
-                  <ChibiBoyPeeker isHoldingLetter />
+                  <InvertedChibiBoy isHoldingLetter />
                 )}
                 <span className="text-[10px] font-black text-pink-700 animate-pulse">
                   ¡Tienes una cartita! 💌
                 </span>
               </motion.div>
             ) : isPartnerLowBattery ? (
-              /* ☕ Partner Low battery cozy cup */
+              /* ☕ Partner Low battery cozy coffee */
               <motion.div
-                initial={{ y: -25, opacity: 0 }}
+                initial={{ y: -30, opacity: 0 }}
                 animate={{
-                  y: [-25, 0, 0, 0, -25],
+                  y: [-30, 0, 0, 0, -30],
                   opacity: [0, 1, 1, 1, 0]
                 }}
-                transition={{ duration: 5.5, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
+                transition={{ duration: 5.2, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
                 className="flex items-center space-x-1.5 bg-amber-50/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-amber-200 shadow-sm"
               >
                 {activeProfile === 'partner1' ? (
-                  <ChibiGirlPeeker isDrinking />
+                  <InvertedChibiGirl isDrinking />
                 ) : (
-                  <ChibiBoyPeeker isDrinking />
+                  <InvertedChibiBoy isDrinking />
                 )}
                 <span className="text-[10px] font-extrabold text-amber-800">
                   {getPartnerDisplayName(activeProfile)} necesita apapacho ☕
                 </span>
               </motion.div>
-            ) : hasSharedEventToday ? (
-              /* 🎈 Shared date celebration */
-              <motion.div
-                initial={{ y: -25, opacity: 0 }}
-                animate={{
-                  y: [-25, 0, 0, 0, -25],
-                  opacity: [0, 1, 1, 1, 0]
-                }}
-                transition={{ duration: 5.5, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
-                className="flex items-center space-x-2 bg-purple-50/90 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-purple-200 shadow-sm"
-              >
-                <ChibiBoyPeeker />
-                <span className="text-xs">🎈</span>
-                <ChibiGirlPeeker />
-              </motion.div>
             ) : (
-              /* 💑 The Romantic Kiss Flow */
+              /* 💑 THE 4-STEP STORYBOARD */
               <>
-                {/* 👦 Chibi Boy: Peeks down on left, slides to center, tilts for kiss, hides */}
+                {/* 👦 Chibi Boy: 
+                    1. Asoma primero por la izquierda (y: -30 -> 0 at x: -36)
+                    2. Sale a juntarse al centro (x: -36 -> -4)
+                    3. Se dan el beso (x: -4, y: 0)
+                    4. Suben a esconderse JUNTOS al centro (x: -4, y: 0 -> -35)
+                */}
                 <motion.div
-                  initial={{ y: -25, x: -38, opacity: 0, rotate: 0 }}
+                  initial={{ y: -32, x: -36, opacity: 0 }}
                   animate={{
-                    y: [-25, 0, 0, 0, 0, -25],
-                    x: [-38, -38, -4, -4, -30, -30],
-                    rotate: [0, 0, 10, 10, 0, 0],
+                    y: [-32, 0, 0, 0, 0, -32],
+                    x: [-36, -36, -36, -4, -4, -4],
+                    rotate: [0, 0, 0, 10, 10, 0],
                     opacity: [0, 1, 1, 1, 1, 0]
                   }}
                   transition={{
-                    duration: 5.5,
-                    times: [0, 0.15, 0.42, 0.78, 0.92, 1],
+                    duration: 5.2,
+                    times: [0, 0.15, 0.32, 0.58, 0.82, 1],
                     ease: 'easeInOut'
                   }}
                   className="absolute"
                 >
-                  <ChibiBoyPeeker />
+                  <InvertedChibiBoy />
                 </motion.div>
 
                 {/* 💖 Floating Heart Burst during kiss */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.2, y: 4 }}
+                  initial={{ opacity: 0, scale: 0.2, y: -2 }}
                   animate={{
-                    opacity: [0, 0, 1, 1, 0],
-                    scale: [0.2, 0.2, 1.4, 1.1, 0.4],
-                    y: [4, 4, -12, -20, -26]
+                    opacity: [0, 0, 0, 1, 1, 0],
+                    scale: [0.2, 0.2, 0.2, 1.4, 1.1, 0.3],
+                    y: [-2, -2, -2, 14, 22, 28]
                   }}
                   transition={{
-                    duration: 5.5,
-                    times: [0, 0.38, 0.52, 0.75, 0.88],
+                    duration: 5.2,
+                    times: [0, 0.45, 0.54, 0.65, 0.82, 0.95],
                     ease: 'easeOut'
                   }}
                   className="absolute z-20 pointer-events-none text-xs flex items-center space-x-0.5"
@@ -317,23 +299,28 @@ export default function DynamicIslandCompanion({
                   <span className="text-[10px]">✨</span>
                 </motion.div>
 
-                {/* 👧 Chibi Girl: Peeks down on right, slides to center, tilts for kiss, hides */}
+                {/* 👧 Chibi Girl: 
+                    1. Asoma DESPUÉS por la derecha (y: -30 -> 0 at x: 36, starts at 0.16)
+                    2. Sale a juntarse al centro (x: 36 -> 4)
+                    3. Se dan el beso (x: 4, y: 0)
+                    4. Suben a esconderse JUNTOS al centro (x: 4, y: 0 -> -35)
+                */}
                 <motion.div
-                  initial={{ y: -25, x: 38, opacity: 0, rotate: 0 }}
+                  initial={{ y: -32, x: 36, opacity: 0 }}
                   animate={{
-                    y: [-25, 0, 0, 0, 0, -25],
-                    x: [38, 38, 4, 4, 30, 30],
-                    rotate: [0, 0, -10, -10, 0, 0],
-                    opacity: [0, 1, 1, 1, 1, 0]
+                    y: [-32, -32, 0, 0, 0, -32],
+                    x: [36, 36, 36, 4, 4, 4],
+                    rotate: [0, 0, 0, -10, -10, 0],
+                    opacity: [0, 0, 1, 1, 1, 0]
                   }}
                   transition={{
-                    duration: 5.5,
-                    times: [0, 0.15, 0.42, 0.78, 0.92, 1],
+                    duration: 5.2,
+                    times: [0, 0.16, 0.34, 0.58, 0.82, 1],
                     ease: 'easeInOut'
                   }}
                   className="absolute"
                 >
-                  <ChibiGirlPeeker />
+                  <InvertedChibiGirl />
                 </motion.div>
               </>
             )}
