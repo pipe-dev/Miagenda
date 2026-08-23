@@ -62,7 +62,7 @@ export default function ProfileModal({
   // Handle Remove Photo
   const handleRemovePhoto = () => {
     hapticService.playWarning();
-    setPhotoUrl(undefined);
+    setPhotoUrl('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -71,17 +71,18 @@ export default function ProfileModal({
   // Handle Save
   const handleSave = () => {
     hapticService.playSuccess();
+    const cleanPhoto = photoUrl && photoUrl.trim().length > 0 ? photoUrl.trim() : '';
     if (activeProfile === 'partner1') {
       saveProfileConfig({
         partner1Name: name.trim() || 'Tú',
         partner1Color: color,
-        partner1PhotoUrl: photoUrl
+        partner1PhotoUrl: cleanPhoto
       });
     } else {
       saveProfileConfig({
         partner2Name: name.trim() || 'Pareja',
         partner2Color: color,
-        partner2PhotoUrl: photoUrl
+        partner2PhotoUrl: cleanPhoto
       });
     }
     onProfileUpdated();

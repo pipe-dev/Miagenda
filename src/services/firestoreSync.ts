@@ -469,7 +469,12 @@ export const syncProfileConfigToCloud = async (config: ProfileConfig) => {
     const { db, isConfigured } = getFirebaseServices();
     if (!db || !isConfigured) return;
     const spaceId = config.coupleId || getSpaceId();
-    await setDoc(doc(db, 'couples', spaceId, 'config', 'profiles'), config);
+    const cloudPayload = {
+      ...config,
+      partner1PhotoUrl: config.partner1PhotoUrl && config.partner1PhotoUrl.trim().length > 0 ? config.partner1PhotoUrl.trim() : null,
+      partner2PhotoUrl: config.partner2PhotoUrl && config.partner2PhotoUrl.trim().length > 0 ? config.partner2PhotoUrl.trim() : null
+    };
+    await setDoc(doc(db, 'couples', spaceId, 'config', 'profiles'), cloudPayload);
   });
 };
 

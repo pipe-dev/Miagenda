@@ -305,6 +305,7 @@ export default function App() {
 
     const unsubProfile = subscribeToCloudProfileConfig((cloudConfig) => {
       localStorage.setItem('daily_delight_profile_config_v1', JSON.stringify(cloudConfig));
+      setProfileVersion((v) => v + 1);
     });
 
     return () => {

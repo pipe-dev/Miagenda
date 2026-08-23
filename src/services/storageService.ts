@@ -272,8 +272,8 @@ export const getProfileConfig = (): ProfileConfig => {
         partner2Name: p2,
         partner1Color: parsed.partner1Color || 'blue',
         partner2Color: parsed.partner2Color || 'pink',
-        partner1PhotoUrl: parsed.partner1PhotoUrl || undefined,
-        partner2PhotoUrl: parsed.partner2PhotoUrl || undefined,
+        partner1PhotoUrl: (parsed.partner1PhotoUrl && typeof parsed.partner1PhotoUrl === 'string' && parsed.partner1PhotoUrl.trim().length > 0) ? parsed.partner1PhotoUrl.trim() : undefined,
+        partner2PhotoUrl: (parsed.partner2PhotoUrl && typeof parsed.partner2PhotoUrl === 'string' && parsed.partner2PhotoUrl.trim().length > 0) ? parsed.partner2PhotoUrl.trim() : undefined,
         activeProfile: active,
         isSetupComplete: Boolean(parsed.isSetupComplete || (p1 && p1 !== 'Tú') || (p2 && p2 !== 'Pareja')),
         coupleId: parsed.coupleId || coupleId,
@@ -320,8 +320,19 @@ export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfi
   const cId = config.coupleId || current.coupleId || getCoupleId();
   saveCoupleId(cId);
 
-  const p1Photo = config.partner1PhotoUrl !== undefined ? config.partner1PhotoUrl : current.partner1PhotoUrl;
-  const p2Photo = config.partner2PhotoUrl !== undefined ? config.partner2PhotoUrl : current.partner2PhotoUrl;
+  let p1Photo: string | undefined = current.partner1PhotoUrl;
+  if ('partner1PhotoUrl' in config) {
+    p1Photo = (config.partner1PhotoUrl && typeof config.partner1PhotoUrl === 'string' && config.partner1PhotoUrl.trim().length > 0) 
+      ? config.partner1PhotoUrl.trim() 
+      : undefined;
+  }
+
+  let p2Photo: string | undefined = current.partner2PhotoUrl;
+  if ('partner2PhotoUrl' in config) {
+    p2Photo = (config.partner2PhotoUrl && typeof config.partner2PhotoUrl === 'string' && config.partner2PhotoUrl.trim().length > 0) 
+      ? config.partner2PhotoUrl.trim() 
+      : undefined;
+  }
 
   const fullConfig: ProfileConfig = {
     partner1Name: p1,
@@ -399,12 +410,13 @@ export const getUserPhotoUrl = (profile: UserProfile): string | undefined => {
 };
 
 // Helper: Save or delete user's avatar photo URL
-export const saveUserPhotoUrl = (profile: UserProfile, photoUrl: string | undefined): void => {
+export const saveUserPhotoUrl = (profile: UserProfile, photoUrl: string | null | undefined): void => {
   const config = getProfileConfig();
+  const cleanUrl = photoUrl && typeof photoUrl === 'string' && photoUrl.trim().length > 0 ? photoUrl.trim() : undefined;
   if (profile === 'partner1') {
-    saveProfileConfig({ ...config, partner1PhotoUrl: photoUrl });
+    saveProfileConfig({ ...config, partner1PhotoUrl: cleanUrl });
   } else {
-    saveProfileConfig({ ...config, partner2PhotoUrl: photoUrl });
+    saveProfileConfig({ ...config, partner2PhotoUrl: cleanUrl });
   }
 };
 
