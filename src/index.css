@@ -77,7 +77,7 @@
   }
 
   .companion-island-container {
-    top: max(calc(env(safe-area-inset-top, 0px) - 4px), 50px) !important;
+    top: max(calc(env(safe-area-inset-top, 0px) - 14px), 43px) !important;
   }
 
   .safe-bottom-dock {
@@ -93,7 +93,7 @@
 }
 
 .pwa-standalone .companion-island-container {
-  top: max(calc(env(safe-area-inset-top, 0px) - 4px), 50px) !important;
+  top: max(calc(env(safe-area-inset-top, 0px) - 14px), 43px) !important;
 }
 
 .pwa-standalone .safe-bottom-dock {

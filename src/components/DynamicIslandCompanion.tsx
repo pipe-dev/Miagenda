@@ -13,7 +13,7 @@ interface DynamicIslandCompanionProps {
   onOpenMoodCheckin?: () => void;
 }
 
-// Inverted Chibi Boy Peeking Down from Island (Upside down from top rim)
+// Inverted Chibi Boy Peeking Down from Island (Upside down with hands holding the island edge)
 const InvertedChibiBoy = ({
   isHoldingLetter = false,
   isDrinking = false
@@ -74,7 +74,7 @@ const InvertedChibiBoy = ({
   );
 };
 
-// Inverted Chibi Girl Peeking Down from Island (Upside down from top rim)
+// Inverted Chibi Girl Peeking Down from Island (Upside down with hands holding the island edge)
 const InvertedChibiGirl = ({
   isHoldingLetter = false,
   isDrinking = false
@@ -160,17 +160,22 @@ export default function DynamicIslandCompanion({
   const isPartnerLowBattery = Boolean(partnerMood?.battery && partnerMood.battery > 0 && partnerMood.battery <= 35);
   const hasSharedEventToday = todayEvents.some((e) => e.privacy === 'shared');
 
-  // Trigger storyboard: 1. Asoma 1 luego el otro -> 2. Salen a juntarse -> 3. Beso con corazón -> 4. Suben a esconderse juntos
+  // Trigger storyboard:
+  // 1. Asoma 1 (mitad -> pausa -> completo)
+  // 2. Asoma el otro (mitad -> pausa -> completo)
+  // 3. Salen a juntarse al centro
+  // 4. Beso con corazón
+  // 5. Se esconden hasta la mitad juntos (pausa) y luego desaparecen
   const triggerStorySequence = () => {
     setIsVisible(true);
     setCycleKey((prev) => prev + 1);
 
     if (animTimerRef.current) clearTimeout(animTimerRef.current);
 
-    // Sequence runs for 5.2 seconds then hides cleanly
+    // Sequence runs for 6.0 seconds then hides cleanly
     animTimerRef.current = setTimeout(() => {
       setIsVisible(false);
-    }, 5300);
+    }, 6000);
   };
 
   // 1. On Mount: trigger full storyboard
@@ -216,12 +221,12 @@ export default function DynamicIslandCompanion({
             {hasUnreadDedication ? (
               /* 💌 Love letter delivery inverted peek */
               <motion.div
-                initial={{ y: -30, opacity: 0 }}
+                initial={{ y: -32, opacity: 0 }}
                 animate={{
-                  y: [-30, 0, 0, 0, -30],
-                  opacity: [0, 1, 1, 1, 0]
+                  y: [-32, -14, -14, 0, 0, -14, -32],
+                  opacity: [0, 1, 1, 1, 1, 1, 0]
                 }}
-                transition={{ duration: 5.2, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
+                transition={{ duration: 5.8, times: [0, 0.12, 0.22, 0.35, 0.82, 0.92, 1], ease: 'easeInOut' }}
                 className="flex items-center space-x-1 bg-pink-100/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-pink-300 shadow-sm"
               >
                 {activeProfile === 'partner1' ? (
@@ -236,12 +241,12 @@ export default function DynamicIslandCompanion({
             ) : isPartnerLowBattery ? (
               /* ☕ Partner Low battery cozy coffee */
               <motion.div
-                initial={{ y: -30, opacity: 0 }}
+                initial={{ y: -32, opacity: 0 }}
                 animate={{
-                  y: [-30, 0, 0, 0, -30],
-                  opacity: [0, 1, 1, 1, 0]
+                  y: [-32, -14, -14, 0, 0, -14, -32],
+                  opacity: [0, 1, 1, 1, 1, 1, 0]
                 }}
-                transition={{ duration: 5.2, times: [0, 0.15, 0.85, 0.95, 1], ease: 'easeInOut' }}
+                transition={{ duration: 5.8, times: [0, 0.12, 0.22, 0.35, 0.82, 0.92, 1], ease: 'easeInOut' }}
                 className="flex items-center space-x-1.5 bg-amber-50/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-amber-200 shadow-sm"
               >
                 {activeProfile === 'partner1' ? (
@@ -254,25 +259,31 @@ export default function DynamicIslandCompanion({
                 </span>
               </motion.div>
             ) : (
-              /* 💑 THE 4-STEP STORYBOARD */
+              /* 💑 2-STEP PEEK & 2-STEP HIDE STORYBOARD */
               <>
                 {/* 👦 Chibi Boy: 
-                    1. Asoma primero por la izquierda (y: -30 -> 0 at x: -36)
-                    2. Sale a juntarse al centro (x: -36 -> -4)
-                    3. Se dan el beso (x: -4, y: 0)
-                    4. Suben a esconderse JUNTOS al centro (x: -4, y: 0 -> -35)
+                    - 0.0s - 0.08s: y = -32 (escondido)
+                    - 0.08s - 0.16s: y = -14 (asoma MITAD de cara por la izquierda)
+                    - 0.16s - 0.24s: y = -14 (pausa mirando)
+                    - 0.24s - 0.32s: y = 0 (baja completo)
+                    - 0.32s - 0.40s: espera a la chica
+                    - 0.40s - 0.58s: se desliza al centro (x: -36 -> -4)
+                    - 0.58s - 0.78s: EL BESO en el centro (x: -4, y: 0)
+                    - 0.78s - 0.88s: suben juntos hasta la MITAD (x: -4, y: -14)
+                    - 0.88s - 0.94s: pausa juntos en mitad de cara
+                    - 0.94s - 1.0s: suben completamente hasta esconderse (x: -4, y: -32)
                 */}
                 <motion.div
                   initial={{ y: -32, x: -36, opacity: 0 }}
                   animate={{
-                    y: [-32, 0, 0, 0, 0, -32],
-                    x: [-36, -36, -36, -4, -4, -4],
-                    rotate: [0, 0, 0, 10, 10, 0],
-                    opacity: [0, 1, 1, 1, 1, 0]
+                    y: [-32, -14, -14, 0, 0, -4, -4, -14, -14, -32],
+                    x: [-36, -36, -36, -36, -36, -4, -4, -4, -4, -4],
+                    rotate: [0, 0, 0, 0, 0, 10, 10, 0, 0, 0],
+                    opacity: [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
                   }}
                   transition={{
-                    duration: 5.2,
-                    times: [0, 0.15, 0.32, 0.58, 0.82, 1],
+                    duration: 5.8,
+                    times: [0, 0.08, 0.16, 0.24, 0.38, 0.56, 0.76, 0.86, 0.93, 1],
                     ease: 'easeInOut'
                   }}
                   className="absolute"
@@ -289,8 +300,8 @@ export default function DynamicIslandCompanion({
                     y: [-2, -2, -2, 14, 22, 28]
                   }}
                   transition={{
-                    duration: 5.2,
-                    times: [0, 0.45, 0.54, 0.65, 0.82, 0.95],
+                    duration: 5.8,
+                    times: [0, 0.48, 0.56, 0.65, 0.76, 0.88],
                     ease: 'easeOut'
                   }}
                   className="absolute z-20 pointer-events-none text-xs flex items-center space-x-0.5"
@@ -300,22 +311,27 @@ export default function DynamicIslandCompanion({
                 </motion.div>
 
                 {/* 👧 Chibi Girl: 
-                    1. Asoma DESPUÉS por la derecha (y: -30 -> 0 at x: 36, starts at 0.16)
-                    2. Sale a juntarse al centro (x: 36 -> 4)
-                    3. Se dan el beso (x: 4, y: 0)
-                    4. Suben a esconderse JUNTOS al centro (x: 4, y: 0 -> -35)
+                    - 0.0s - 0.20s: y = -32 (espera)
+                    - 0.20s - 0.28s: y = -14 (asoma MITAD de cara por la derecha)
+                    - 0.28s - 0.36s: y = -14 (pausa mirando)
+                    - 0.36s - 0.44s: y = 0 (baja completo)
+                    - 0.44s - 0.58s: se desliza al centro (x: 36 -> 4)
+                    - 0.58s - 0.78s: EL BESO en el centro (x: 4, y: 0)
+                    - 0.78s - 0.88s: suben juntos hasta la MITAD (x: 4, y: -14)
+                    - 0.88s - 0.94s: pausa juntos en mitad de cara
+                    - 0.94s - 1.0s: suben completamente hasta esconderse (x: 4, y: -32)
                 */}
                 <motion.div
                   initial={{ y: -32, x: 36, opacity: 0 }}
                   animate={{
-                    y: [-32, -32, 0, 0, 0, -32],
-                    x: [36, 36, 36, 4, 4, 4],
-                    rotate: [0, 0, 0, -10, -10, 0],
-                    opacity: [0, 0, 1, 1, 1, 0]
+                    y: [-32, -32, -14, -14, 0, -4, -4, -14, -14, -32],
+                    x: [36, 36, 36, 36, 36, 4, 4, 4, 4, 4],
+                    rotate: [0, 0, 0, 0, 0, -10, -10, 0, 0, 0],
+                    opacity: [0, 0, 1, 1, 1, 1, 1, 1, 1, 0]
                   }}
                   transition={{
-                    duration: 5.2,
-                    times: [0, 0.16, 0.34, 0.58, 0.82, 1],
+                    duration: 5.8,
+                    times: [0, 0.18, 0.26, 0.34, 0.42, 0.56, 0.76, 0.86, 0.93, 1],
                     ease: 'easeInOut'
                   }}
                   className="absolute"
