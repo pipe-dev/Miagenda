@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
+import { format, addDays, isSameDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { isEventActiveOnDate } from '../services/storageService';
 import { EventItem, PrivacyType } from '../types';
@@ -40,7 +40,7 @@ export default function CalendarGridView({
   const [dragOverDate, setDragOverDate] = useState<string | null>(null);
   const [draggingEventId, setDraggingEventId] = useState<string | null>(null);
 
-  const startDate = startOfWeek(selectedDate, { weekStartsOn: 1 }); // Monday
+  const startDate = selectedDate;
   const weekDays = Array.from({ length: 7 }).map((_, i) => addDays(startDate, i));
 
   // Filter events based on active privacy tab: 'mine' vs 'shared'
