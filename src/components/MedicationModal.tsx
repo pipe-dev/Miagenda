@@ -171,83 +171,95 @@ export default function MedicationModal({
 
             {/* Nombre y Dosis */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-bold text-on-surface-variant mb-1">
+              <div className="relative group">
+                <label className="block text-[11px] font-extrabold text-on-surface-variant mb-1 ml-1 uppercase tracking-wider">
                   Nombre del Medicamento *
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej: Ibuprofeno, Vitamina D3"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/90 border border-slate-200 text-xs text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary shadow-xs font-medium"
-                />
+                <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej: Ibuprofeno, Vitamina D3"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-transparent outline-none border-none px-3.5 py-2 font-bold text-xs sm:text-sm text-on-surface placeholder:text-outline-variant"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-on-surface-variant mb-1">
+              <div className="relative group">
+                <label className="block text-[11px] font-extrabold text-on-surface-variant mb-1 ml-1 uppercase tracking-wider">
                   Dosis / Presentación
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ej: 1 tableta (400mg), 5ml"
-                  value={dosage}
-                  onChange={(e) => setDosage(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-white/90 border border-slate-200 text-xs text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary shadow-xs font-medium"
-                />
+                <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                  <input
+                    type="text"
+                    placeholder="Ej: 1 tableta (400mg), 5ml"
+                    value={dosage}
+                    onChange={(e) => setDosage(e.target.value)}
+                    className="w-full bg-transparent outline-none border-none px-3.5 py-2 font-bold text-xs sm:text-sm text-on-surface placeholder:text-outline-variant"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Horarios de toma */}
             <div>
-              <label className="block text-xs font-bold text-on-surface-variant mb-1.5">
-                Horarios de toma al día
+              <label className="block text-[11px] font-extrabold text-on-surface-variant mb-1.5 ml-1 uppercase tracking-wider">
+                Horarios de toma al día:
               </label>
               <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <span className="text-[10px] text-on-surface-variant font-semibold block mb-0.5">Toma 1</span>
-                  <input
-                    type="time"
-                    required
-                    value={time1}
-                    onChange={(e) => setTime1(e.target.value)}
-                    className="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-on-surface focus:outline-none focus:border-primary text-center"
-                  />
+                <div className="relative group">
+                  <span className="text-[10px] text-on-surface-variant font-extrabold uppercase tracking-wider block mb-1 text-center">Toma 1 *</span>
+                  <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                    <input
+                      type="time"
+                      required
+                      value={time1}
+                      onChange={(e) => setTime1(e.target.value)}
+                      className="w-full bg-transparent outline-none border-none px-2 py-2 text-xs sm:text-sm font-bold text-on-surface text-center cursor-pointer"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[10px] text-on-surface-variant font-semibold block mb-0.5">Toma 2 (Opcional)</span>
-                  <input
-                    type="time"
-                    value={time2}
-                    onChange={(e) => setTime2(e.target.value)}
-                    className="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-on-surface focus:outline-none focus:border-primary text-center"
-                  />
+                <div className="relative group">
+                  <span className="text-[10px] text-on-surface-variant font-extrabold uppercase tracking-wider block mb-1 text-center">Toma 2 (Opc)</span>
+                  <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                    <input
+                      type="time"
+                      value={time2}
+                      onChange={(e) => setTime2(e.target.value)}
+                      className="w-full bg-transparent outline-none border-none px-2 py-2 text-xs sm:text-sm font-bold text-on-surface text-center cursor-pointer"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[10px] text-on-surface-variant font-semibold block mb-0.5">Toma 3 (Opcional)</span>
-                  <input
-                    type="time"
-                    value={time3}
-                    onChange={(e) => setTime3(e.target.value)}
-                    className="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-on-surface focus:outline-none focus:border-primary text-center"
-                  />
+                <div className="relative group">
+                  <span className="text-[10px] text-on-surface-variant font-extrabold uppercase tracking-wider block mb-1 text-center">Toma 3 (Opc)</span>
+                  <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                    <input
+                      type="time"
+                      value={time3}
+                      onChange={(e) => setTime3(e.target.value)}
+                      className="w-full bg-transparent outline-none border-none px-2 py-2 text-xs sm:text-sm font-bold text-on-surface text-center cursor-pointer"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Indicaciones médicas / Instrucciones */}
-            <div>
-              <label className="block text-xs font-bold text-on-surface-variant mb-1">
-                Instrucciones / Recomendaciones
+            <div className="relative group">
+              <label className="block text-[11px] font-extrabold text-on-surface-variant mb-1 ml-1 uppercase tracking-wider">
+                Instrucciones / Recomendaciones:
               </label>
-              <input
-                type="text"
-                placeholder="Ej: Tomar con comida, no mezclar con lácteos, abundante agua"
-                value={instructions}
-                onChange={(e) => setInstructions(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white/90 border border-slate-200 text-xs text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary shadow-xs font-medium"
-              />
+              <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                <input
+                  type="text"
+                  placeholder="Ej: Tomar con comida, no mezclar con lácteos, abundante agua"
+                  value={instructions}
+                  onChange={(e) => setInstructions(e.target.value)}
+                  className="w-full bg-transparent outline-none border-none px-3.5 py-2 font-medium text-xs sm:text-sm text-on-surface placeholder:text-outline-variant"
+                />
+              </div>
             </div>
 
             {/* Opciones adicionales: Recordatorio y Continuidad */}

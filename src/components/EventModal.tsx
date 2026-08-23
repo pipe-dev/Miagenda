@@ -242,37 +242,51 @@ export default function EventModal({
               </div>
             </div>
 
-            {/* Date & Times Row */}
+            {/* Date & Times Row: Standardized Plush Sunken Wells */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <div>
-                <label className="block text-[11px] font-bold text-on-surface-variant mb-1 ml-1">Fecha</label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full bg-white/90 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold border border-white focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
-                  required
-                />
+              <div className="relative group">
+                <label className="block text-[11px] font-extrabold text-on-surface-variant mb-1 ml-1 uppercase tracking-wider">
+                  Fecha:
+                </label>
+                <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="w-full bg-transparent outline-none border-none px-3.5 py-2 font-bold text-sm sm:text-base text-on-surface text-center sm:text-left cursor-pointer"
+                    required
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-[11px] font-bold text-on-surface-variant mb-1 ml-1">Hora Inicio</label>
-                <input
-                  type="time"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full bg-white/90 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold border border-white focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
-                  required
-                />
+
+              <div className="relative group">
+                <label className="block text-[11px] font-extrabold text-on-surface-variant mb-1 ml-1 uppercase tracking-wider">
+                  Hora Inicio:
+                </label>
+                <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                  <input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="w-full bg-transparent outline-none border-none px-3.5 py-2 font-bold text-sm sm:text-base text-on-surface text-center cursor-pointer"
+                    required
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-[11px] font-bold text-on-surface-variant mb-1 ml-1">Hora Fin</label>
-                <input
-                  type="time"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full bg-white/90 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold border border-white focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
-                  required
-                />
+
+              <div className="relative group">
+                <label className="block text-[11px] font-extrabold text-on-surface-variant mb-1 ml-1 uppercase tracking-wider">
+                  Hora Fin:
+                </label>
+                <div className="bg-surface-container-high/90 rounded-2xl p-1 shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-2px_-2px_6px_rgba(255,255,255,0.9)] border border-white/60 transition-all focus-within:ring-2 focus-within:ring-primary">
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="w-full bg-transparent outline-none border-none px-3.5 py-2 font-bold text-sm sm:text-base text-on-surface text-center cursor-pointer"
+                    required
+                  />
+                </div>
               </div>
             </div>
 
