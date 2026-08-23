@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { MedicationItem, UserProfile } from '../types';
-import { getUserDisplayName } from '../services/storageService';
+import { getUserDisplayName, getUserProfileColor } from '../services/storageService';
 import { hapticService } from '../services/hapticService';
 
 interface MedicationModalProps {
@@ -21,6 +21,10 @@ export default function MedicationModal({
   onSave,
   onDelete
 }: MedicationModalProps) {
+  const partnerProfile: UserProfile = activeProfile === 'partner1' ? 'partner2' : 'partner1';
+  const myColor = getUserProfileColor(activeProfile);
+  const partnerColor = getUserProfileColor(partnerProfile);
+
   const [name, setName] = useState(initialMedication?.name || '');
   const [dosage, setDosage] = useState(initialMedication?.dosage || '1 tableta');
   const [forUser, setForUser] = useState<UserProfile | 'both'>(initialMedication?.forUser || activeProfile);
@@ -34,7 +38,7 @@ export default function MedicationModal({
   const [isContinuous, setIsContinuous] = useState(initialMedication?.isContinuous ?? true);
   const [hasAlarm, setHasAlarm] = useState(initialMedication?.hasAlarm ?? true);
   const [color, setColor] = useState<'blue' | 'pink' | 'emerald' | 'purple' | 'amber'>(
-    initialMedication?.color || (forUser === 'partner2' ? 'pink' : forUser === 'partner1' ? 'blue' : 'emerald')
+    initialMedication?.color || (forUser === partnerProfile ? partnerColor : forUser === activeProfile ? myColor : 'emerald')
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -119,41 +123,47 @@ export default function MedicationModal({
                   ¿Para quién es este medicamento?
                 </label>
                 <div className="grid grid-cols-3 gap-2">
+                  {/* Botón 1: Mi Perfil (Color propio: Azul o Rosa) */}
                   <button
                     type="button"
                     onClick={() => {
-                      setForUser('partner1');
-                      setColor('blue');
+                      hapticService.playLightTap();
+                      setForUser(activeProfile);
+                      setColor(myColor);
                     }}
                     className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 border select-none ${
-                      forUser === 'partner1'
-                        ? 'candy-btn-blue text-white'
-                        : 'bg-blue-50/70 text-blue-900 border-blue-200/70 hover:bg-blue-100/80'
+                      forUser === activeProfile
+                        ? (myColor === 'blue' ? 'candy-btn-blue text-white' : 'candy-btn-pink text-white')
+                        : (myColor === 'blue' ? 'bg-blue-50/70 text-blue-900 border-blue-200/70 hover:bg-blue-100/80' : 'bg-pink-50/70 text-pink-900 border-pink-200/70 hover:bg-pink-100/80')
                     }`}
                   >
                     <span className="material-symbols-outlined text-[16px]">person</span>
-                    <span>{getUserDisplayName('partner1')}</span>
+                    <span>{getUserDisplayName(activeProfile)}</span>
                   </button>
 
+                  {/* Botón 2: Pareja / Invitado (Color invertido: Rosa o Azul) */}
                   <button
                     type="button"
                     onClick={() => {
-                      setForUser('partner2');
-                      setColor('pink');
+                      hapticService.playLightTap();
+                      setForUser(partnerProfile);
+                      setColor(partnerColor);
                     }}
                     className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 border select-none ${
-                      forUser === 'partner2'
-                        ? 'candy-btn-pink text-white'
-                        : 'bg-pink-50/70 text-pink-900 border-pink-200/70 hover:bg-pink-100/80'
+                      forUser === partnerProfile
+                        ? (partnerColor === 'blue' ? 'candy-btn-blue text-white' : 'candy-btn-pink text-white')
+                        : (partnerColor === 'blue' ? 'bg-blue-50/70 text-blue-900 border-blue-200/70 hover:bg-blue-100/80' : 'bg-pink-50/70 text-pink-900 border-pink-200/70 hover:bg-pink-100/80')
                     }`}
                   >
                     <span className="material-symbols-outlined text-[16px]">person</span>
-                    <span>{getUserDisplayName('partner2')}</span>
+                    <span>{getUserDisplayName(partnerProfile)}</span>
                   </button>
 
+                  {/* Botón 3: Botiquín */}
                   <button
                     type="button"
                     onClick={() => {
+                      hapticService.playLightTap();
                       setForUser('both');
                       setColor('emerald');
                     }}
@@ -316,19 +326,19 @@ export default function MedicationModal({
                 >
                   Cancelar
                 </button>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  type="submit"
-                  className={`px-6 py-2.5 rounded-full text-white font-bold text-xs shadow-md select-none ${
-                    forUser === 'partner1'
-                      ? 'candy-btn-blue'
-                      : forUser === 'partner2'
-                      ? 'candy-btn-pink'
-                      : 'candy-btn-emerald'
-                  }`}
-                >
-                  {initialMedication ? 'Guardar Cambios' : 'Guardar en Pastillero'}
-                </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    type="submit"
+                    className={`px-6 py-2.5 rounded-full text-white font-bold text-xs shadow-md select-none ${
+                      forUser === activeProfile
+                        ? (myColor === 'blue' ? 'candy-btn-blue' : 'candy-btn-pink')
+                        : forUser === partnerProfile
+                        ? (partnerColor === 'blue' ? 'candy-btn-blue' : 'candy-btn-pink')
+                        : 'candy-btn-emerald'
+                    }`}
+                  >
+                    {initialMedication ? 'Guardar Cambios' : 'Guardar en Pastillero'}
+                  </motion.button>
               </div>
             </div>
           </form>

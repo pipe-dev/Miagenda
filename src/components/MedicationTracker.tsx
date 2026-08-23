@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MedicationItem, UserProfile } from '../types';
-import { getUserDisplayName, isMedicationTakenOnDate, getLocalDateStr } from '../services/storageService';
+import { getUserDisplayName, getUserProfileColor, isMedicationTakenOnDate, getLocalDateStr } from '../services/storageService';
 import { hapticService } from '../services/hapticService';
 import { downloadMedicationIcs } from '../services/calendarIcsService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
@@ -22,7 +22,11 @@ export default function MedicationTracker({
   onDeleteMedication,
   onToggleTaken
 }: MedicationTrackerProps) {
-  // Selected Tab Filter: 'dani' | 'ella' | 'both'
+  const partnerProfile: UserProfile = activeProfile === 'partner1' ? 'partner2' : 'partner1';
+  const myColor = getUserProfileColor(activeProfile);
+  const partnerColor = getUserProfileColor(partnerProfile);
+
+  // Selected Tab Filter: activeProfile | partnerProfile | 'both'
   const [selectedTab, setSelectedTab] = useState<UserProfile | 'both'>(activeProfile);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMed, setEditingMed] = useState<MedicationItem | null>(null);
@@ -44,6 +48,8 @@ export default function MedicationTracker({
   // Counts for badge indicators
   const p1Count = medications.filter((m) => m.forUser === 'partner1' || m.forUser === ('dani' as any)).length;
   const p2Count = medications.filter((m) => m.forUser === 'partner2' || m.forUser === ('ella' as any)).length;
+  const myCount = activeProfile === 'partner1' ? p1Count : p2Count;
+  const partnerCount = partnerProfile === 'partner1' ? p1Count : p2Count;
   const sharedCount = medications.filter((m) => m.forUser === 'both').length;
 
   const handleDownloadAlarm = (med: MedicationItem) => {
@@ -55,14 +61,37 @@ export default function MedicationTracker({
     }, 3500);
   };
 
+  const handleOpenNewMed = () => {
+    hapticService.playLightTap();
+    setEditingMed(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditMed = (med: MedicationItem) => {
+    hapticService.playLightTap();
+    setEditingMed(med);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveModal = (medData: Partial<MedicationItem> & { name: string; author: UserProfile }) => {
+    hapticService.playSuccess();
+    onSaveMedication(medData);
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteFromModal = (id: string) => {
+    hapticService.playWarning();
+    onDeleteMedication(id);
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="space-y-4 pb-24">
-      {/* Header & Add Button */}
+    <div className="w-full max-w-3xl mx-auto space-y-4">
+      {/* Header Info */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-black text-on-surface flex items-center space-x-1.5">
-            <span className="text-xl">💊</span>
-            <span>Pastillero & Salud</span>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-on-surface tracking-tight flex items-center space-x-2">
+            <span>💊 Pastillero & Salud</span>
           </h2>
           <p className="text-xs text-on-surface-variant font-medium">
             Control de medicamentos, tomas y botiquín
@@ -72,20 +101,10 @@ export default function MedicationTracker({
         <motion.button
           whileTap={{ scale: 0.92 }}
           type="button"
-          onClick={() => {
-            hapticService.playLightTap();
-            setEditingMed(null);
-            setIsModalOpen(true);
-          }}
-          className="px-3.5 py-2 rounded-full candy-btn text-white text-xs font-black shadow-md flex items-center space-x-1"
+          onClick={handleOpenNewMed}
+          className="px-4 py-2 rounded-full candy-btn text-white text-xs sm:text-sm font-extrabold shadow-md flex items-center space-x-1 select-none"
         >
-          <LordIcon
-            src={LORDICON_ICONS.plus}
-            trigger="hover"
-            size={16}
-            primaryColor="#ffffff"
-            secondaryColor="#ffffff"
-          />
+          <span className="material-symbols-outlined text-[18px]">add</span>
           <span>Añadir</span>
         </motion.button>
       </div>
@@ -110,55 +129,63 @@ export default function MedicationTracker({
         )}
       </AnimatePresence>
 
-      {/* Segmented Filter Tabs con estilo Candy 3D y colores de paleta específicos */}
+      {/* Segmented Filter Tabs con estilo Candy 3D y colores dinamicos e invertidos */}
       <div className="sunken-well bg-white/75 p-1.5 rounded-full flex items-center space-x-1.5 border border-white/60 shadow-inner">
-        {/* Partner 1 / Masculino (Azul Candy 3D) */}
+        {/* Tab 1: Mi Perfil (Color propio activo: Azul o Rosa) */}
         <motion.button
           whileTap={{ scale: 0.94 }}
           type="button"
           onClick={() => {
             hapticService.playLightTap();
-            setSelectedTab('partner1');
+            setSelectedTab(activeProfile);
           }}
           className={`flex-1 py-2 px-2.5 rounded-full text-xs font-bold transition-all flex items-center justify-center space-x-1.5 select-none relative ${
-            selectedTab === 'partner1'
-              ? 'candy-btn-blue text-white shadow-md'
-              : 'bg-blue-50/70 text-blue-900 hover:bg-blue-100/80 border border-blue-200/70'
+            selectedTab === activeProfile
+              ? (myColor === 'blue' ? 'candy-btn-blue text-white shadow-md' : 'candy-btn-pink text-white shadow-md')
+              : (myColor === 'blue' ? 'bg-blue-50/70 text-blue-900 hover:bg-blue-100/80 border border-blue-200/70' : 'bg-pink-50/70 text-pink-900 hover:bg-pink-100/80 border border-pink-200/70')
           }`}
         >
           <span className="material-symbols-outlined text-[16px] relative z-10">person</span>
-          <span className="relative z-10">{getUserDisplayName('partner1')}</span>
-          {p1Count > 0 && (
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold relative z-10 ${selectedTab === 'partner1' ? 'bg-white/25 text-white' : 'bg-blue-200/80 text-blue-900'}`}>
-              {p1Count}
+          <span className="relative z-10">{getUserDisplayName(activeProfile)}</span>
+          {myCount > 0 && (
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold relative z-10 ${
+              selectedTab === activeProfile
+                ? 'bg-white/25 text-white'
+                : (myColor === 'blue' ? 'bg-blue-200/80 text-blue-900' : 'bg-pink-200/80 text-pink-900')
+            }`}>
+              {myCount}
             </span>
           )}
         </motion.button>
 
-        {/* Partner 2 / Femenino (Rosa Candy 3D) */}
+        {/* Tab 2: Pareja / Invitado (Color invertido de la pareja: Rosa o Azul) */}
         <motion.button
           whileTap={{ scale: 0.94 }}
           type="button"
           onClick={() => {
             hapticService.playLightTap();
-            setSelectedTab('partner2');
+            setSelectedTab(partnerProfile);
           }}
           className={`flex-1 py-2 px-2.5 rounded-full text-xs font-bold transition-all flex items-center justify-center space-x-1.5 select-none relative ${
-            selectedTab === 'partner2'
-              ? 'candy-btn-pink text-white shadow-md'
-              : 'bg-pink-50/70 text-pink-900 hover:bg-pink-100/80 border border-pink-200/70'
+            selectedTab === partnerProfile
+              ? (partnerColor === 'blue' ? 'candy-btn-blue text-white shadow-md' : 'candy-btn-pink text-white shadow-md')
+              : (partnerColor === 'blue' ? 'bg-blue-50/70 text-blue-900 hover:bg-blue-100/80 border border-blue-200/70' : 'bg-pink-50/70 text-pink-900 hover:bg-pink-100/80 border border-pink-200/70')
           }`}
         >
           <span className="material-symbols-outlined text-[16px] relative z-10">person</span>
-          <span className="relative z-10">{getUserDisplayName('partner2')}</span>
-          {p2Count > 0 && (
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold relative z-10 ${selectedTab === 'partner2' ? 'bg-white/25 text-white' : 'bg-pink-200/80 text-pink-900'}`}>
-              {p2Count}
+          <span className="relative z-10">{getUserDisplayName(partnerProfile)}</span>
+          {partnerCount > 0 && (
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold relative z-10 ${
+              selectedTab === partnerProfile
+                ? 'bg-white/25 text-white'
+                : (partnerColor === 'blue' ? 'bg-blue-200/80 text-blue-900' : 'bg-pink-200/80 text-pink-900')
+            }`}>
+              {partnerCount}
             </span>
           )}
         </motion.button>
 
-        {/* Botiquín / Compartido (Verde Esmeralda Candy 3D) */}
+        {/* Tab 3: Botiquín / Compartido (Verde Esmeralda Candy 3D) */}
         <motion.button
           whileTap={{ scale: 0.94 }}
           type="button"

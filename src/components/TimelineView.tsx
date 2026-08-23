@@ -6,6 +6,7 @@ import {
   getLocalDateStr,
   getMinutesFromDayStart,
   isEventPassed,
+  getUserProfileColor,
   FreeTimeWindow
 } from '../services/storageService';
 import { EventItem, PrivacyType, TaskItem, UserProfile } from '../types';
@@ -158,7 +159,7 @@ export default function TimelineView({
                       className={`absolute left-0 top-0 bottom-0 w-2.5 ${
                         evt.privacy === 'shared'
                           ? 'candy-accent-bicolor'
-                          : evt.author === 'partner1'
+                          : getUserProfileColor(evt.author || 'partner1') === 'blue'
                           ? 'bg-blue-500'
                           : 'bg-pink-500'
                       }`}
