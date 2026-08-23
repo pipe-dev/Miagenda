@@ -97,7 +97,7 @@ class TourService {
             element: '#tour-header-avatar',
             popover: {
               title: '👤 Mi Perfil & Foto',
-              description: 'Toca tu foto para subir o borrar tu foto con ImgBB, alternar el color del tema (Azul o Rosa) y editar tu nombre.',
+              description: 'Toca tu foto para elegir una foto de perfil, borrarla cuando quieras, cambiar el color de tu tema y editar tu nombre.',
               side: 'bottom',
               align: 'end'
             }
