@@ -62,7 +62,7 @@ export default function SettingsModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto modal-scroll-area bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
+        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-inverse-surface/40 backdrop-blur-md cursor-pointer"
       >
         <motion.div
           
@@ -71,36 +71,41 @@ export default function SettingsModal({
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.88, y: 40, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 380, damping: 26 }}
-          className="relative z-10 w-full max-w-lg my-auto candy-modal-card rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden cursor-default"
+          className="relative z-10 w-full max-w-lg max-h-[92vh] sm:max-h-[86vh] flex flex-col candy-modal-card rounded-t-[32px] sm:rounded-3xl shadow-2xl overflow-hidden cursor-default"
         >
-          {/* iOS Drag Handle */}
+          {/* Sticky Header in Modal */}
+          <div className="p-5 sm:p-6 pb-2 shrink-0 border-b border-white/60">
+            {/* iOS Drag Handle */}
+            <div className="w-12 h-1.5 bg-outline-variant/60 rounded-full mx-auto mb-3 cursor-grab" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center shadow-md">
+                  <span className="material-symbols-outlined text-[22px]">settings</span>
+                </div>
+                <div>
+                  <h2 className="font-extrabold text-xl sm:text-2xl text-primary tracking-tight">
+                    Ajustes & Preferencias
+                  </h2>
+                  <p className="text-xs text-on-surface-variant font-medium">
+                    Perfiles, sincronización y alarmas
+                  </p>
+                </div>
+              </div>
+              <motion.button
+                whileTap={{ scale: 0.85 }}
+                onClick={onClose}
+                className="w-9 h-9 rounded-full bg-white/60 hover:bg-white text-on-surface-variant flex items-center justify-center shadow-sm"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </motion.button>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto modal-scroll-area p-5 sm:p-6 space-y-4 overscroll-contain">
           <div className="w-12 h-1 bg-outline-variant/60 rounded-full mx-auto mb-3 cursor-grab" />
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center shadow-md">
-                <span className="material-symbols-outlined text-[22px]">settings</span>
-              </div>
-              <div>
-                <h2 className="font-extrabold text-xl sm:text-2xl text-primary tracking-tight">
-                  Ajustes & Preferencias
-                </h2>
-                <p className="text-xs text-on-surface-variant font-medium">
-                  Perfiles, sincronización y alarmas
-                </p>
-              </div>
-            </div>
-            <motion.button
-              whileTap={{ scale: 0.85 }}
-              onClick={onClose}
-              className="w-9 h-9 rounded-full bg-white/60 hover:bg-white text-on-surface-variant flex items-center justify-center shadow-sm"
-            >
-              <span className="material-symbols-outlined">close</span>
-            </motion.button>
-          </div>
-
-          <div className="space-y-4 max-h-[70vh] overflow-y-auto modal-scroll-area pr-1">
+          
             {/* Sincronización en la Nube */}
             <div className="plush-card rounded-2xl p-4 border border-white flex items-center justify-between shadow-xs bg-white/90">
               <div className="flex items-center space-x-3">

@@ -123,7 +123,7 @@ export default function EventModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/30 backdrop-blur-md cursor-pointer overflow-y-auto"
+        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-inverse-surface/30 backdrop-blur-md cursor-pointer"
       >
         <motion.div
           
@@ -132,39 +132,43 @@ export default function EventModal({
           exit={{ scale: 0.94, opacity: 0, y: 30 }}
           transition={{ type: 'spring', damping: 25, stiffness: 350 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-lg my-auto rounded-[32px] p-6 sm:p-7 relative overflow-hidden text-on-surface shadow-[0_24px_60px_rgba(0,0,0,0.22),inset_0_2px_4px_rgba(255,255,255,1)] border-2 border-white cursor-default bg-white/95"
+          className="w-full max-w-lg max-h-[92vh] sm:max-h-[86vh] flex flex-col rounded-t-[32px] sm:rounded-[32px] relative overflow-hidden text-on-surface shadow-[0_24px_60px_rgba(0,0,0,0.22),inset_0_2px_4px_rgba(255,255,255,1)] border-2 border-white cursor-default bg-white/95"
           style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(253,248,252,0.95) 100%)'
           }}
         >
-          {/* iOS Swipe Bar */}
+          {/* Pinned Modal Header */}
+          <div className="p-5 sm:p-6 pb-3 shrink-0 border-b border-white/60">
+            {/* iOS Swipe Bar */}
+            <div className="w-12 h-1.5 bg-outline-variant/60 rounded-full mx-auto mb-3 cursor-grab" />
+            <div className="flex items-center justify-between">
+              <div>
+                <span
+                  className="text-[10px] font-extrabold uppercase tracking-widest text-primary leading-none block mb-0.5"
+                  style={{ color: 'var(--primary)' }}
+                >
+                  {isEditing ? 'MODIFICAR EVENTO' : 'NUEVO EVENTO'}
+                </span>
+                <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-on-surface select-none">
+                  {isEditing ? 'Editar Cita' : 'Crear Cita o Tarea'}
+                </h2>
+              </div>
+              <motion.button
+                whileTap={{ scale: 0.88 }}
+                type="button"
+                onClick={onClose}
+                className="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xs font-bold border border-white hover:bg-surface-container shadow-inner"
+              >
+                ✕
+              </motion.button>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto modal-scroll-area p-5 sm:p-6 space-y-4 overscroll-contain">
           <div className="w-12 h-1.5 bg-outline-variant/60 rounded-full mx-auto mb-4 cursor-grab active:cursor-grabbing" />
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <span
-                className="text-[10px] font-extrabold uppercase tracking-widest text-primary leading-none block mb-0.5"
-                style={{ color: 'var(--primary)' }}
-              >
-                {isEditing ? 'MODIFICAR EVENTO' : 'NUEVO EVENTO'}
-              </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-on-surface select-none">
-                {isEditing ? 'Editar Cita' : 'Crear Cita o Tarea'}
-              </h2>
-            </div>
-
-            <motion.button
-              whileTap={{ scale: 0.88 }}
-              type="button"
-              onClick={onClose}
-              className="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center text-xs font-bold border border-white hover:bg-surface-container shadow-inner"
-            >
-              ✕
-            </motion.button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto modal-scroll-area pr-1">
+          
             {/* Privacy Switch: Mi Agenda vs Compartido */}
             <div className="flex flex-col items-center space-y-1.5">
               <div className="bg-surface-container-high/80 p-1 rounded-full flex items-center space-x-1 border border-white shadow-inner">
