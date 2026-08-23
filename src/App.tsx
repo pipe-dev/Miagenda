@@ -129,6 +129,26 @@ export default function App() {
     | null
   >(null);
 
+  // Detect PWA Standalone Mode (Home Screen on iPhone / Android)
+  useEffect(() => {
+    const checkStandalone = () => {
+      const isStandalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        (window.navigator as any).standalone === true ||
+        document.referrer.includes('android-app://');
+
+      if (isStandalone) {
+        document.documentElement.classList.add('pwa-standalone');
+      } else {
+        document.documentElement.classList.remove('pwa-standalone');
+      }
+    };
+
+    checkStandalone();
+    window.addEventListener('resize', checkStandalone);
+    return () => window.removeEventListener('resize', checkStandalone);
+  }, []);
+
   // Start background notification monitor (citas, pastillero, briefing)
   useEffect(() => {
     notificationScheduler.start();
