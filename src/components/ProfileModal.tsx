@@ -7,7 +7,10 @@ import {
   getUserPhotoUrl,
   saveProfileConfig,
   getProfileConfig,
-  getCoupleId
+  getCoupleId,
+  isCoupleLinked,
+  getDaysTogether,
+  getPartnerDisplayName
 } from '../services/storageService';
 import { uploadImageToCloud } from '../services/mediaUploadService';
 import { hapticService } from '../services/hapticService';
@@ -267,29 +270,59 @@ export default function ProfileModal({
               </div>
             </div>
 
-            {/* 💌 4. COUPLE CODE */}
-            <div className="p-4 rounded-2xl bg-white/80 border border-slate-100 shadow-2xs space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-secondary block">
-                Tu Código de Pareja
-              </span>
-              <div className="flex items-center justify-between">
-                <span className="font-mono font-black text-base text-primary tracking-widest">
-                  {coupleCode}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(coupleCode);
-                    hapticService.playLightTap();
-                    setCopiedCode(true);
-                    setTimeout(() => setCopiedCode(false), 2000);
-                  }}
-                  className="px-3 py-1 rounded-full text-xs font-extrabold text-primary bg-primary/10 hover:bg-primary/20 transition-colors"
-                >
-                  {copiedCode ? '¡Copiado! ✓' : 'Copiar'}
-                </button>
+            {/* 💌 4. COUPLE STATUS / DAYS TOGETHER OR INVITE CODE */}
+            {isCoupleLinked() ? (
+              /* Conectados: Mostrar contador de días juntos */
+              <div className="p-4.5 rounded-2xl bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 border-2 border-pink-200/80 shadow-xs space-y-2.5 text-center">
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center shadow-inner">
+                    <span className="material-symbols-outlined text-[18px]">favorite</span>
+                  </div>
+                  <span className="text-xs font-black text-pink-700 uppercase tracking-wider">
+                    Espacio de Pareja Conectado
+                  </span>
+                </div>
+
+                <div className="space-y-1">
+                  <h4 className="text-sm font-black text-slate-800 tracking-tight">
+                    {name || 'Tú'} & {getPartnerDisplayName(activeProfile)}
+                  </h4>
+                  <div className="py-2 px-3.5 bg-white/85 rounded-xl border border-pink-100 shadow-2xs inline-block">
+                    <p className="text-xs font-extrabold text-pink-700 flex items-center justify-center gap-1.5 flex-wrap">
+                      <span>✨ Llevan compartiendo</span>
+                      <span className="text-sm font-black text-pink-600 underline decoration-pink-300 decoration-2">
+                        {getDaysTogether()} {getDaysTogether() === 1 ? 'día' : 'días'}
+                      </span>
+                      <span>la vida juntos</span>
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              /* No conectados: Mostrar código para invitar */
+              <div className="p-4 rounded-2xl bg-white/80 border border-slate-100 shadow-2xs space-y-1">
+                <span className="text-[10px] font-black uppercase tracking-wider text-secondary block">
+                  Tu Código de Pareja
+                </span>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-black text-base text-primary tracking-widest">
+                    {coupleCode}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(coupleCode);
+                      hapticService.playLightTap();
+                      setCopiedCode(true);
+                      setTimeout(() => setCopiedCode(false), 2000);
+                    }}
+                    className="px-3 py-1 rounded-full text-xs font-extrabold text-primary bg-primary/10 hover:bg-primary/20 transition-colors"
+                  >
+                    {copiedCode ? '¡Copiado! ✓' : 'Copiar'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Footer */}

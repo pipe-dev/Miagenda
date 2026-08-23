@@ -72,6 +72,7 @@ export interface ProfileConfig {
   briefingTime?: string; // Hora del resumen matutino (HH:mm)
   enableBedtimeReminder?: boolean; // Aviso 1h antes de dormir
   enableWakeAlarm?: boolean; // Alarma al despertar
+  connectedSince?: string; // Fecha de conexion de la pareja (ISO string)
 }
 
 export interface SharedGroceryItem {

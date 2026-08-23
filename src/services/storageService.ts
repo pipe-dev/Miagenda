@@ -283,7 +283,8 @@ export const getProfileConfig = (): ProfileConfig => {
         sleepTime: parsed.sleepTime || '23:00',
         briefingTime: parsed.briefingTime || '08:00',
         enableBedtimeReminder: parsed.enableBedtimeReminder !== undefined ? Boolean(parsed.enableBedtimeReminder) : true,
-        enableWakeAlarm: parsed.enableWakeAlarm !== undefined ? Boolean(parsed.enableWakeAlarm) : true
+        enableWakeAlarm: parsed.enableWakeAlarm !== undefined ? Boolean(parsed.enableWakeAlarm) : true,
+        connectedSince: parsed.connectedSince || undefined
       };
     }
   } catch (e) {
@@ -305,7 +306,8 @@ export const getProfileConfig = (): ProfileConfig => {
     sleepTime: '23:00',
     briefingTime: '08:00',
     enableBedtimeReminder: true,
-    enableWakeAlarm: true
+    enableWakeAlarm: true,
+    connectedSince: undefined
   };
 };
 
@@ -337,7 +339,8 @@ export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfi
     sleepTime: config.sleepTime || current.sleepTime || '23:00',
     briefingTime: config.briefingTime || current.briefingTime || '08:00',
     enableBedtimeReminder: config.enableBedtimeReminder !== undefined ? config.enableBedtimeReminder : current.enableBedtimeReminder,
-    enableWakeAlarm: config.enableWakeAlarm !== undefined ? config.enableWakeAlarm : current.enableWakeAlarm
+    enableWakeAlarm: config.enableWakeAlarm !== undefined ? config.enableWakeAlarm : current.enableWakeAlarm,
+    connectedSince: config.connectedSince || current.connectedSince || (isCoupleLinked() ? new Date().toISOString() : undefined)
   };
   localStorage.setItem(PROFILE_CONFIG_KEY, JSON.stringify(fullConfig));
   if (config.activeProfile) {
@@ -455,6 +458,26 @@ export const isCoupleLinked = (): boolean => {
     otherPartner !== 'Tú' &&
     otherPartner.trim().length > 0
   );
+};
+
+
+// Helper: Calculate days together sharing life as a couple
+export const getDaysTogether = (): number => {
+  const config = getProfileConfig();
+  const rawDate = config.connectedSince;
+  if (!rawDate) {
+    if (isCoupleLinked()) {
+      const today = new Date().toISOString();
+      saveProfileConfig({ ...config, connectedSince: today });
+      return 1;
+    }
+    return 1;
+  }
+  const start = new Date(rawDate).getTime();
+  const now = Date.now();
+  const diffTime = Math.max(0, now - start);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  return diffDays;
 };
 
 export const isCoupleSpaceUnlocked = (): boolean => {
