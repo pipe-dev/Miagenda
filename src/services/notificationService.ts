@@ -1,4 +1,5 @@
 import { audioService } from './audioService';
+import { soundService } from './soundService';
 import { hapticService } from './hapticService';
 import { syncPushSubscriptionToCloud } from './firestoreSync';
 import { getActiveProfile } from './storageService';
@@ -125,9 +126,8 @@ class NotificationService {
 
     // Optional audio & haptic feedback when notification triggers in app
     if (playSound) {
-      audioService.playCompletionChime();
-    }
-    if (triggerHaptic) {
+      soundService.playIosSound(undefined, triggerHaptic);
+    } else if (triggerHaptic) {
       hapticService.playSuccess();
     }
 
