@@ -8,14 +8,13 @@ const formatTime12H = (time24?: string): string => {
   return `${h12.toString().padStart(2, '0')}:${m} ${period}`;
 };
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { getFirebaseServices } from '../services/firebase';
 import { getProfileConfig, getUserSchedule, saveUserSchedule, isCoupleLinked, getDaysTogether } from '../services/storageService';
 import { isFirestoreConfigured, getFirestoreConfig } from '../services/firestoreSync';
 import { hapticService } from '../services/hapticService';
 import { notificationService } from '../services/notificationService';
-import { soundService, IOS_SOUND_OPTIONS, IosSoundId } from '../services/soundService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
 
 interface SettingsModalProps {
@@ -29,7 +28,6 @@ export default function SettingsModal({
   onResetData,
   onOpenProfileSetup
 }: SettingsModalProps) {
-  const [selectedSound, setSelectedSound] = useState<IosSoundId>(() => soundService.getSelectedSound());
   const { isConfigured } = getFirebaseServices();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState<boolean>(notificationService.isEnabled());
   const [permissionStatus, setPermissionStatus] = React.useState<string>(notificationService.getPermission());
@@ -413,75 +411,6 @@ export default function SettingsModal({
                     <motion.div layout className="w-4 h-4 bg-white rounded-full shadow-xs" />
                   </button>
                 </div>
-              </div>
-            </div>
-
-            {/* 🔔 Tonos Nativos de iPhone para Alertas y Calendario */}
-            <div className="plush-card rounded-2xl p-4 border border-slate-100 bg-white/90 space-y-3 shadow-xs">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[18px]">volume_up</span>
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-on-surface">Sonido de Notificaciones iPhone</h4>
-                    <p className="text-[10px] text-on-surface-variant">
-                      Elige el tono nativo para citas del calendario, recordatorios y alertas
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                {IOS_SOUND_OPTIONS.map((opt) => {
-                  const isChosen = selectedSound === opt.id;
-                  return (
-                    <div
-                      key={opt.id}
-                      onClick={() => {
-                        setSelectedSound(opt.id);
-                        soundService.setSelectedSound(opt.id);
-                        soundService.playIosSound(opt.id);
-                      }}
-                      className={`p-2.5 rounded-xl border-2 flex items-center justify-between cursor-pointer transition-all ${
-                        isChosen
-                          ? 'border-sky-400 bg-sky-50/80 shadow-xs'
-                          : 'border-slate-200/80 bg-white/70 hover:bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2 min-w-0 pr-1">
-                        <div
-                          className={`w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center ${
-                            isChosen ? 'border-sky-500 bg-sky-500' : 'border-slate-300 bg-white'
-                          }`}
-                        >
-                          {isChosen && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-slate-800 flex items-center space-x-1">
-                            <span>{opt.name}</span>
-                            <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-200/80 text-slate-700 font-semibold">
-                              {opt.category}
-                            </span>
-                          </p>
-                          <p className="text-[9px] text-slate-500 truncate">{opt.description}</p>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          soundService.playIosSound(opt.id);
-                        }}
-                        className="w-7 h-7 rounded-full bg-sky-100 hover:bg-sky-200 text-sky-700 flex items-center justify-center transition-colors shadow-2xs shrink-0"
-                        title={`Probar ${opt.name}`}
-                      >
-                        <span className="material-symbols-outlined text-[14px]">play_arrow</span>
-                      </button>
-                    </div>
-                  );
-                })}
               </div>
             </div>
 

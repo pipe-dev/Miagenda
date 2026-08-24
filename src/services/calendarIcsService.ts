@@ -1,6 +1,5 @@
 // Calendar .ics generator with native alarm and cancellation support for iOS / Apple Calendar in TypeScript
 import { EventItem } from '../types';
-import { soundService, IOS_SOUND_OPTIONS } from './soundService';
 
 export const getEventUid = (eventId: string): string => {
   return `${eventId}@miagenda.app`;
@@ -40,12 +39,11 @@ export const generateIcsEvent = (event: EventItem): string => {
     `LOCATION:${location}`,
     'STATUS:CONFIRMED',
     'SEQUENCE:0',
-    // High Priority Alarm for iOS (suena con el tono de iPhone configurado)
+    // High Priority Alarm for iOS (suena en modo enfoque)
     'BEGIN:VALARM',
     'TRIGGER:-PT0M',
     'ACTION:AUDIO',
-    `ATTACH;VALUE=URI:${IOS_SOUND_OPTIONS.find((o) => o.id === soundService.getSelectedSound())?.attachUri || 'Tri-tone'}`,
-    'X-APPLE-DEFAULT-ALARM:TRUE',
+    'ATTACH;VALUE=URI:Chord',
     `DESCRIPTION:Alarma: ${title}`,
     'END:VALARM',
     // 15 min reminder

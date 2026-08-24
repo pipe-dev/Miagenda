@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { downloadIcsFile } from '../services/calendarIcsService';
 import { isCoupleLinked } from '../services/storageService';
-import { soundService, IOS_SOUND_OPTIONS } from '../services/soundService';
 import { EventItem, PrivacyType, RecurrenceType, UserProfile } from '../types';
 import { hapticService } from '../services/hapticService';
 
@@ -428,15 +427,13 @@ export default function EventModal({
               </div>
             </div>
 
-            {/* iOS Alarm & Native Sound Row */}
-            <div className="space-y-2 pt-1">
-              <div className="flex items-center justify-between bg-white/80 px-3.5 py-2.5 rounded-2xl border border-white shadow-sm">
-                <label className="flex items-center space-x-2 cursor-pointer select-none">
-                  <span className="material-symbols-outlined text-[18px] text-primary" style={{ color: 'var(--primary)' }}>
-                    alarm
-                  </span>
-                  <span className="text-xs font-extrabold text-on-surface">Alarma y Notificación iPhone</span>
-                </label>
+            {/* iOS Alarm Toggle Switch Row */}
+            <div className="pt-1 flex items-center justify-between">
+              <label className="flex items-center space-x-2 cursor-pointer bg-white/80 px-3.5 py-2 rounded-2xl border border-white shadow-sm">
+                <span className="material-symbols-outlined text-[18px] text-primary" style={{ color: 'var(--primary)' }}>
+                  alarm
+                </span>
+                <span className="text-xs font-extrabold text-on-surface">Alarma en Calendario iOS</span>
                 <input
                   type="checkbox"
                   checked={enableAlarm}
@@ -446,29 +443,7 @@ export default function EventModal({
                   }}
                   className="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant cursor-pointer ml-1"
                 />
-              </div>
-
-              {/* Sound Selector Preview Pill */}
-              {enableAlarm && (
-                <div className="flex items-center justify-between bg-slate-50/90 px-3.5 py-2 rounded-xl border border-slate-200/80 shadow-2xs">
-                  <div className="flex items-center space-x-2">
-                    <span className="material-symbols-outlined text-[16px] text-sky-600">volume_up</span>
-                    <span className="text-[11px] font-bold text-slate-700">
-                      Tono: <strong>{IOS_SOUND_OPTIONS.find((o) => o.id === soundService.getSelectedSound())?.name || 'Tri-tono'}</strong>
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      soundService.playIosSound();
-                    }}
-                    className="px-2.5 py-1 rounded-full bg-sky-100 hover:bg-sky-200 text-sky-800 text-[10px] font-extrabold flex items-center space-x-1 transition-colors shadow-2xs select-none"
-                  >
-                    <span className="material-symbols-outlined text-[12px]">play_arrow</span>
-                    <span>Probar Tono</span>
-                  </button>
-                </div>
-              )}
+              </label>
             </div>
 
             {/* Bottom Actions Row: Delete (if editing) & Submit Candy Button */}
