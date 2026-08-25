@@ -12,6 +12,7 @@ import { getFirebaseServices, ensureAnonymousAuth } from './firebase';
 import { getCoupleId } from './storageService';
 import { mutationQueue } from './mutationQueue';
 import {
+  cleanUndefined,
   sanitizeEventPayload,
   sanitizeTaskPayload,
   sanitizeGroceryPayload,
@@ -311,7 +312,7 @@ export const syncEventToCloud = async (event: EventItem) => {
     const { db, isConfigured } = getFirebaseServices();
     if (!db || !isConfigured || !sanitized.id) return;
     const spaceId = getSpaceId();
-    await setDoc(doc(db, 'couples', spaceId, 'events', sanitized.id), sanitized);
+    await setDoc(doc(db, 'couples', spaceId, 'events', sanitized.id), cleanUndefined(sanitized));
   });
 };
 
@@ -334,7 +335,7 @@ export const syncTaskToCloud = async (task: TaskItem) => {
     const { db, isConfigured } = getFirebaseServices();
     if (!db || !isConfigured || !sanitized.id) return;
     const spaceId = getSpaceId();
-    await setDoc(doc(db, 'couples', spaceId, 'tasks', sanitized.id), sanitized);
+    await setDoc(doc(db, 'couples', spaceId, 'tasks', sanitized.id), cleanUndefined(sanitized));
   });
 };
 
@@ -357,7 +358,7 @@ export const syncGroceryToCloud = async (grocery: SharedGroceryItem) => {
     const { db, isConfigured } = getFirebaseServices();
     if (!db || !isConfigured || !sanitized.id) return;
     const spaceId = getSpaceId();
-    await setDoc(doc(db, 'couples', spaceId, 'groceries', sanitized.id), sanitized);
+    await setDoc(doc(db, 'couples', spaceId, 'groceries', sanitized.id), cleanUndefined(sanitized));
   });
 };
 
@@ -380,7 +381,7 @@ export const syncDedicationToCloud = async (dedication: DedicationItem) => {
     const { db, isConfigured } = getFirebaseServices();
     if (!db || !isConfigured || !sanitized.id) return;
     const spaceId = getSpaceId();
-    await setDoc(doc(db, 'couples', spaceId, 'dedications', sanitized.id), sanitized);
+    await setDoc(doc(db, 'couples', spaceId, 'dedications', sanitized.id), cleanUndefined(sanitized));
   });
 };
 
@@ -403,7 +404,7 @@ export const syncLoveCouponToCloud = async (coupon: LoveCoupon) => {
     const { db, isConfigured } = getFirebaseServices();
     if (!db || !isConfigured || !sanitized.id) return;
     const spaceId = getSpaceId();
-    await setDoc(doc(db, 'couples', spaceId, 'coupons', sanitized.id), sanitized);
+    await setDoc(doc(db, 'couples', spaceId, 'coupons', sanitized.id), cleanUndefined(sanitized));
   });
 };
 
@@ -426,7 +427,7 @@ export const syncMedicationToCloud = async (med: MedicationItem) => {
     const { db, isConfigured } = getFirebaseServices();
     if (!db || !isConfigured || !sanitized.id) return;
     const spaceId = getSpaceId();
-    await setDoc(doc(db, 'couples', spaceId, 'medications', sanitized.id), sanitized);
+    await setDoc(doc(db, 'couples', spaceId, 'medications', sanitized.id), cleanUndefined(sanitized));
   });
 };
 
@@ -469,11 +470,11 @@ export const syncProfileConfigToCloud = async (config: ProfileConfig) => {
     const { db, isConfigured } = getFirebaseServices();
     if (!db || !isConfigured) return;
     const spaceId = config.coupleId || getSpaceId();
-    const cloudPayload = {
+    const cloudPayload = cleanUndefined({
       ...config,
       partner1PhotoUrl: config.partner1PhotoUrl && config.partner1PhotoUrl.trim().length > 0 ? config.partner1PhotoUrl.trim() : null,
       partner2PhotoUrl: config.partner2PhotoUrl && config.partner2PhotoUrl.trim().length > 0 ? config.partner2PhotoUrl.trim() : null
-    };
+    });
     await setDoc(doc(db, 'couples', spaceId, 'config', 'profiles'), cloudPayload);
   });
 };
@@ -532,7 +533,12 @@ export const syncAllLocalDataToCloud = async (data: {
         }
       }
     }
-    await setDoc(doc(db, 'couples', spaceId, 'config', 'profiles'), data.profileConfig);
+    const cleanProfiles = cleanUndefined({
+      ...data.profileConfig,
+      partner1PhotoUrl: data.profileConfig.partner1PhotoUrl && data.profileConfig.partner1PhotoUrl.trim().length > 0 ? data.profileConfig.partner1PhotoUrl.trim() : null,
+      partner2PhotoUrl: data.profileConfig.partner2PhotoUrl && data.profileConfig.partner2PhotoUrl.trim().length > 0 ? data.profileConfig.partner2PhotoUrl.trim() : null
+    });
+    await setDoc(doc(db, 'couples', spaceId, 'config', 'profiles'), cleanProfiles);
 
     return true;
   } catch (e) {

@@ -1,3 +1,20 @@
+export const cleanUndefined = <T>(obj: T): T => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(cleanUndefined) as any;
+  }
+  const clean: any = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      clean[key] = cleanUndefined(value);
+    }
+  }
+  return clean;
+};
+
+import { getLocalDateStr } from './storageService';
 /**
  * S.H.I.E.L.D. Security & Input Sanitization Service
  * - Input Sanitization (XSS, Script injection prevention)
@@ -42,11 +59,11 @@ export const sanitizeBattery = (val: any): number => {
 
 // 3. Validate and Sanitize Event Item before Cloud Write
 export const sanitizeEventPayload = (event: any): any => {
-  return {
+  return cleanUndefined({
     id: sanitizeString(event.id || 'evt-' + Date.now(), 64),
     title: sanitizeString(event.title || '', 120),
     description: sanitizeString(event.description || '', 500),
-    date: sanitizeString(event.date || new Date().toISOString().split('T')[0], 20),
+    date: sanitizeString(event.date || getLocalDateStr(), 20),
     startTime: sanitizeString(event.startTime || '10:00', 10),
     endTime: sanitizeString(event.endTime || '11:00', 10),
     privacy: event.privacy === 'mine' ? 'mine' : 'shared',
@@ -58,12 +75,12 @@ export const sanitizeEventPayload = (event: any): any => {
     repeatDays: Array.isArray(event.repeatDays) ? event.repeatDays.filter((d: any) => typeof d === 'number' && d >= 0 && d <= 6) : undefined,
     createdAt: sanitizeString(event.createdAt || new Date().toISOString(), 35),
     location: event.location ? sanitizeString(event.location, 100) : undefined
-  };
+  });
 };
 
 // 4. Validate and Sanitize Task Item
 export const sanitizeTaskPayload = (task: any): any => {
-  return {
+  return cleanUndefined({
     id: sanitizeString(task.id || 'tsk-' + Date.now(), 64),
     title: sanitizeString(task.title || '', 150),
     completed: Boolean(task.completed),
@@ -73,12 +90,12 @@ export const sanitizeTaskPayload = (task: any): any => {
     dueDate: task.dueDate ? sanitizeString(task.dueDate, 20) : undefined,
     createdAt: sanitizeString(task.createdAt || new Date().toISOString(), 35),
     completedAt: task.completedAt ? sanitizeString(task.completedAt, 35) : undefined
-  };
+  });
 };
 
 // 5. Validate and Sanitize Grocery Item
 export const sanitizeGroceryPayload = (grocery: any): any => {
-  return {
+  return cleanUndefined({
     id: sanitizeString(grocery.id || 'gro-' + Date.now(), 64),
     title: sanitizeString(grocery.title || '', 120),
     completed: Boolean(grocery.completed),
@@ -86,7 +103,7 @@ export const sanitizeGroceryPayload = (grocery: any): any => {
     addedBy: (grocery.addedBy === 'partner2' || grocery.addedBy === 'ella') ? 'partner2' : 'partner1',
     createdAt: sanitizeString(grocery.createdAt || new Date().toISOString(), 35),
     completedAt: grocery.completedAt ? sanitizeString(grocery.completedAt, 35) : undefined
-  };
+  });
 };
 
 // 6. Validate and Sanitize Dedication Item
@@ -97,7 +114,7 @@ export const sanitizeDedicationPayload = (ded: any): any => {
     return 'both';
   };
 
-  return {
+  return cleanUndefined({
     id: sanitizeString(ded.id || 'ded-' + Date.now(), 64),
     from: (ded.from === 'partner2' || ded.from === 'ella') ? 'partner2' : 'partner1',
     to: sanitizeTo(ded.to),
@@ -108,12 +125,12 @@ export const sanitizeDedicationPayload = (ded: any): any => {
     createdAt: sanitizeString(ded.createdAt || new Date().toISOString(), 35),
     readBy: Array.isArray(ded.readBy) ? ded.readBy.map((p: any) => (p === 'partner2' || p === 'ella') ? 'partner2' : 'partner1') : [],
     triggerDate: ded.triggerDate ? sanitizeString(ded.triggerDate, 20) : undefined
-  };
+  });
 };
 
 // 7. Validate and Sanitize Love Coupon
 export const sanitizeCouponPayload = (coupon: any): any => {
-  return {
+  return cleanUndefined({
     id: sanitizeString(coupon.id || 'cpn-' + Date.now(), 64),
     title: sanitizeString(coupon.title || '', 100),
     description: sanitizeString(coupon.description || '', 300),
@@ -123,7 +140,7 @@ export const sanitizeCouponPayload = (coupon: any): any => {
     redeemed: Boolean(coupon.redeemed),
     redeemedAt: coupon.redeemedAt ? sanitizeString(coupon.redeemedAt, 35) : undefined,
     createdAt: sanitizeString(coupon.createdAt || new Date().toISOString(), 35)
-  };
+  });
 };
 
 // 8. Validate and Sanitize Medication Item
@@ -134,7 +151,7 @@ export const sanitizeMedicationPayload = (med: any): any => {
     return 'both';
   };
 
-  return {
+  return cleanUndefined({
     id: sanitizeString(med.id || 'med-' + Date.now(), 64),
     name: sanitizeString(med.name || '', 120),
     dosage: sanitizeString(med.dosage || '1 tableta', 60),
@@ -150,7 +167,7 @@ export const sanitizeMedicationPayload = (med: any): any => {
     color: ['blue', 'pink', 'emerald', 'purple', 'amber'].includes(med.color) ? med.color : 'blue',
     createdAt: sanitizeString(med.createdAt || new Date().toISOString(), 35),
     author: (med.author === 'partner2' || med.author === 'ella') ? 'partner2' : 'partner1'
-  };
+  });
 };
 
 // 9. Rate Limiter (Token bucket / throttle for client-side cloud actions)

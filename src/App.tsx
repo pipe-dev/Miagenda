@@ -230,13 +230,48 @@ export default function App() {
         }
       }
       cloudEvents.forEach(e => knownEventIdsRef.current.add(e.id));
-      setEvents(cloudEvents);
-      localStorage.setItem('daily_delight_events_v2', JSON.stringify(cloudEvents));
+
+      setEvents((currentEvents) => {
+        const localEvents = getEvents();
+        const mergedMap = new Map<string, EventItem>();
+        localEvents.forEach(e => mergedMap.set(e.id, e));
+        currentEvents.forEach(e => mergedMap.set(e.id, e));
+        cloudEvents.forEach(e => mergedMap.set(e.id, e));
+        const merged = Array.from(mergedMap.values());
+
+        if (isInitialCloudSyncRef.current) {
+          localEvents.forEach(loc => {
+            if (!cloudEvents.some(c => c.id === loc.id)) {
+              syncEventToCloud(loc);
+            }
+          });
+        }
+
+        localStorage.setItem('daily_delight_events_v2', JSON.stringify(merged));
+        return merged;
+      });
     });
 
     const unsubTasks = subscribeToCloudTasks((cloudTasks) => {
-      setTasks(cloudTasks.filter(t => t.author === activeProfile));
-      localStorage.setItem('daily_delight_tasks_v2', JSON.stringify(cloudTasks));
+      setTasks((currentTasks) => {
+        const localTasks = getTasks(activeProfile);
+        const mergedMap = new Map<string, TaskItem>();
+        localTasks.forEach(t => mergedMap.set(t.id, t));
+        currentTasks.forEach(t => mergedMap.set(t.id, t));
+        cloudTasks.forEach(t => mergedMap.set(t.id, t));
+        const mergedAll = Array.from(mergedMap.values());
+
+        if (isInitialCloudSyncRef.current) {
+          localTasks.forEach(loc => {
+            if (!cloudTasks.some(c => c.id === loc.id)) {
+              syncTaskToCloud(loc);
+            }
+          });
+        }
+
+        localStorage.setItem('daily_delight_tasks_v2', JSON.stringify(mergedAll));
+        return mergedAll.filter(t => t.author === activeProfile);
+      });
     });
 
     const unsubGroceries = subscribeToCloudGroceries((cloudGroceries) => {
@@ -258,8 +293,26 @@ export default function App() {
         }
       }
       cloudGroceries.forEach(g => knownGroceryIdsRef.current.add(g.id));
-      setSharedGroceries(cloudGroceries);
-      localStorage.setItem('daily_delight_shared_groceries_v2', JSON.stringify(cloudGroceries));
+
+      setSharedGroceries((currentGroceries) => {
+        const localGroceries = getSharedGroceries();
+        const mergedMap = new Map<string, SharedGroceryItem>();
+        localGroceries.forEach(g => mergedMap.set(g.id, g));
+        currentGroceries.forEach(g => mergedMap.set(g.id, g));
+        cloudGroceries.forEach(g => mergedMap.set(g.id, g));
+        const merged = Array.from(mergedMap.values());
+
+        if (isInitialCloudSyncRef.current) {
+          localGroceries.forEach(loc => {
+            if (!cloudGroceries.some(c => c.id === loc.id)) {
+              syncGroceryToCloud(loc);
+            }
+          });
+        }
+
+        localStorage.setItem('daily_delight_shared_groceries_v2', JSON.stringify(merged));
+        return merged;
+      });
     });
 
     const unsubDedications = subscribeToCloudDedications((cloudDedications) => {
@@ -281,16 +334,51 @@ export default function App() {
         }
       }
       cloudDedications.forEach(d => knownDedicationIdsRef.current.add(d.id));
-      setDedications(cloudDedications);
-      localStorage.setItem('daily_delight_dedications_v2', JSON.stringify(cloudDedications));
+
+      setDedications((currentDeds) => {
+        const localDeds = getDedications();
+        const mergedMap = new Map<string, DedicationItem>();
+        localDeds.forEach(d => mergedMap.set(d.id, d));
+        currentDeds.forEach(d => mergedMap.set(d.id, d));
+        cloudDedications.forEach(d => mergedMap.set(d.id, d));
+        const merged = Array.from(mergedMap.values());
+
+        if (isInitialCloudSyncRef.current) {
+          localDeds.forEach(loc => {
+            if (!cloudDedications.some(c => c.id === loc.id)) {
+              syncDedicationToCloud(loc);
+            }
+          });
+        }
+
+        localStorage.setItem('daily_delight_dedications_v2', JSON.stringify(merged));
+        return merged;
+      });
       
       // Initial sync completed after first snapshot
       isInitialCloudSyncRef.current = false;
     });
 
     const unsubMeds = subscribeToCloudMedications((cloudMeds) => {
-      setMedications(cloudMeds);
-      localStorage.setItem('daily_delight_medications_v2', JSON.stringify(cloudMeds));
+      setMedications((currentMeds) => {
+        const localMeds = getMedications();
+        const mergedMap = new Map<string, MedicationItem>();
+        localMeds.forEach(m => mergedMap.set(m.id, m));
+        currentMeds.forEach(m => mergedMap.set(m.id, m));
+        cloudMeds.forEach(m => mergedMap.set(m.id, m));
+        const merged = Array.from(mergedMap.values());
+
+        if (isInitialCloudSyncRef.current) {
+          localMeds.forEach(loc => {
+            if (!cloudMeds.some(c => c.id === loc.id)) {
+              syncMedicationToCloud(loc);
+            }
+          });
+        }
+
+        localStorage.setItem('daily_delight_medications_v2', JSON.stringify(merged));
+        return merged;
+      });
     });
 
     const unsubMoods = subscribeToCloudMoods((cloudMoods: any) => {

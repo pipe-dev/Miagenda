@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { audioRecorder, AudioRecordingResult } from '../services/audioService';
 import { UserProfile, DedicationItem } from '../types';
-import { getUserDisplayName, getUserProfileColor } from '../services/storageService';
+import { getUserDisplayName, getUserProfileColor, getLocalDateStr } from '../services/storageService';
 import { hapticService } from '../services/hapticService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
 
@@ -110,7 +110,7 @@ export default function DedicationCreator({ activeProfile, onClose, onSave }: De
         note: note.trim(),
         photoUrl: uploadedPhotoUrl,
         audioUrl: uploadedAudioUrl,
-        triggerDate: new Date().toISOString().split('T')[0]
+        triggerDate: getLocalDateStr()
       };
 
       onSave(newDedication);

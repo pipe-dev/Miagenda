@@ -30,18 +30,14 @@ interface TimelineViewProps {
 }
 
 // 12-hour format parser (09:00 AM, 01:30 PM, 08:00 PM)
-const formatTo12H = (time24?: string) => {
-  if (!time24) return { hour: '12', minute: '00', period: 'PM' };
+const formatTo12H = (time24?: string): string => {
+  if (!time24) return '';
   const parts = time24.split(':');
   const h24 = parseInt(parts[0] || '12', 10);
   const minute = parts[1] || '00';
   const period = h24 >= 12 ? 'PM' : 'AM';
   const h12 = h24 % 12 || 12;
-  return {
-    hour: h12.toString().padStart(2, '0'),
-    minute,
-    period
-  };
+  return `${h12.toString().padStart(2, '0')}:${minute} ${period}`;
 };
 
 export default function TimelineView({
@@ -121,7 +117,7 @@ export default function TimelineView({
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 hapticService.playPhysicalThud(0.28, 0.18);
-                onNewEvent(todayStr);
+                onNewEvent();
               }}
               className="px-5 py-2.5 rounded-full text-xs font-extrabold text-white shadow-md select-none candy-btn"
             >
@@ -132,7 +128,7 @@ export default function TimelineView({
           <Reorder.Group
             axis="y"
             values={orderedDisplayEvents}
-            onReorder={handleReorderEvents}
+            onReorder={handleReorder}
             className="space-y-4 pt-2"
           >
             {orderedDisplayEvents.map((evt) => {

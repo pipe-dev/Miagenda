@@ -77,7 +77,7 @@ export const getEvents = (): EventItem[] => {
 export const saveEvent = (eventData: Partial<EventItem> & { title: string }): EventItem[] => {
   const events = getEvents();
   const coupleLinked = isCoupleLinked();
-  const effectivePrivacy: PrivacyType = coupleLinked ? (eventData.privacy || 'mine') : 'mine';
+  const effectivePrivacy: PrivacyType = eventData.privacy || (coupleLinked ? 'shared' : 'mine');
 
   let updatedEvents: EventItem[];
   let savedItem: EventItem;
@@ -93,7 +93,7 @@ export const saveEvent = (eventData: Partial<EventItem> & { title: string }): Ev
       id: 'evt-' + Date.now(),
       title: eventData.title,
       description: eventData.description || '',
-      date: eventData.date || new Date().toISOString().split('T')[0],
+      date: eventData.date || getLocalDateStr(),
       startTime: eventData.startTime || '10:00',
       endTime: eventData.endTime || '11:00',
       privacy: effectivePrivacy,
@@ -468,11 +468,14 @@ export const getPartnerDisplayName = (profile: UserProfile): string => {
 // ==========================================
 export const isCoupleLinked = (): boolean => {
   const config = getProfileConfig();
+  if (config.connectedSince) return true;
   const p1 = config.partner1Name?.trim();
   const p2 = config.partner2Name?.trim();
-  const hasValidP1 = Boolean(p1 && p1 !== 'Tú' && p1 !== 'Pareja' && p1.length > 0);
-  const hasValidP2 = Boolean(p2 && p2 !== 'Tú' && p2 !== 'Pareja' && p2.length > 0);
-  return hasValidP1 && hasValidP2;
+  const hasCustomP1 = Boolean(p1 && p1 !== 'Tú' && p1.length > 0);
+  const hasCustomP2 = Boolean(p2 && p2 !== 'Pareja' && p2.length > 0);
+  if (hasCustomP1 && hasCustomP2) return true;
+  if (config.isSetupComplete && (hasCustomP1 || hasCustomP2)) return true;
+  return false;
 };
 
 

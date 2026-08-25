@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { downloadIcsFile } from '../services/calendarIcsService';
-import { isCoupleLinked } from '../services/storageService';
+import { isCoupleLinked, getLocalDateStr } from '../services/storageService';
 import { EventItem, PrivacyType, RecurrenceType, UserProfile } from '../types';
 import { hapticService } from '../services/hapticService';
 
@@ -29,7 +29,7 @@ export default function EventModal({
   // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(initialDate || getLocalDateStr());
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('11:00');
   const coupleLinked = isCoupleLinked();
@@ -45,7 +45,7 @@ export default function EventModal({
     if (initialEvent) {
       setTitle(initialEvent.title || '');
       setDescription(initialEvent.description || '');
-      setDate(initialEvent.date || new Date().toISOString().split('T')[0]);
+      setDate(initialEvent.date || getLocalDateStr());
       setStartTime(initialEvent.startTime || '10:00');
       setEndTime(initialEvent.endTime || '11:00');
       setPrivacy(coupleLinked ? (initialEvent.privacy || 'shared') : 'mine');
@@ -56,7 +56,7 @@ export default function EventModal({
     } else {
       setTitle('');
       setDescription('');
-      const defaultDate = initialDate || new Date().toISOString().split('T')[0];
+      const defaultDate = initialDate || getLocalDateStr();
       setDate(defaultDate);
       setStartTime('10:00');
       setEndTime('11:00');
