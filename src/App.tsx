@@ -706,6 +706,14 @@ export default function App() {
   ) => {
     const updated = saveSharedGrocery(itemData);
     setSharedGroceries(updated);
+
+    const myName = getUserDisplayName(activeProfile);
+    remotePushService.sendPushToPartner({
+      title: '🛒 Lista del Súper Compartida',
+      body: `${myName} agregó: "${itemData.title}" a la lista de compras.`,
+      url: '/?view=tasks',
+      tag: 'remote-grocery-' + Date.now()
+    });
   };
 
   const handleToggleSharedGrocery = (id: string) => {
@@ -763,6 +771,16 @@ export default function App() {
   const handleSaveMedication = (medData: Partial<MedicationItem> & { name: string; author: UserProfile }) => {
     const updated = saveMedication(medData);
     setMedications(updated);
+
+    if (medData.forUser === 'both' || (medData.forUser && medData.forUser !== activeProfile)) {
+      const myName = getUserDisplayName(activeProfile);
+      remotePushService.sendPushToPartner({
+        title: '💊 Medicamento Compartido',
+        body: `${myName} programó ${medData.name}${medData.dosage ? ' (' + medData.dosage + ')' : ''} en el pastillero.`,
+        url: '/?view=tasks',
+        tag: 'remote-med-' + Date.now()
+      });
+    }
   };
 
   const handleDeleteMedication = (id: string) => {
