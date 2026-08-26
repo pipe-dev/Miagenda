@@ -52,7 +52,7 @@ class NotificationScheduler {
 
   // Main check routine
   public checkScheduledReminders(): void {
-    if (!notificationService.isEnabled() || notificationService.getPermission() !== 'granted') {
+    if (!notificationService.isEnabled()) {
       return;
     }
 
@@ -111,9 +111,11 @@ class NotificationScheduler {
       }
     });
 
-    // 2. 💊 CHECK MEDICATIONS & PILL REMINDERS
+    // 2. 💊 CHECK MEDICATIONS & PILL REMINDERS (Active profile & shared)
     const activeProfile = getActiveProfile();
-    const medications = getMedications().filter((m: MedicationItem) => !m.author || m.author === activeProfile);
+    const medications = getMedications().filter((m: MedicationItem) => 
+      !m.forUser || m.forUser === 'both' || m.forUser === activeProfile || m.author === activeProfile
+    );
 
     medications.forEach((med: MedicationItem) => {
       const times = med.times || [med.time || '08:00'];
@@ -165,10 +167,15 @@ class NotificationScheduler {
       }
     }
 
-    // 5. ⏰ WAKE-UP ALARM (At today's effective wakeTime)
+    // 5. ⏰ WAKE-UP ALARM (At today's effective wakeTime weekdays vs weekend)
     if (schedule.enableWakeAlarm) {
+      const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+      const effectiveWakeTime = isWeekend 
+        ? (schedule.wakeTimeWeekend || '09:00') 
+        : (schedule.wakeTimeWeekdays || schedule.wakeTime || '07:00');
+
       const wakeKey = `wake_alarm_${todayStr}`;
-      if (currentTimeStr === schedule.wakeTime && !notifiedSet.has(wakeKey)) {
+      if (currentTimeStr === effectiveWakeTime && !notifiedSet.has(wakeKey)) {
         markNotified(wakeKey);
         const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
         const dayName = dayNames[now.getDay()] || 'hoy';

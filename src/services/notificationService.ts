@@ -107,11 +107,9 @@ class NotificationService {
     }
   }
 
-  // Send a native push/local notification
+  // Send a native push/local notification + In-App Dynamic Island alert
   public async sendNotification(payload: NotificationPayload): Promise<boolean> {
-    if (!this.isSupported()) return false;
     if (!this.isEnabled()) return false;
-    if (this.getPermission() !== 'granted') return false;
 
     const {
       title,
@@ -123,7 +121,7 @@ class NotificationService {
       triggerHaptic = true
     } = payload;
 
-    // Optional audio & haptic feedback when notification triggers in app
+    // 1. Audio & Haptic Feedback
     if (playSound) {
       audioService.playCompletionChime();
     }
@@ -131,45 +129,58 @@ class NotificationService {
       hapticService.playSuccess();
     }
 
+    // 2. Dispatch in-app Dynamic Island alert (suena y vibra en pantalla visible)
     try {
-      // 1. Try Service Worker showNotification (Best for PWA & mobile)
-      if ('serviceWorker' in navigator) {
-        const registration = await navigator.serviceWorker.ready;
-        if (registration && registration.showNotification) {
-          await registration.showNotification(title, {
-            body,
-            icon,
-            badge: '/icons/icon-192.png',
-            vibrate: [250, 100, 250],
-            tag,
-            renotify: true,
-            data: { url }
-          });
-          return true;
-        }
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('in_app_reminder', {
+            detail: { title, body, url, tag }
+          })
+        );
       }
+    } catch {}
 
-      // 2. Fallback to standard Window Notification
-      const notif = new Notification(title, {
-        body,
-        icon,
-        tag,
-        data: { url }
-      });
-
-      notif.onclick = () => {
-        window.focus();
-        if (url && url !== '/') {
-          window.location.href = url;
+    // 3. If system notifications are supported and granted, trigger OS Push
+    if (this.isSupported() && this.getPermission() === 'granted') {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          if (registration && registration.showNotification) {
+            await registration.showNotification(title, {
+              body,
+              icon,
+              badge: '/icons/icon-192.png',
+              vibrate: [250, 100, 250],
+              tag,
+              renotify: true,
+              data: { url }
+            });
+            return true;
+          }
         }
-        notif.close();
-      };
 
-      return true;
-    } catch (err) {
-      console.warn('Could not display notification', err);
-      return false;
+        const notif = new Notification(title, {
+          body,
+          icon,
+          tag,
+          data: { url }
+        });
+
+        notif.onclick = () => {
+          window.focus();
+          if (url && url !== '/') {
+            window.location.href = url;
+          }
+          notif.close();
+        };
+
+        return true;
+      } catch (err) {
+        console.warn('System notification delivery failed, in-app banner displayed', err);
+      }
     }
+
+    return true;
   }
 
   // Helper: Send a test notification

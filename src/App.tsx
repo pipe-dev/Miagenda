@@ -17,6 +17,7 @@ import ConfirmDeleteModal from './components/ConfirmDeleteModal';
 import CoupleMoodCheckinModal from './components/CoupleMoodCheckinModal';
 import MedicationTracker from './components/MedicationTracker';
 import ProfileModal from './components/ProfileModal';
+import InAppNotificationBanner from './components/InAppNotificationBanner';
 
 import {
   getEvents,
@@ -795,6 +796,9 @@ export default function App() {
       className={`min-h-screen flex flex-col relative text-on-surface transition-colors duration-300 ${themeClass}`}
       style={{ backgroundColor: 'var(--app-bg, #d6cddb)' }}
     >
+      {/* Dynamic Island Floating Notification Banner */}
+      <InAppNotificationBanner onNavigate={setCurrentView} />
+
       {/* Top Header */}
       <Header
         activeProfile={activeProfile}
