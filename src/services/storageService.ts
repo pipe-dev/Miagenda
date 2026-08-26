@@ -351,7 +351,7 @@ export const saveProfileConfig = (config: Partial<ProfileConfig> & { activeProfi
     briefingTime: config.briefingTime || current.briefingTime || '08:00',
     enableBedtimeReminder: config.enableBedtimeReminder !== undefined ? config.enableBedtimeReminder : current.enableBedtimeReminder,
     enableWakeAlarm: config.enableWakeAlarm !== undefined ? config.enableWakeAlarm : current.enableWakeAlarm,
-    connectedSince: config.connectedSince || current.connectedSince || (isCoupleLinked() ? new Date().toISOString() : undefined)
+    connectedSince: config.connectedSince || current.connectedSince || ((p1 && p1 !== 'Tú' && p1 !== 'Pareja' && p2 && p2 !== 'Tú' && p2 !== 'Pareja') ? new Date().toISOString() : undefined)
   };
   localStorage.setItem(PROFILE_CONFIG_KEY, JSON.stringify(fullConfig));
   try {
@@ -468,13 +468,12 @@ export const getPartnerDisplayName = (profile: UserProfile): string => {
 // ==========================================
 export const isCoupleLinked = (): boolean => {
   const config = getProfileConfig();
-  if (config.connectedSince) return true;
   const p1 = config.partner1Name?.trim();
   const p2 = config.partner2Name?.trim();
-  const hasCustomP1 = Boolean(p1 && p1 !== 'Tú' && p1.length > 0);
-  const hasCustomP2 = Boolean(p2 && p2 !== 'Pareja' && p2.length > 0);
+  const hasCustomP1 = Boolean(p1 && p1 !== 'Tú' && p1 !== 'Pareja' && p1.length > 0);
+  const hasCustomP2 = Boolean(p2 && p2 !== 'Tú' && p2 !== 'Pareja' && p2.length > 0);
+  if (config.connectedSince && (hasCustomP1 || hasCustomP2)) return true;
   if (hasCustomP1 && hasCustomP2) return true;
-  if (config.isSetupComplete && (hasCustomP1 || hasCustomP2)) return true;
   return false;
 };
 

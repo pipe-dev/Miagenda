@@ -23,7 +23,7 @@ export default function MedicationModal({
 }: MedicationModalProps) {
   const partnerProfile: UserProfile = activeProfile === 'partner1' ? 'partner2' : 'partner1';
   const myColor = getUserProfileColor(activeProfile);
-  const partnerColor = getUserProfileColor(partnerProfile);
+  const partnerColor = myColor === 'blue' ? 'pink' : 'blue';
 
   const [name, setName] = useState(initialMedication?.name || '');
   const [dosage, setDosage] = useState(initialMedication?.dosage || '1 tableta');

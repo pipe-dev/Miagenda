@@ -24,7 +24,7 @@ export default function MedicationTracker({
 }: MedicationTrackerProps) {
   const partnerProfile: UserProfile = activeProfile === 'partner1' ? 'partner2' : 'partner1';
   const myColor = getUserProfileColor(activeProfile);
-  const partnerColor = getUserProfileColor(partnerProfile);
+  const partnerColor = myColor === 'blue' ? 'pink' : 'blue';
 
   // Selected Tab Filter: activeProfile | partnerProfile | 'both'
   const [selectedTab, setSelectedTab] = useState<UserProfile | 'both'>(activeProfile);

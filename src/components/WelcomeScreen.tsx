@@ -173,7 +173,8 @@ export default function WelcomeScreen({ onComplete }: WelcomeScreenProps) {
       partner2Color: finalP2Color,
       activeProfile: selectedProfile,
       isSetupComplete: true,
-      coupleId: finalCoupleId
+      coupleId: finalCoupleId,
+      connectedSince: mode === 'join' ? new Date().toISOString() : undefined
     });
 
     try {

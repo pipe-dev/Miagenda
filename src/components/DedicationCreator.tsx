@@ -17,7 +17,7 @@ interface DedicationCreatorProps {
 export default function DedicationCreator({ activeProfile, onClose, onSave }: DedicationCreatorProps) {
   const partnerProfile: UserProfile = activeProfile === 'partner1' ? 'partner2' : 'partner1';
   const myColor = getUserProfileColor(activeProfile);
-  const partnerColor = getUserProfileColor(partnerProfile);
+  const partnerColor = myColor === 'blue' ? 'pink' : 'blue';
 
   const [recipient, setRecipient] = useState<UserProfile>(partnerProfile);
   const [note, setNote] = useState('');
