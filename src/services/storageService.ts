@@ -84,7 +84,13 @@ export const saveEvent = (eventData: Partial<EventItem> & { title: string }): Ev
   if (eventData.id) {
     updatedEvents = events.map(e =>
       e.id === eventData.id
-        ? ({ ...e, ...eventData, privacy: coupleLinked ? (eventData.privacy || e.privacy) : 'mine' } as EventItem)
+        ? ({
+            ...e,
+            ...eventData,
+            recurrence: eventData.recurrence || e.recurrence || 'none',
+            repeatDays: eventData.recurrence === 'custom' ? (eventData.repeatDays || e.repeatDays) : (eventData.recurrence ? undefined : e.repeatDays),
+            privacy: coupleLinked ? (eventData.privacy || e.privacy) : 'mine'
+          } as EventItem)
         : e
     );
     savedItem = updatedEvents.find(e => e.id === eventData.id)!;
@@ -98,6 +104,8 @@ export const saveEvent = (eventData: Partial<EventItem> & { title: string }): Ev
       endTime: eventData.endTime || '11:00',
       privacy: effectivePrivacy,
       category: eventData.category || 'date',
+      recurrence: eventData.recurrence || 'none',
+      repeatDays: eventData.recurrence === 'custom' ? eventData.repeatDays : undefined,
       author: (eventData.author === 'partner2' || (eventData.author as any) === 'ella') ? 'partner2' : 'partner1',
       hasAlarm: eventData.hasAlarm ?? true,
       hasVoiceNote: eventData.hasVoiceNote ?? false,
@@ -599,6 +607,7 @@ export const clearCompletedTasks = (profile: UserProfile): TaskItem[] => {
 // RECURRENCE & EVENT DATE RESOLVER
 // ==========================================
 export const isEventActiveOnDate = (event: EventItem, targetDateStr: string): boolean => {
+  if (!event) return false;
   if (event.date === targetDateStr) return true;
   if (!event.recurrence || event.recurrence === 'none') return false;
 
@@ -621,8 +630,11 @@ export const isEventActiveOnDate = (event: EventItem, targetDateStr: string): bo
     return dayOfWeek === originalDate.getDay();
   }
 
-  if (event.recurrence === 'custom' && Array.isArray(event.repeatDays)) {
-    return event.repeatDays.includes(dayOfWeek);
+  if (event.recurrence === 'custom') {
+    if (Array.isArray(event.repeatDays) && event.repeatDays.length > 0) {
+      return event.repeatDays.map(Number).includes(dayOfWeek);
+    }
+    return dayOfWeek === originalDate.getDay();
   }
 
   return false;

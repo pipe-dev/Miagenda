@@ -21,6 +21,22 @@ export const generateIcsEvent = (event: EventItem): string => {
   const description = `${event.description || ''}\n\nCreado en Mi Agenda (${event.privacy === 'shared' ? 'Agenda Compartida' : 'Mi Agenda Privada'})`;
   const location = event.location || 'Mi Agenda';
 
+  // Build RRULE for repeating routines on Apple & Google Calendar
+  let rruleLine = '';
+  if (event.recurrence === 'daily') {
+    rruleLine = 'RRULE:FREQ=DAILY';
+  } else if (event.recurrence === 'weekly') {
+    rruleLine = 'RRULE:FREQ=WEEKLY';
+  } else if (event.recurrence === 'weekdays') {
+    rruleLine = 'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR';
+  } else if (event.recurrence === 'custom' && Array.isArray(event.repeatDays) && event.repeatDays.length > 0) {
+    const dayMap = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+    const byDays = event.repeatDays.map(Number).filter(d => d >= 0 && d <= 6).map(d => dayMap[d]).join(',');
+    if (byDays) {
+      rruleLine = `RRULE:FREQ=WEEKLY;BYDAY=${byDays}`;
+    }
+  }
+
   // Build ICS content with VALARM for critical audible alert on iOS
   const icsContent = [
     'BEGIN:VCALENDAR',
@@ -34,6 +50,7 @@ export const generateIcsEvent = (event: EventItem): string => {
     `DTSTAMP:${dtStamp}`,
     `DTSTART:${dtStart}`,
     `DTEND:${dtEnd}`,
+    ...(rruleLine ? [rruleLine] : []),
     `SUMMARY:${title}`,
     `DESCRIPTION:${description}`,
     `LOCATION:${location}`,

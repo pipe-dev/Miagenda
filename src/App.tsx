@@ -50,6 +50,7 @@ import {
   checkShouldAutoPromptMood,
   markMoodPromptedForToday,
   getLocalDateStr,
+  isEventActiveOnDate,
   getActiveProfile,
   setActiveProfile as persistActiveProfile,
   getProfileConfig,
@@ -76,7 +77,12 @@ import {
   subscribeToCloudDedications,
   subscribeToCloudMedications,
   subscribeToCloudMoods,
-  subscribeToCloudProfileConfig
+  subscribeToCloudProfileConfig,
+  syncEventToCloud,
+  syncTaskToCloud,
+  syncGroceryToCloud,
+  syncDedicationToCloud,
+  syncMedicationToCloud
 } from './services/firestoreSync';
 import { getFirebaseServices } from './services/firebase';
 import { checkAndRunAutomatedBackup } from './services/backupService';
@@ -797,7 +803,7 @@ export default function App() {
         onStartTour={() => tourService.startTour(currentView, true)}
         hasUnreadDedication={hasUnread}
         partnerMood={coupleMoods[activeProfile === 'partner1' ? 'partner2' : 'partner1']}
-        todayEvents={events.filter((e) => e.date === getLocalDateStr())}
+        todayEvents={events.filter((e) => isEventActiveOnDate(e, getLocalDateStr()))}
         onOpenSurprise={() => {
           const s = getPendingSurprise(activeProfile);
           if (s) setActiveSurprise(s);
