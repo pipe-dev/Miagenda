@@ -43,7 +43,12 @@ export default async function handler(req, res) {
 
     const result = await webpush.sendNotification(subscription, pushPayload, {
       TTL: 86400, // 24 hours queue on Apple APNs / Google FCM if phone is offline
-      urgency: 'high'
+      urgency: 'high',
+      headers: {
+        'apns-push-type': 'alert',
+        'apns-priority': '10',
+        'apns-expiration': String(Math.floor(Date.now() / 1000) + 86400)
+      }
     });
 
     return res.status(200).json({ success: true, statusCode: result.statusCode });

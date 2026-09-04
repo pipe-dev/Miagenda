@@ -12,6 +12,9 @@ import {
 } from '../services/storageService';
 import { subscribeToCloudCoupons } from '../services/firestoreSync';
 import { hapticService } from '../services/hapticService';
+import { notificationService } from '../services/notificationService';
+import { remotePushService } from '../services/remotePushService';
+import { audioService } from '../services/audioService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
 import styles from './LoveCouponsVault.module.css';
 
@@ -31,11 +34,60 @@ export default function LoveCouponsVault({ activeProfile }: LoveCouponsVaultProp
   const [coupons, setCoupons] = useState<LoveCoupon[]>(() => getLoveCoupons());
   const [selectedId, setSelectedId] = useState<string>(() => coupons[0]?.id || '');
   const [isCreating, setIsCreating] = useState(false);
+  const isInitialSyncRef = useRef(true);
+  const prevCouponsRef = useRef<LoveCoupon[]>(coupons);
 
-  // Escucha cambios de cupones en la nube en tiempo real
+  // Escucha cambios de cupones en la nube en tiempo real y despierta al receptor
   useEffect(() => {
     const unsub = subscribeToCloudCoupons((cloudCoupons) => {
       if (cloudCoupons && cloudCoupons.length > 0) {
+        if (!isInitialSyncRef.current) {
+          // 1. Detectar si la pareja canjeó un vale
+          const newlyRedeemed = cloudCoupons.find((c) => {
+            const prev = prevCouponsRef.current.find((p) => p.id === c.id);
+            return c.redeemed && prev && !prev.redeemed;
+          });
+
+          if (newlyRedeemed) {
+            hapticService.playSuccess();
+            audioService.playCompletionChime();
+            try {
+              confetti({
+                particleCount: 80,
+                spread: 80,
+                origin: { y: 0.5 },
+                colors: ['#007dab', '#af0a78', '#f59e0b', '#ec4899', '#10b981']
+              });
+            } catch (_) {}
+
+            notificationService.sendNotification({
+              title: '🎟️ ¡Vale Canjeado por tu pareja!',
+              body: `Tu pareja ha canjeado el vale: "${newlyRedeemed.title}". ¡A disfrutarlo juntos! 🎉`,
+              url: '/?view=memories',
+              tag: 'coupon-redeemed-' + newlyRedeemed.id
+            });
+          }
+
+          // 2. Detectar si la pareja creó un nuevo vale de regalo
+          const newlyAdded = cloudCoupons.find((c) => {
+            const prev = prevCouponsRef.current.find((p) => p.id === c.id);
+            return !prev && c.from !== activeProfile;
+          });
+
+          if (newlyAdded) {
+            hapticService.playSuccess();
+            audioService.playCompletionChime();
+            notificationService.sendNotification({
+              title: '🎁 ¡Nuevo Vale 3D de Regalo!',
+              body: `Tu pareja te ha regalado un vale de amor: "${newlyAdded.title}". ¡Entra a canjearlo!`,
+              url: '/?view=memories',
+              tag: 'coupon-new-' + newlyAdded.id
+            });
+          }
+        }
+
+        isInitialSyncRef.current = false;
+        prevCouponsRef.current = cloudCoupons;
         setCoupons(cloudCoupons);
         localStorage.setItem('daily_delight_love_coupons_v2', JSON.stringify(cloudCoupons));
       }
@@ -43,7 +95,7 @@ export default function LoveCouponsVault({ activeProfile }: LoveCouponsVaultProp
     return () => {
       if (unsub) unsub();
     };
-  }, []);
+  }, [activeProfile]);
 
   // Custom coupon form state
   const [newTitle, setNewTitle] = useState('');
@@ -106,10 +158,11 @@ export default function LoveCouponsVault({ activeProfile }: LoveCouponsVaultProp
   // Redeem Coupon Action with Tactile Sub-Bass & Confetti
   const handleRedeem = (coupon: LoveCoupon) => {
     hapticService.playSuccess();
+    audioService.playCompletionChime();
     try {
       confetti({
-        particleCount: 60,
-        spread: 70,
+        particleCount: 90,
+        spread: 80,
         origin: { y: 0.6 },
         colors: ['#007dab', '#af0a78', '#f59e0b', '#ec4899', '#10b981']
       });
@@ -117,18 +170,46 @@ export default function LoveCouponsVault({ activeProfile }: LoveCouponsVaultProp
 
     const updated = redeemLoveCoupon(coupon.id);
     setCoupons(updated);
+    prevCouponsRef.current = updated;
+
+    // Despierta el teléfono de la pareja con Push de alta prioridad
+    const myName = getUserDisplayName(activeProfile);
+    remotePushService.sendPushToPartner({
+      title: '🎟️ ¡Vale 3D Canjeado!',
+      body: `${myName} ha canjeado el vale: "${coupon.title}". ¡A disfrutarlo juntos! 🎉`,
+      url: '/?view=memories',
+      tag: 'remote-coupon-redeem-' + Date.now()
+    });
+
+    // Alerta local Dynamic Island para quien lo canjeó
+    notificationService.sendNotification({
+      title: '🎉 ¡Vale Canjeado con Éxito!',
+      body: `Has canjeado "${coupon.title}". Tu pareja ha recibido la notificación.`,
+      url: '/?view=memories',
+      tag: 'local-coupon-redeemed'
+    });
   };
 
   const handleUnredeem = (coupon: LoveCoupon) => {
     hapticService.playLightTap();
     const updated = unredeemLoveCoupon(coupon.id);
     setCoupons(updated);
+    prevCouponsRef.current = updated;
+
+    const myName = getUserDisplayName(activeProfile);
+    remotePushService.sendPushToPartner({
+      title: '🎟️ Vale Reactivado',
+      body: `${myName} reactivó el vale: "${coupon.title}".`,
+      url: '/?view=memories',
+      tag: 'remote-coupon-unredeem-' + Date.now()
+    });
   };
 
   const handleDelete = (coupon: LoveCoupon) => {
     hapticService.playWarning();
     const updated = deleteLoveCoupon(coupon.id);
     setCoupons(updated);
+    prevCouponsRef.current = updated;
     if (updated.length > 0) {
       setSelectedId(updated[0].id);
     } else {
@@ -141,6 +222,7 @@ export default function LoveCouponsVault({ activeProfile }: LoveCouponsVaultProp
     if (!newTitle.trim()) return;
 
     hapticService.playPhysicalThud(0.28, 0.18);
+    audioService.playCompletionChime();
     const otherProfile: UserProfile = activeProfile === 'partner1' ? 'partner2' : 'partner1';
 
     const updated = saveLoveCoupon({
@@ -154,10 +236,29 @@ export default function LoveCouponsVault({ activeProfile }: LoveCouponsVaultProp
     });
 
     setCoupons(updated);
+    prevCouponsRef.current = updated;
     if (updated.length > 0) {
       setSelectedId(updated[0].id);
     }
     setIsCreating(false);
+
+    // Despierta el teléfono de la pareja con Push de alta prioridad
+    const myName = getUserDisplayName(activeProfile);
+    remotePushService.sendPushToPartner({
+      title: '🎁 ¡Nuevo Vale 3D de Regalo!',
+      body: `${myName} te ha regalado un nuevo vale de amor: "${newTitle.trim()}". ¡Entra a canjearlo! ✨`,
+      url: '/?view=memories',
+      tag: 'remote-coupon-new-' + Date.now()
+    });
+
+    // Alerta local Dynamic Island para el creador
+    notificationService.sendNotification({
+      title: '✨ Vale 3D Creado',
+      body: `Le has regalado "${newTitle.trim()}" a tu pareja.`,
+      url: '/?view=memories',
+      tag: 'local-coupon-created'
+    });
+
     setNewTitle('');
     setNewDesc('');
     setNewNote('');

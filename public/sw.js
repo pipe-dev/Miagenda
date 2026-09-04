@@ -36,11 +36,14 @@ self.addEventListener('push', (event) => {
     body: payload.body,
     icon: '/icons/icon-192.png',
     badge: '/icons/icon-192.png',
-    vibrate: [250, 100, 250, 100, 250],
+    vibrate: [350, 120, 350, 120, 350],
     tag: payload.tag || 'mi-agenda-notif-' + Date.now(),
     renotify: true,
+    requireInteraction: true,
+    timestamp: Date.now(),
     data: {
-      url: payload.url || '/'
+      url: payload.url || '/',
+      timestamp: Date.now()
     }
   };
 

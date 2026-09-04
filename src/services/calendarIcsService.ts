@@ -37,6 +37,11 @@ export const generateIcsEvent = (event: EventItem): string => {
     }
   }
 
+  const sequence = typeof event.sequence === 'number' ? event.sequence : (event.updatedAt ? 1 : 0);
+  const lastModified = event.updatedAt
+    ? new Date(event.updatedAt).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+    : dtStamp;
+
   // Build ICS content with VALARM for critical audible alert on iOS
   const icsContent = [
     'BEGIN:VCALENDAR',
@@ -48,6 +53,7 @@ export const generateIcsEvent = (event: EventItem): string => {
     'BEGIN:VEVENT',
     `UID:${uid}`,
     `DTSTAMP:${dtStamp}`,
+    `LAST-MODIFIED:${lastModified}`,
     `DTSTART:${dtStart}`,
     `DTEND:${dtEnd}`,
     ...(rruleLine ? [rruleLine] : []),
@@ -55,7 +61,7 @@ export const generateIcsEvent = (event: EventItem): string => {
     `DESCRIPTION:${description}`,
     `LOCATION:${location}`,
     'STATUS:CONFIRMED',
-    'SEQUENCE:0',
+    `SEQUENCE:${sequence}`,
     // High Priority Alarm for iOS (suena en modo enfoque)
     'BEGIN:VALARM',
     'TRIGGER:-PT0M',
@@ -79,6 +85,7 @@ export const generateIcsEvent = (event: EventItem): string => {
 export const generateCancelIcsEvent = (event: EventItem): string => {
   const dtStamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   const uid = getEventUid(event.id);
+  const sequence = typeof event.sequence === 'number' ? event.sequence + 1 : 1;
 
   const icsContent = [
     'BEGIN:VCALENDAR',
@@ -89,9 +96,10 @@ export const generateCancelIcsEvent = (event: EventItem): string => {
     'BEGIN:VEVENT',
     `UID:${uid}`,
     `DTSTAMP:${dtStamp}`,
+    `LAST-MODIFIED:${dtStamp}`,
     `SUMMARY:${event.title || 'Evento'} (Cancelado)`,
     'STATUS:CANCELLED',
-    'SEQUENCE:1',
+    `SEQUENCE:${sequence}`,
     'END:VEVENT',
     'END:VCALENDAR'
   ].join('\r\n');
@@ -185,6 +193,131 @@ export const downloadMedicationIcs = (med: any): void => {
   const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
   link.setAttribute('download', `${(med.name || 'medicamento').replace(/\s+/g, '_')}_alarma_diaria.ics`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// ==========================================
+// WAKE-UP & SLEEP ROUTINE IPHONE ALARMS (.ICS)
+// ==========================================
+export const generateScheduleAlarmsIcs = (schedule: any): string => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = (today.getMonth() + 1).toString().padStart(2, '0');
+  const day = today.getDate().toString().padStart(2, '0');
+  const dtStamp = today.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+  const wakeWeekdays = schedule.wakeTimeWeekdays || schedule.wakeTime || '07:30';
+  const wakeWeekend = schedule.wakeTimeWeekend || '09:00';
+  const sleepTime = schedule.sleepTime || '23:00';
+
+  const [wwH, wwM] = wakeWeekdays.split(':');
+  const [weH, weM] = wakeWeekend.split(':');
+
+  // Calculate 1 hour before sleep for bedtime prep
+  const [sleepH, sleepM] = sleepTime.split(':').map(Number);
+  let prepH = (sleepH || 23) - 1;
+  if (prepH < 0) prepH += 24;
+  const prepTime = `${prepH.toString().padStart(2, '0')}:${(sleepM || 0).toString().padStart(2, '0')}`;
+  const [spH, spM] = prepTime.split(':');
+
+  const vevents: string[] = [];
+
+  // 1. Alarma de Despertar - Lunes a Viernes
+  if (schedule.enableWakeAlarm !== false) {
+    vevents.push(
+      [
+        'BEGIN:VEVENT',
+        `UID:wake-weekdays@miagenda.app`,
+        `DTSTAMP:${dtStamp}`,
+        `DTSTART:${year}${month}${day}T${wwH || '07'}${wwM || '30'}00`,
+        `DTEND:${year}${month}${day}T${wwH || '07'}${wwM || '30'}00`,
+        'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR',
+        'SUMMARY:⏰ Alarma: ¡Hora de levantarse! (Lun-Vie)',
+        'DESCRIPTION:Alarma matutina configurada desde Mi Agenda para días laborables.',
+        'LOCATION:Mi Agenda - Rutina Matutina',
+        'STATUS:CONFIRMED',
+        'SEQUENCE:0',
+        'BEGIN:VALARM',
+        'TRIGGER:-PT0M',
+        'ACTION:AUDIO',
+        'ATTACH;VALUE=URI:Chord',
+        'DESCRIPTION:⏰ ¡Hora de despertar! Inicia tu jornada',
+        'END:VALARM',
+        'END:VEVENT'
+      ].join('\r\n')
+    );
+
+    // 2. Alarma de Despertar - Fines de Semana (Sábado y Domingo)
+    vevents.push(
+      [
+        'BEGIN:VEVENT',
+        `UID:wake-weekend@miagenda.app`,
+        `DTSTAMP:${dtStamp}`,
+        `DTSTART:${year}${month}${day}T${weH || '09'}${weM || '00'}00`,
+        `DTEND:${year}${month}${day}T${weH || '09'}${weM || '00'}00`,
+        'RRULE:FREQ=WEEKLY;BYDAY=SA,SU',
+        'SUMMARY:🏖️ Alarma: Despertar de Fin de Semana',
+        'DESCRIPTION:Alarma matutina configurada desde Mi Agenda para Sábados y Domingos.',
+        'LOCATION:Mi Agenda - Rutina Fin de Semana',
+        'STATUS:CONFIRMED',
+        'SEQUENCE:0',
+        'BEGIN:VALARM',
+        'TRIGGER:-PT0M',
+        'ACTION:AUDIO',
+        'ATTACH;VALUE=URI:Chord',
+        'DESCRIPTION:🏖️ ¡Feliz fin de semana! Hora de levantarse',
+        'END:VALARM',
+        'END:VEVENT'
+      ].join('\r\n')
+    );
+  }
+
+  // 3. Aviso 1 hora antes de Dormir / Rutina de Sueño
+  if (schedule.enableBedtimeReminder !== false) {
+    vevents.push(
+      [
+        'BEGIN:VEVENT',
+        `UID:sleep-prep@miagenda.app`,
+        `DTSTAMP:${dtStamp}`,
+        `DTSTART:${year}${month}${day}T${spH || '22'}${spM || '00'}00`,
+        `DTEND:${year}${month}${day}T${spH || '22'}${spM || '00'}00`,
+        'RRULE:FREQ=DAILY;INTERVAL=1',
+        'SUMMARY:🌙 Rutina de Sueño: Desconexión y Descanso',
+        `DESCRIPTION:Falta 1 hora para tu hora de dormir programada (${sleepTime}). ¡Desconéctate y relájate!`,
+        'LOCATION:Mi Agenda - Rutina Nocturna',
+        'STATUS:CONFIRMED',
+        'SEQUENCE:0',
+        'BEGIN:VALARM',
+        'TRIGGER:-PT0M',
+        'ACTION:AUDIO',
+        'ATTACH;VALUE=URI:Chord',
+        'DESCRIPTION:🌙 Hora de prepararse para descansar',
+        'END:VALARM',
+        'END:VEVENT'
+      ].join('\r\n')
+    );
+  }
+
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Mi Agenda//Rutinas y Alarmas//ES',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:Rutina Mi Agenda',
+    ...vevents,
+    'END:VCALENDAR'
+  ].join('\r\n');
+};
+
+export const downloadScheduleAlarmsIcs = (schedule: any): void => {
+  const icsData = generateScheduleAlarmsIcs(schedule);
+  const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.setAttribute('download', 'rutina_despertar_y_dormir_alarma.ics');
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

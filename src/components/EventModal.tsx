@@ -75,6 +75,9 @@ export default function EventModal({
     e.preventDefault();
     if (!title.trim()) return;
 
+    const nowIso = new Date().toISOString();
+    const nextSequence = initialEvent ? ((initialEvent.sequence || 0) + 1) : 0;
+
     const eventPayload: Partial<EventItem> & { title: string } = {
       ...(initialEvent?.id ? { id: initialEvent.id } : {}),
       title: title.trim(),
@@ -88,7 +91,10 @@ export default function EventModal({
       repeatDays: recurrence === 'custom' ? repeatDays : undefined,
       author: initialEvent?.author || activeProfile,
       hasAlarm: enableAlarm,
-      hasVoiceNote: false
+      hasVoiceNote: false,
+      sequence: nextSequence,
+      createdAt: initialEvent?.createdAt || nowIso,
+      updatedAt: nowIso
     };
 
     onSave(eventPayload);
@@ -97,7 +103,7 @@ export default function EventModal({
       downloadIcsFile({
         ...eventPayload,
         id: initialEvent?.id || 'temp-' + Date.now(),
-        createdAt: initialEvent?.createdAt || new Date().toISOString()
+        createdAt: initialEvent?.createdAt || nowIso
       } as EventItem);
     }
 

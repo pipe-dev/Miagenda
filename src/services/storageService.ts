@@ -81,12 +81,16 @@ export const saveEvent = (eventData: Partial<EventItem> & { title: string }): Ev
 
   let updatedEvents: EventItem[];
   let savedItem: EventItem;
+  const nowIso = new Date().toISOString();
+
   if (eventData.id) {
     updatedEvents = events.map(e =>
       e.id === eventData.id
         ? ({
             ...e,
             ...eventData,
+            sequence: typeof eventData.sequence === 'number' ? eventData.sequence : (e.sequence || 0) + 1,
+            updatedAt: nowIso,
             recurrence: eventData.recurrence || e.recurrence || 'none',
             repeatDays: eventData.recurrence === 'custom' ? (eventData.repeatDays || e.repeatDays) : (eventData.recurrence ? undefined : e.repeatDays),
             privacy: coupleLinked ? (eventData.privacy || e.privacy) : 'mine'
@@ -109,7 +113,9 @@ export const saveEvent = (eventData: Partial<EventItem> & { title: string }): Ev
       author: (eventData.author === 'partner2' || (eventData.author as any) === 'ella') ? 'partner2' : 'partner1',
       hasAlarm: eventData.hasAlarm ?? true,
       hasVoiceNote: eventData.hasVoiceNote ?? false,
-      createdAt: new Date().toISOString()
+      sequence: 0,
+      createdAt: nowIso,
+      updatedAt: nowIso
     };
     updatedEvents = [newEvent, ...events];
     savedItem = newEvent;

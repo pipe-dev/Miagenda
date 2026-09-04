@@ -74,6 +74,8 @@ export const sanitizeEventPayload = (event: any): any => {
     recurrence: ['none', 'daily', 'weekly', 'weekdays', 'custom'].includes(event.recurrence) ? event.recurrence : 'none',
     repeatDays: Array.isArray(event.repeatDays) ? event.repeatDays.filter((d: any) => typeof d === 'number' && d >= 0 && d <= 6) : undefined,
     createdAt: sanitizeString(event.createdAt || new Date().toISOString(), 35),
+    updatedAt: event.updatedAt ? sanitizeString(event.updatedAt, 35) : undefined,
+    sequence: typeof event.sequence === 'number' ? Math.max(0, Math.floor(event.sequence)) : undefined,
     location: event.location ? sanitizeString(event.location, 100) : undefined
   });
 };

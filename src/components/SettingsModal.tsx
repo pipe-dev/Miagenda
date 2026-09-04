@@ -15,6 +15,8 @@ import { getProfileConfig, getUserSchedule, saveUserSchedule, isCoupleLinked, ge
 import { isFirestoreConfigured, getFirestoreConfig } from '../services/firestoreSync';
 import { hapticService } from '../services/hapticService';
 import { notificationService } from '../services/notificationService';
+import { audioService } from '../services/audioService';
+import { downloadScheduleAlarmsIcs } from '../services/calendarIcsService';
 import LordIcon, { LORDICON_ICONS } from './LordIcon';
 
 interface SettingsModalProps {
@@ -40,6 +42,26 @@ export default function SettingsModal({
   const [enableBedtimeReminder, setEnableBedtimeReminder] = React.useState<boolean>(initialSchedule.enableBedtimeReminder ?? true);
   const [enableWakeAlarm, setEnableWakeAlarm] = React.useState<boolean>(initialSchedule.enableWakeAlarm ?? true);
   const [scheduleSavedFeedback, setScheduleSavedFeedback] = React.useState<boolean>(false);
+  const [isSyncingAlarm, setIsSyncingAlarm] = React.useState<boolean>(false);
+
+  // Helper para sincronizar e instalar la alarma nativa sonora en iPhone / Reloj
+  const handleSyncRoutineAlarm = () => {
+    setIsSyncingAlarm(true);
+    hapticService.playSuccess();
+    audioService.playCompletionChime();
+    downloadScheduleAlarmsIcs({
+      wakeTimeWeekdays,
+      wakeTimeWeekend,
+      sleepTime,
+      enableWakeAlarm,
+      enableBedtimeReminder
+    });
+    setScheduleSavedFeedback(true);
+    setTimeout(() => {
+      setIsSyncingAlarm(false);
+      setScheduleSavedFeedback(false);
+    }, 2000);
+  };
 
   // Helper to calculate 1 hour before bedtime
   const getBedtimePrepTime = (timeStr: string) => {
@@ -410,6 +432,40 @@ export default function SettingsModal({
                   >
                     <motion.div layout className="w-4 h-4 bg-white rounded-full shadow-xs" />
                   </button>
+                </div>
+
+                {/* 3. Botón de Sincronización Sonora para iPhone / Reloj */}
+                <div className="pt-2 border-t border-slate-100/80">
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50/60 p-3 rounded-2xl border border-amber-200/80 shadow-2xs space-y-2">
+                    <div className="flex items-start space-x-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                        <span className="material-symbols-outlined text-[18px]">alarm_on</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h6 className="text-[11px] font-black text-amber-950 flex items-center gap-1.5">
+                          <span>Alarma Sonora para iPhone & Reloj</span>
+                        </h6>
+                        <p className="text-[10px] text-amber-900/80 font-medium leading-tight mt-0.5">
+                          Instala las alarmas de despertar y descanso en el Reloj/Calendario de tu iPhone para que <strong>suenen fuerte</strong> aunque el teléfono esté bloqueado o en modo silencio.
+                        </p>
+                      </div>
+                    </div>
+
+                    <motion.button
+                      whileTap={{ scale: 0.96 }}
+                      type="button"
+                      disabled={isSyncingAlarm}
+                      onClick={handleSyncRoutineAlarm}
+                      className="w-full py-2.5 px-3.5 rounded-xl candy-btn text-white text-xs font-black shadow-sm flex items-center justify-center space-x-2 transition-transform"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        {isSyncingAlarm ? 'sync' : 'notification_important'}
+                      </span>
+                      <span>
+                        {isSyncingAlarm ? 'Instalando en iPhone...' : '📲 Sincronizar Alarma Sonora con iPhone'}
+                      </span>
+                    </motion.button>
+                  </div>
                 </div>
               </div>
             </div>

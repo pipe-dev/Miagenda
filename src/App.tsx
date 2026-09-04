@@ -568,6 +568,7 @@ export default function App() {
 
   // Event handlers: Save / Edit / Delete / Reorder / Move Date
   const handleSaveEvent = (eventData: Partial<EventItem> & { title: string }) => {
+    const isEditing = Boolean(editingEvent && editingEvent.id);
     const updated = saveEvent(eventData);
     setEvents(updated);
     setEditingEvent(null);
@@ -578,8 +579,10 @@ export default function App() {
     if (eventData.privacy === 'shared') {
       const myName = getUserDisplayName(activeProfile);
       remotePushService.sendPushToPartner({
-        title: '✨ Nueva cita compartida',
-        body: `${myName} programó: "${eventData.title}" a las ${eventData.startTime || '10:00'}`,
+        title: isEditing ? '📅 Cita Compartida Modificada' : '✨ Nueva Cita en la Agenda',
+        body: isEditing
+          ? `${myName} modificó la cita: "${eventData.title}" (${eventData.startTime || '10:00'}).`
+          : `${myName} programó: "${eventData.title}" para el ${eventData.date || 'día de hoy'} a las ${eventData.startTime || '10:00'}.`,
         url: '/?view=today',
         tag: 'remote-event-' + Date.now()
       });
@@ -604,9 +607,12 @@ export default function App() {
 
   const handleExecuteDelete = () => {
     if (!deleteTarget) return;
+    const myName = getUserDisplayName(activeProfile);
 
     if (deleteTarget.type === 'event') {
       const eventId = deleteTarget.data.id;
+      const wasShared = deleteTarget.data.privacy === 'shared';
+      const eventTitle = deleteTarget.data.title;
       const updated = deleteEvent(eventId);
       setEvents(updated);
       if (selectedEvent?.id === eventId) {
@@ -616,6 +622,15 @@ export default function App() {
         setEditingEvent(null);
       }
       setIsEventModalOpen(false);
+
+      if (wasShared) {
+        remotePushService.sendPushToPartner({
+          title: '🗑️ Cita Compartida Cancelada',
+          body: `${myName} canceló la cita: "${eventTitle}".`,
+          url: '/?view=calendar',
+          tag: 'remote-del-event-' + Date.now()
+        });
+      }
     } else if (deleteTarget.type === 'dedication') {
       const dedicationId = deleteTarget.data.id;
       const updated = deleteDedication(dedicationId);
@@ -623,14 +638,37 @@ export default function App() {
       if (activeSurprise?.id === dedicationId) {
         setActiveSurprise(null);
       }
+
+      remotePushService.sendPushToPartner({
+        title: '💌 Recuerdos de Pareja',
+        body: `${myName} actualizó la cápsula de recuerdos compartidos.`,
+        url: '/?view=memories',
+        tag: 'remote-del-ded-' + Date.now()
+      });
     } else if (deleteTarget.type === 'task') {
       const taskId = deleteTarget.data.id;
+      const taskTitle = deleteTarget.data.title;
       const updated = deleteTask(taskId, activeProfile);
       setTasks(updated);
+
+      remotePushService.sendPushToPartner({
+        title: '📋 Tareas & Hogar',
+        body: `${myName} eliminó la tarea: "${taskTitle}".`,
+        url: '/?view=tasks',
+        tag: 'remote-del-task-' + Date.now()
+      });
     } else if (deleteTarget.type === 'grocery') {
       const groceryId = deleteTarget.data.id;
+      const groceryTitle = deleteTarget.data.title;
       const updated = deleteSharedGrocery(groceryId);
       setSharedGroceries(updated);
+
+      remotePushService.sendPushToPartner({
+        title: '🛒 Lista del Súper',
+        body: `${myName} eliminó "${groceryTitle}" de la lista.`,
+        url: '/?view=tasks',
+        tag: 'remote-del-grocery-' + Date.now()
+      });
     }
 
     setDeleteTarget(null);
@@ -671,6 +709,16 @@ export default function App() {
     if (targetEvent) {
       const updated = saveEvent({ ...targetEvent, date: targetDateStr });
       setEvents(updated);
+
+      if (targetEvent.privacy === 'shared') {
+        const myName = getUserDisplayName(activeProfile);
+        remotePushService.sendPushToPartner({
+          title: '📅 Cita Compartida Reprogramada',
+          body: `${myName} reprogramó "${targetEvent.title}" para el ${targetDateStr}.`,
+          url: '/?view=calendar',
+          tag: 'remote-move-event-' + Date.now()
+        });
+      }
     }
   };
 
@@ -679,15 +727,35 @@ export default function App() {
     setEvents(updated);
   };
 
-  // Personal Task Handlers
+  // Personal & Household Task Handlers
   const handleSaveTask = (taskData: Partial<TaskItem> & { title: string; author: UserProfile }) => {
     const updated = saveTask(taskData);
     setTasks(updated);
+
+    const myName = getUserDisplayName(activeProfile);
+    const catLabel = taskData.category === 'home' ? 'Hogar' : taskData.category === 'work' ? 'Trabajo' : 'General';
+    remotePushService.sendPushToPartner({
+      title: `📋 Nueva Tarea (${catLabel})`,
+      body: `${myName} agregó la tarea: "${taskData.title}".`,
+      url: '/?view=tasks',
+      tag: 'remote-task-' + Date.now()
+    });
   };
 
   const handleToggleTask = (id: string) => {
+    const target = tasks.find(t => t.id === id);
     const updated = toggleTask(id, activeProfile);
     setTasks(updated);
+
+    if (target) {
+      const myName = getUserDisplayName(activeProfile);
+      remotePushService.sendPushToPartner({
+        title: '📋 Tareas & Hogar',
+        body: `${myName} ${!target.completed ? 'completó la tarea: "' + target.title + '" ✅' : 'reactivó la tarea: "' + target.title + '"'}.`,
+        url: '/?view=tasks',
+        tag: 'remote-task-toggle-' + Date.now()
+      });
+    }
   };
 
   const handleReorderTasks = (reordered: TaskItem[]) => {
@@ -698,6 +766,14 @@ export default function App() {
   const handleClearCompletedTasks = () => {
     const updated = clearCompletedTasks(activeProfile);
     setTasks(updated);
+
+    const myName = getUserDisplayName(activeProfile);
+    remotePushService.sendPushToPartner({
+      title: '📋 Tareas & Hogar',
+      body: `${myName} limpió las tareas completadas.`,
+      url: '/?view=tasks',
+      tag: 'remote-task-clear-' + Date.now()
+    });
   };
 
   // Shared Groceries Handlers
@@ -717,13 +793,32 @@ export default function App() {
   };
 
   const handleToggleSharedGrocery = (id: string) => {
+    const item = sharedGroceries.find(g => g.id === id);
     const updated = toggleSharedGrocery(id);
     setSharedGroceries(updated);
+
+    if (item) {
+      const myName = getUserDisplayName(activeProfile);
+      remotePushService.sendPushToPartner({
+        title: '🛒 Lista del Súper',
+        body: `${myName} marcó "${item.title}" como ${!item.completed ? 'comprado ✅' : 'pendiente'}.`,
+        url: '/?view=tasks',
+        tag: 'remote-toggle-grocery-' + Date.now()
+      });
+    }
   };
 
   const handleClearCompletedSharedGroceries = () => {
     const updated = clearCompletedSharedGroceries();
     setSharedGroceries(updated);
+
+    const myName = getUserDisplayName(activeProfile);
+    remotePushService.sendPushToPartner({
+      title: '🛒 Lista del Súper',
+      body: `${myName} limpió los artículos comprados de la lista.`,
+      url: '/?view=tasks',
+      tag: 'remote-clear-grocery-' + Date.now()
+    });
   };
 
   // Couple Mood / Sintonizador Handlers
@@ -733,9 +828,19 @@ export default function App() {
     markMoodPromptedForToday(activeProfile);
 
     const myName = getUserDisplayName(activeProfile);
+    const needLabel = {
+      intimacy: 'Intimidad & Pasión 🔥',
+      cuddle: 'Ternura & Apapacho 🧸',
+      touch: 'Contacto & Abrazos 🫂',
+      talk: 'Charla & Desahogo 💬',
+      space: 'Espacio & Calma 🌿',
+      chill: 'Plan chill & Pelis 🍿',
+      hangout: 'Salir y despejarnos 🎉'
+    }[status.need] || 'Cariño & Conexión 💕';
+
     remotePushService.sendPushToPartner({
-      title: '💖 Sintonizador de Pareja',
-      body: `${myName} ha compartido su estado de ánimo hoy.`,
+      title: '💖 Nivel de Energía Actualizado',
+      body: `${myName} está al ${status.battery}% de energía y le apetece: ${needLabel}.${status.note ? ' "' + status.note + '"' : ''}`,
       url: '/?view=memories',
       tag: 'remote-mood-' + Date.now()
     });
@@ -749,9 +854,19 @@ export default function App() {
 
     // Dispatch Apple APNs / Google Push for love dedication
     const myName = getUserDisplayName(activeProfile);
+    const hasPhoto = Boolean(dedicationData.photoUrl);
+    const hasAudio = Boolean(dedicationData.audioUrl);
+    const detail = hasPhoto && hasAudio
+      ? 'una foto, una nota de voz y una cartita de amor'
+      : hasPhoto
+      ? 'una foto y una cartita de amor'
+      : hasAudio
+      ? 'una nota de voz y una cartita de amor'
+      : 'una cartita de amor secreta';
+
     remotePushService.sendPushToPartner({
-      title: '💌 ¡Dedicatoria sorpresa de amor!',
-      body: `${myName} te ha enviado una cartita de amor.`,
+      title: '💌 ¡Nuevo Recuerdo de Amor!',
+      body: `${myName} te ha enviado ${detail}. ¡Toca para abrir tu sorpresa! ✨`,
       url: '/?view=memories',
       tag: 'remote-dedication-' + Date.now()
     });
@@ -784,13 +899,35 @@ export default function App() {
   };
 
   const handleDeleteMedication = (id: string) => {
+    const med = medications.find(m => m.id === id);
     const updated = deleteMedication(id);
     setMedications(updated);
+
+    if (med && (med.forUser === 'both' || med.forUser !== activeProfile)) {
+      const myName = getUserDisplayName(activeProfile);
+      remotePushService.sendPushToPartner({
+        title: '💊 Pastillero',
+        body: `${myName} eliminó ${med.name} del pastillero.`,
+        url: '/?view=tasks',
+        tag: 'remote-del-med-' + Date.now()
+      });
+    }
   };
 
   const handleToggleMedicationTaken = (id: string) => {
+    const med = medications.find(m => m.id === id);
     const updated = toggleMedicationTaken(id);
     setMedications(updated);
+
+    if (med) {
+      const myName = getUserDisplayName(activeProfile);
+      remotePushService.sendPushToPartner({
+        title: '💊 Pastillero & Salud',
+        body: `${myName} registró la toma de su medicamento "${med.name}". ✅`,
+        url: '/?view=tasks',
+        tag: 'remote-take-med-' + Date.now()
+      });
+    }
   };
 
   const handleResetData = () => {
